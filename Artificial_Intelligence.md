@@ -10,8 +10,8 @@ Textbook is supplemental to the days topic
 -----------------------------------------------           
     act like humans     |   Act rationally
 
-### Rational = Doing the right thing {optimally}
-#### Bounded Rationality: making the best decision given limited resources {satisficing}
+### Rational = Doing the right thing **optimally**
+#### Bounded Rationality: making the best decision given limited resources **satisficing**
 
 ### AI is solving NP-complete problems
     Algorithms with tricks
@@ -20,3 +20,4 @@ Ethics is criticial
     IEEE write standards on ethics and ai, algoirthmic bias
     Being useful. ethical, and fair
     
+"All of AI is search" - Herb Simon
