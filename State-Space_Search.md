@@ -71,6 +71,7 @@
 * In a stack and use LIFO
 * Backtracking to continue search
 * It is complete only with a finite graph
+* most naturally supports searching for solutions in CSP
 
 * Not complete and not optimal
 * Time and space complexity = O(b*d)?
