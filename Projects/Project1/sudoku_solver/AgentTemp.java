@@ -25,13 +25,21 @@ public class AgentTemp {
             population[k] = tempBoard;
             Board.printBoard(tempBoard.board);
         }
-
-
-
-
         //check to see if solution exists
-        //select the two best boards (based off of fitness function) and reproduce
-        //repeat process
+        boolean solutionFound = false;
+        for(int b = 0; b < 20; b++){
+            if(Checker.checkRows(population[b].board) && Checker.checkCols(population[b].board) && Checker.checkMatrices(population[b].board)){
+                Board.printBoard(population[b].board);
+                solutionFound = true;
+                break;
+            }
+        }
+
+        if (!solutionFound){
+            //select the two best boards (based off of fitness function) and reproduce
+            //repeat process
+        }
+
 
 
     }
