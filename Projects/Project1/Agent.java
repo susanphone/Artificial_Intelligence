@@ -51,4 +51,5 @@ public class Agent {
         Board.printBoard(memory.board.init_board);
         
     }
+    
 }
