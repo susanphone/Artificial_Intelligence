@@ -7,6 +7,10 @@ import java.util.logging.Logger;
 public class Board {
     //Stores the initial board
     public int[][] board = new int[9][9];
+
+    public Board(){
+        //constructor to have empty board objects
+    }
     
     
     //Reads in a board from the file with the name passed in
