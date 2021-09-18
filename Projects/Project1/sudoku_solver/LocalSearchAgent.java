@@ -3,7 +3,7 @@ package sudoku_solver;
 import java.io.File;
 import java.util.Random;
 public class LocalSearchAgent {
-    private static int row;
+    private int row;
     int initialValues[] = new int[1]; // whatever value is not a 0 in the initial board
     private int column;
     Memory memory = new Memory();
@@ -13,7 +13,7 @@ public class LocalSearchAgent {
         this.column = column;
     }
 
-    public static void simulatedAnnealing(File file, int intialValues) {
+    public static void simulatedAnnealing() {
         Random rand =  new Random();
         int[] possibleValues = new int[] {
                 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -33,15 +33,24 @@ public class LocalSearchAgent {
         int position[][] = memory.board.board;
         int initialValue = 0;
         int remainingValues = 81 - initialValue;
-        if (initialValue != 0) {
-            // remove intial Values from possibleValues
+        //Loops through i values
+        for (int i = 0; i < 9; i++) {
+            //Loops through j values
+            for (int j = 0; j < 9; j++) {
+                if (initialValue != 0) {
+                    HelperFunctions.removeArrayElem(possibleValues[initialValue]);
+                    // remove intial Values from possibleValues
 
         } else {
             // put remaining values into the spots whose value is 0, randomly
             int nRow = rand.nextInt(9) + 1;// add 1 to make the range 1-9
             int mColumn = rand.nextInt(9)+1;
-            // pick a random spot with 0 and empty the array
 
+            // pick a random spot with 0
+            int randomPos[][] = new int[nRow][mColumn];
+            // and empty the array
+            HelperFunctions.removeArrayElem(randomPos);
+            HelperFunctions.removeArrayElem(randomPos);
         }
 
     }
