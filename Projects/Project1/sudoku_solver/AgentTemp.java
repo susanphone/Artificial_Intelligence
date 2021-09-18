@@ -2,8 +2,6 @@ package sudoku_solver;
 import java.util.Random;
 
 public class AgentTemp {
-
-
     //local search using a genetic algorithm with a penalty function and tournament selection
     public static void genetic() {
         //generate 20 boards to create initial population
