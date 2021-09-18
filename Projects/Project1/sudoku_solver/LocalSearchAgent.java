@@ -1,71 +1,80 @@
 package sudoku_solver;
 
-import com.sun.tools.javac.comp.Check;
-
+import java.io.File;
 import java.util.Random;
-import java.lang.Math;
-//import statistics
 public class LocalSearchAgent {
-    int row;
-    int column;
+    private static int row;
+    int initialValues[] = new int[81];
+    private int column;
     Memory memory = new Memory();
-    int k =1;
-    public void LocalSearchAgent(int row, int column, int memory) {
+
+    public void LocalSearchAgent(int row, int column, int memory[][]) {
         this.row = row;
         this.column = column;
-        memory.board.board = memory;
     }
-    public static void simulatedAnnealing() {
-        Random randomValue = new Random();
+
+    public static void simulatedAnnealing(File file, int intialValues) {
+        int[] possibleValues = new int[81];
+        possibleValues[intialValues] = [
+                1,1,1,1,1,1,1,1,1,
+                2,2,2,2,2,2,2,2,2,
+                3,3,3,3,3,3,3,3,3,
+                4,4,4,4,4,4,4,4,4,
+                5,5,5,5,5,5,5,5,5,
+                6,6,6,6,6,6,6,6,6,
+                7,7,7,7,7,7,7,7,7,
+                8,8,8,8,8,8,8,8,8,
+                9,9,9,9,9,9,9,9,9];
+
+//        Random randomValue = new Random();
         Memory memory = new Memory();
         Board.printBoard(memory.board.board);
-        int initialProbability = 1;
-        int currentProbability = 1;// number of remaining spaces
-        int i = 0, j = 0;
-        int position = memory.board.board[i][j];
 
-        //read in the board
-        for(int row =0; i < 9; i++) {
-            //Loops through j values
-            for (int col= 0; j < 9; j++) {
-                //Checks for empty space; If it's empty, the algorithm changes it. Otherwise, it does not need to be changed
-                if (memory.board.board[row][col] == 0) {
-                    for (int num = 1; num <= 9; num++) {
-                        //Sets the space at the current index (i,j) to num
-                        memory.board.board[row][col] = num;
-                    }
+        int position = memory.board.board[][];
+        int initialValue;
+        int remainingValues = 81 - initialValue;
+        // remove intial Values from possibleValues
+        if(initialValue != 0) {
+
+        }
+
+    }
+
+    public int costFunction(int memory[][]) {
+        int columnCost = 0;
+        int rowCost = 0;
+        int currentValue = 0;
+        int neighborValue = 0;
+        for (int row=1; row<10; row++) {
+            for(int column=1; column<10;column++) {
+                // if the value in the current spot is the same as the value as a neighbor
+                // or the current value is equal to zero
+                if (currentValue == neighborValue || currentValue == 0){
+                    columnCost += 1;
                 }
-                // choose a random value between 1 and 9 at position (i,j)
-                for(position = 1; randomValue.nextInt() < 10; position++) {
-
-                    // assign a value to the random spot and keep that value there is the probability increases
-                    if(initialProbability > currentProbability) {
-                        memory.board.board[i][j] = randomValue.nextInt();
-                    }
-                    // otherwise choose another random number and see if the next value is a better fit than the current value
-                    int nextInt = randomValue.nextInt();
-                    int deltaE = (currentProbability - initialProbability)/2;
-                    if(deltaE > 1) {
-                        position = randomValue.nextInt();
-                    } else {
-                        position = nextInt;
-                    }
             }
         }
-        }
-    }
-    // this is using minimum conflict
-    public int costFunction(int row, int column, int memory) {
-        int i;
-        int numberOfErrorsCalculation = 0;
-        int numberOfErrorsColAndRow = (9 - length(Checker.checkRows(this.row, this.column))) + (9 - length(Checker.checkCols([this.row][this.column])))
-        ;
-        numberOfErrorsCalculation += numberOfErrorsColAndRow;
-        return numberOfErrorsCalculation;
-    }
-    public int[] randomGridSelection(int row, int column, int memory) {
+        for (column=1;column<10;column++) {
+            for(row=1; row<10;row++) {
+                if (currentValue == neighborValue || currentValue == 0) {
+                    for (int num = 1; num <= 9; num++) {
+                        memory.board.board[row][column] = num; //Sets the space at the current index (i,j) to num
 
-        return [row1, column1], [row2, column2]
+                        rowCost += 1;
+                }
+            }
+        }
+
+        int currentTotalErrors = rowCost + columnCost;
+        int possibleTotalErrors = 81;
+
+        // if switching the values made the cost higher, then switch them back
+        if (possibleTotalErrors > currentTotalErrors) {
+
+        } else {
+            //update the board
+        }
+        return currentTotalErrors;
     }
 
 }
