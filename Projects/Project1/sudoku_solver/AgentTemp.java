@@ -3,10 +3,11 @@ import java.util.Random;
 
 public class AgentTemp {
     //local search using a genetic algorithm with a penalty function and tournament selection
-    public static void genetic() {
+    public static Board genetic() {
         //generate 20 boards to create initial population
         //population is stored in an array of Boards
         Board[] population = new Board[20];
+        Board solutionBoard = new Board();
         Memory memory = new Memory();
         Random rand = new Random();
         //fill the empty spaces with a random value to create the initial population of boards
@@ -70,7 +71,23 @@ public class AgentTemp {
                 }
             }
 
-            //crossover and mutate to make a new population
+            //crossover - one point (spot 60)
+            Board tempBoard1 = new Board();
+            Board tempBoard2 = new Board();
+            for(int i = 0; i < 9; i++) {
+                for (int j = 0; j < 9; j++) {
+                    if (memory.board.board[i][j] == 0 && i * j > 60) {
+                        tempBoard1.board[i][j] = parent2.board[i][j];
+                        tempBoard2.board[i][j] = parent1.board[i][j];
+                    } else {
+                        tempBoard1.board[i][j] = parent1.board[i][j];
+                        tempBoard1.board[i][j] = parent2.board[i][j];
+                    }
+                }
+            }
+            parent1 = tempBoard1;
+            parent2 = tempBoard2;
+            //random mutation
 
             //repeat entire process until a new 'generation' is reached and start over
             //finish when solution is found (fitness == 1) or number of iterations is reached
@@ -81,7 +98,7 @@ public class AgentTemp {
             //repeat process
 
 
-
+    return solutionBoard;
     }
     
 }

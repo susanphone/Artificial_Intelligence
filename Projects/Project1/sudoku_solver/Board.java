@@ -7,6 +7,7 @@ import java.util.logging.Logger;
 public class Board {
     //Stores the initial board
     public int[][] board = new int[9][9];
+    public int[] null_positions = new int[81];
 
     public Board(){
         //constructor to have empty board objects
@@ -18,25 +19,26 @@ public class Board {
         //Try and catch to handle errors
         try {
             //In stores the current line
-            //Delimeter is used to seperate values within a line
+            //Delimiter is used to separate values within a line
             String in, delimiter = ",";
             
             //Stores the index of the current row
             int row = 0;
             
-            //Initilaizes a buffered reader to read the csv file
+            //Initializes a buffered reader to read the csv file
             BufferedReader br = new BufferedReader(new FileReader(name));
             
             //Reads in the next line and stores it in 'in'
             while ((in = br.readLine()) != null){ 
-                //Seperates the line into an array, with commas seperating values
+                //Separates the line into an array, with commas separating values
                 String[] line = in.split(delimiter);
                 
                 //Loops through array line and stores them in the board
-                for(int col = 0; col < line.length; col++){
+                for(int col = 0, index = 0; col < line.length; col++){
                     if(line[col].length() == 2){
                         if(line[col].charAt(1) == '?'){
                             board[row][col] = 0;
+                            null_positions[index++] = row * col;
                         }
                             
                         else{
