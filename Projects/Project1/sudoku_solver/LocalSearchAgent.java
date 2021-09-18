@@ -13,7 +13,7 @@ public class LocalSearchAgent {
     public void LocalSearchAgent(int row, int column, int memory) {
         this.row = row;
         this.column = column;
-        this.memory = memory.board.board;
+        memory.board.board = memory;
     }
     public static void simulatedAnnealing() {
         Random randomValue = new Random();

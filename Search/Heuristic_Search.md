@@ -95,3 +95,14 @@
 * if n is not chsen for expansion,
 * **Corollary**: If $h'(n) = h(n)$ forall n, then only path expaned is the optimal path
 * **seriously check slides**
+
+## Bandit Problem
+Slot machines all have a different chance on winning
+* Limited generation(resources)
+* The mechanism of selection
+## Stochastic Search
+Incorporates randomness into the search
+* Simulated Annealing
+* Genetic Algorithm
+* Random Restart Hillclimbing
+* Particle Swarm Optimization
