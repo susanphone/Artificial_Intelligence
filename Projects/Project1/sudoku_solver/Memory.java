@@ -9,5 +9,7 @@ public class Memory {
     int past_move_ind = 0;
     int[] past_moves = new int[81];
     int[][] past_move_coords = new int[81][2];
+    int[][][] possible_moves = new int[9][9][9];
+
     //+ potentialBoards: Board[]
 }
