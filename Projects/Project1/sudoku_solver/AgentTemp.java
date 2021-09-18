@@ -86,6 +86,21 @@ public class AgentTemp {
         return fitness_val;
 
     }
+    public static int[] removeArrayElem(int[] boards, int index){
+        int[] tempArray = new int[boards.length - 1];
+
+        if(boards == null || index < 0 || index >= boards.length){
+            return  boards;
+        }
+        for(int i = 0, j = 0; i < boards.length; i ++){
+            if(i == index){
+                continue;
+            }else{
+                tempArray[j++] = boards[i];
+            }
+        }
+        return tempArray;
+    }
     //local search using a genetic algorithm with a penalty function and tournament selection
     public static void genetic() {
         //generate 20 boards to create initial population
@@ -122,6 +137,7 @@ public class AgentTemp {
         int iteration = 1000; //limit number of iterations
 
         do{
+
             //select two random candidates
             //calculate the fitness of each candidate
             //repeat
