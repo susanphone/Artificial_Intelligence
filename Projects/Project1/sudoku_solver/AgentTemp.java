@@ -39,58 +39,68 @@ public class AgentTemp {
         int iteration = 1000; //limit number of iterations
 
         do{
+
             Board[] new_population = new Board[population.length];
-            //select two random candidates using tournament selection
-            Board candidate1 = new Board();
-            Board candidate2 = new Board();
-            Board parent1 = new Board();
-            Board parent2 = new Board();
-            Board[] temp_population = new Board[population.length];
-            //create two tournaments and select 'winners' from each to be parents
+            int new_gen_pop_size = 0;
+            while(new_gen_pop_size < new_population.length){
+                //select two random candidates using tournament selection
+                Board candidate1 = new Board();
+                Board candidate2 = new Board();
+                Board parent1 = new Board();
+                Board parent2 = new Board();
+                Board[] temp_population = new Board[population.length];
+                //HelperFunctions.tournamentSelection(population, candidate1, candidate2, parent1, parent2);
 
-            for( int l = 0; l < 2; l++){
-                int n1 = rand.nextInt(population.length);
-                candidate1 = population[n1];
-                temp_population = HelperFunctions.removeArrayElem(population, n1);
-                int n2 = rand.nextInt(temp_population.length);
-                candidate2 = temp_population[n2];
+                for( int l = 0; l < 2; l++){
+                    int n1 = rand.nextInt(population.length);
+                    candidate1 = population[n1];
+                    temp_population = HelperFunctions.removeArrayElem(population, n1);
+                    int n2 = rand.nextInt(temp_population.length);
+                    candidate2 = temp_population[n2];
 
-                //calculate the fitness of each candidate
-                float fitness1 = HelperFunctions.fitness(candidate1);
-                float fitness2 = HelperFunctions.fitness(candidate2);
+                    //calculate the fitness of each candidate
+                    float fitness1 = HelperFunctions.fitness(candidate1);
+                    float fitness2 = HelperFunctions.fitness(candidate2);
 
-                //use the two candidates with the highest fitness from each 'tournament'  to be parents
-                if(fitness1 > fitness2){
-                    if(l ==0){
-                        parent1 = candidate1;
-                    }else parent2 = candidate1;
-                }else {
-                    if(l == 0){
-                        parent1 = candidate2;
-                    }else parent2 = candidate2;
-                }
-            }
-
-            //crossover - one point (spot 60)
-            Board tempBoard1 = new Board();
-            Board tempBoard2 = new Board();
-            for(int i = 0; i < 9; i++) {
-                for (int j = 0; j < 9; j++) {
-                    if (memory.board.board[i][j] == 0 && i * j > 60) {
-                        tempBoard1.board[i][j] = parent2.board[i][j];
-                        tempBoard2.board[i][j] = parent1.board[i][j];
-                    } else {
-                        tempBoard1.board[i][j] = parent1.board[i][j];
-                        tempBoard1.board[i][j] = parent2.board[i][j];
+                    if(fitness1 == 1)
+                    //use the two candidates with the highest fitness from each 'tournament'  to be parents
+                    if(fitness1 > fitness2){
+                        if(l ==0){
+                            parent1 = candidate1;
+                        }else parent2 = candidate1;
+                    }else {
+                        if(l == 0){
+                            parent1 = candidate2;
+                        }else parent2 = candidate2;
                     }
                 }
-            }
-            parent1 = tempBoard1;
-            parent2 = tempBoard2;
-            //random mutation
+                //crossover - one point (spot 60)
+                Board tempBoard1 = new Board();
+                Board tempBoard2 = new Board();
+                for(int i = 0; i < 9; i++) {
+                    for (int j = 0; j < 9; j++) {
+                        if (memory.board.board[i][j] == 0 && i * j > 60) {
+                            tempBoard1.board[i][j] = parent2.board[i][j];
+                            tempBoard2.board[i][j] = parent1.board[i][j];
+                        } else {
+                            tempBoard1.board[i][j] = parent1.board[i][j];
+                            tempBoard1.board[i][j] = parent2.board[i][j];
+                        }
+                    }
+                }
 
-            //repeat entire process until a new 'generation' is reached and start over
-            //finish when solution is found (fitness == 1) or number of iterations is reached
+                //parent1 = tempBoard1;
+                //parent2 = tempBoard2;
+                //random mutation
+                parent1 = HelperFunctions.mutate(parent1);
+                parent2 = HelperFunctions.mutate(parent2);
+
+                new_population[new_gen_pop_size++] = parent1;
+                new_population[new_gen_pop_size++] = parent2;
+                //repeat entire process until a new 'generation' is reached and start over
+                //finish when solution is found (fitness == 1) or number of iterations is reached
+            }
+
 
         }while (!solutionFound && iteration > 0);
 

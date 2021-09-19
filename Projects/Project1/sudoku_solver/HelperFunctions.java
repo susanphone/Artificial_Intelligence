@@ -1,6 +1,8 @@
 package sudoku_solver;
+import java.util.Random;
 
 public class HelperFunctions {
+
     public static float  fitness(Board board){
 
         //find number of correct rows and divide by total rows
@@ -99,6 +101,35 @@ public class HelperFunctions {
             }
         }
         return tempArray;
+    }
+    public static void crossover(Board parent1, Board parent2){
+        Memory memory = new Memory();
+
+    }
+
+    public static Board mutate(Board parent){
+        Memory memory = new Memory();
+        Random rand = new Random();
+
+        int mutationPoint_row = rand.nextInt(9);
+        int mutationPoint_col = rand.nextInt(9);
+        boolean mutationValid = false;
+
+        while(!mutationValid){
+            if( mutationPoint_col != 0 && mutationPoint_row != 0 && memory.board.null_positions[mutationPoint_row * mutationPoint_col] == 0){
+                mutationPoint_col = rand.nextInt(9);
+                mutationPoint_row = rand.nextInt(9);
+            }else mutationValid = true;
+        }
+        int new_val = rand.nextInt(9) + 1;// add 1 to make the range 1-9
+
+        parent.board[mutationPoint_row][mutationPoint_col] = new_val;
+        return parent;
+    }
+
+    public static void tournamentSelection( Board[] population, Board candidate1, Board candidate2, Board parent1, Board parent2){
+        //create two tournaments and select 'winners' from each to be parents
+        Random rand = new Random();
     }
 }
 
