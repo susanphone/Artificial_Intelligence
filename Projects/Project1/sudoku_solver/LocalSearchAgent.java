@@ -1,12 +1,11 @@
 package sudoku_solver;
 
-import java.io.File;
 import java.util.Random;
 public class LocalSearchAgent {
     int initialValues[] = new int[1]; // whatever value is not a 0 in the initial board
     Memory memory = new Memory();
 
-    public void LocalSearchAgent(int row, int column, int memory[][]) {
+    public void LocalSearchAgent(int memory[][]) {
         this.memory.board.board = memory;
     }
 
@@ -25,8 +24,7 @@ public class LocalSearchAgent {
 
 //        Random randomValue = new Random();
         Memory memory = new Memory();
-        Board.printBoard(memory.board.board);
-
+        int currentCost = 81;
         int position[][] = memory.board.board;
         int initialValue[] = new int[1];
         int remainingValues = 81 - initialValue[1];
@@ -35,8 +33,8 @@ public class LocalSearchAgent {
             //Loops through j values
             for (int j = 0; j < 9; j++) {
                 if (initialValue[j] != 0) {
-                    HelperFunctions.removeArrayElem(possibleValues[i][j]);
-                    // remove intial Values from possibleValues
+                    // remove initial Values from possibleValues
+                    HelperFunctions.removeArrayElem(possibleValues);
 
                 } else {
                     // put remaining values into the spots whose value is 0, randomly
@@ -44,53 +42,22 @@ public class LocalSearchAgent {
                     int mColumn = rand.nextInt(9) + 1;
 
                     // pick a random spot with 0
-                    int randomPos[][] = new int[nRow][mColumn];
-                    // and empty the array
-                    HelperFunctions.removeArrayElem(possibleValues[this.row][this.column]);
+                    Board randomPos[][] = new Board[nRow][mColumn];
+                    // and empty the array by placing numbers in random positions where the value is 0.
+                    HelperFunctions.removeArrayElem(randomPos);
+                }
+                // use the cost function to check if the switch reduced the current cost
+                int cost = HelperFunctions.costFunction(position);
+                if (cost < currentCost) {
+                    currentCost = cost;
+                } else {
+                    // switch the values back and pick another spot
+                }
+                if (cost == 0) {
+                    Board.printBoard(memory.board.board);
                 }
 
             }
         }
     }
-            // Cost function used to compare it switching the values would reduce the cost on the board.
-            // Goal is to have the cost be 0.
-            public int costFunction ( int memory[][]){
-                int columnCost = 0;
-                int rowCost = 0;
-                int currentValue = 0;
-                int neighborValue = 0;
-                int currentTotalErrors = 0;
-                // check for duplicates in rows
-                for (int row = 1; row < 10; row++) {
-                    for (int column = 1; column < 10; column++) {
-                        // if the value in the current spot is the same as the value as a neighbor
-                        // or the current value is equal to zero
-                        if (currentValue == neighborValue || currentValue == 0) {
-                            columnCost += 1;
-                        }
-                    }
-                }
-                // check for duplicates in columns
-                for (int column = 1; column < 10; column++) {
-                    for (int row = 1; row < 10; row++) {
-                        if (currentValue == neighborValue || currentValue == 0) {
-                            for (int num = 1; num <= 9; num++) {
-//                                memory[row][column] = num; //Sets the space at the current index (i,j) to num
-                                rowCost += 1;
-                            }
-                        }
-                    }
-
-                    currentTotalErrors = rowCost + columnCost;
-                    int possibleTotalErrors = 81;
-
-                    // if switching the values made the cost higher, then switch them back
-                    if (possibleTotalErrors > currentTotalErrors) {
-
-                    } else {
-                        //update the board
-                    }
-                }
-                return currentTotalErrors;
-            }
         }
