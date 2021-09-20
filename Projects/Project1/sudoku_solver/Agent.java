@@ -100,11 +100,6 @@ public class Agent {
                     for (int num = 1; num <= 9; num++) {
                         loops++; //Increments for every loop done
 
-
-                    //Loops through possible numbers for a space
-                    for (int num = 1; num <= 9; num++) {
-
-
                         //Sets the space at the current index (i,j) to num
                         memory.board.board[i][j] = num;
 
