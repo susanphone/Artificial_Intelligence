@@ -141,15 +141,12 @@ public class Agent {
                 }
             }
         }
-<<<<<<< HEAD
-=======
 
         //Print the (hopefully) successful board
         System.out.println("Loops: " + loops);
         Board.printBoard(memory.board.board);
 
     }
->>>>>>> 0db1a35636bd14da7dd43e8a277e249fed5e5b3b
 
     public static void backtrackArcConsistency() {
         //Init of memory related items
@@ -301,12 +298,10 @@ public class Agent {
         Memory memory = new Memory();
         int currentCost = 81;
         int position[][] = memory.board.board;
-<<<<<<< HEAD
         int initialValue[] =  new int[position.length];
         System.out.println(initialValue);
-=======
-        int initialValue[] = new int[9];
->>>>>>> 0db1a35636bd14da7dd43e8a277e249fed5e5b3b
+        initialValue = new int[9];
+
         int randomValue = rand.nextInt(9) + 1;
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -330,7 +325,7 @@ public class Agent {
                         HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
                     }
                     // use the cost function to check if the switch reduced the current cost
-                    int cost = HelperFunctions.costFunction(position);
+                    int cost = HelperFunctions.costFunction(position, randomValue);
                     if (cost < currentCost) {
                         currentCost = cost;
                     } else {
@@ -343,11 +338,9 @@ public class Agent {
 //                        System.out.println(currentCost);
                     }
                 }
-<<<<<<< HEAD
+
                 Board.printBoard(memory.board.board);
-=======
                     Board.printBoard(memory.board.board);
->>>>>>> 0db1a35636bd14da7dd43e8a277e249fed5e5b3b
             }
         }
     }
