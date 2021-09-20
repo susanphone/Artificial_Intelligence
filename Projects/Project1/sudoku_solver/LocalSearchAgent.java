@@ -27,30 +27,28 @@ public class LocalSearchAgent {
         int currentCost = 81;
         int position[][] = memory.board.board;
         int initialValue[] = new int[1];
-        int remainingValues = 81 - initialValue[1];
         //Loops through i values
         for (int i = 0; i < 9; i++) {
             //Loops through j values
             for (int j = 0; j < 9; j++) {
-                if (initialValue[j] != 0) {
+                if (initialValue[position[i][j]] != 0) {
                     // remove initial Values from possibleValues
-                    HelperFunctions.removeIntArrayElem(possibleValues, j);
+                    HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
 
                 } else {
                     // put remaining values into the spots whose value is 0, randomly
-                    int nRow = rand.nextInt(9) + 1;// add 1 to make the range 1-9
-                    int mColumn = rand.nextInt(9) + 1;
+                    int randomValue = rand.nextInt();
 
                     // pick a random spot with 0
-                    Board randomPos[][] = new Board[nRow][mColumn];
                     // and empty the array by placing numbers in random positions where the value is 0.
-                    HelperFunctions.removeIntArrayElem(possibleValues, rand.nextInt(9)+1);
+                    HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
                 }
                 // use the cost function to check if the switch reduced the current cost
                 int cost = HelperFunctions.costFunction(position);
                 if (cost < currentCost) {
                     currentCost = cost;
                 } else {
+                    break;
                     // switch the values back and pick another spot
                 }
                 if (cost == 0) {

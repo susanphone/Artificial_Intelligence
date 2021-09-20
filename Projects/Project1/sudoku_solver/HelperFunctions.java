@@ -122,6 +122,22 @@ public class HelperFunctions {
         return tempArray;
     }
 
+    public static int[] addIntArrayElem(int[] arr, int index){
+        int[] tempArray = new int[arr.length + 1];
+
+        if(arr == null || index < 0 || index >= arr.length){
+            return  arr;
+        }
+        for(int i = 0, j = 0; i < arr.length; i ++){
+            if(i == index){
+                continue;
+            }else{
+                tempArray[j++] = arr[i];
+            }
+        }
+        return tempArray;
+    }
+
     public static Board[] removeBoardArrayElem(Board[] boards, int index){
         Board[] tempArray = new Board[boards.length - 1];
 

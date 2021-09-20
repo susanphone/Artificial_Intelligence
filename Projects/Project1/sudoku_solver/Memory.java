@@ -2,7 +2,7 @@
 package sudoku_solver;
 
 public class Memory {
-    Board board = new Board("/Med-P3.csv");
+    Board board = new Board("test_files/Easy-P5.csv");
     //+ currentBoard: Board
     
     
