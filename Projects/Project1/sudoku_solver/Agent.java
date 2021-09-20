@@ -128,7 +128,7 @@ public class Agent {
             }
         }
 
-        //Print the (hopefully) succesful board
+        //Print the (hopefully) successful board
         Board.printBoard(memory.board.board);
 
     }

@@ -172,7 +172,7 @@ public class HelperFunctions {
         Random rand = new Random();
         int[] possibleValues = generateRemainingValues(memory.board);
         //fill the empty spaces with a random value to create the initial population of boards
-        for(int k = 0; k < 20; k++){
+        for(int k = 0; k < 20000; k++){
             Board tempBoard = new Board();
             possibleValues = generateRemainingValues(memory.board);
             for(int i = 0; i < 9; i++){
@@ -186,7 +186,7 @@ public class HelperFunctions {
                     }
                 }
             }
-            Board.printBoard(tempBoard.board);
+            //Board.printBoard(tempBoard.board);
             population[k] = tempBoard;
         }
         return population;
@@ -201,7 +201,7 @@ public class HelperFunctions {
         boolean mutationValid = false;
 
         while(!mutationValid){
-            if( mutationPoint_col != 0 && mutationPoint_row != 0 && memory.board.null_positions[mutationPoint_row * mutationPoint_col] == 0){
+            if(memory.board.board[mutationPoint_row][mutationPoint_col] != 0){
                 mutationPoint_col = rand.nextInt(9);
                 mutationPoint_row = rand.nextInt(9);
             }else mutationValid = true;

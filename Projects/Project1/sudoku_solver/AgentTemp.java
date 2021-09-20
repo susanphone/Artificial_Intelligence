@@ -6,7 +6,7 @@ public class AgentTemp {
     public static Board genetic() {
         //generate 20 boards to create initial population
         //population is stored in an array of Boards
-        Board[] population = new Board[20];
+        Board[] population = new Board[20000];
         Board solutionBoard = new Board();
         Memory memory = new Memory();
         Random rand = new Random();
@@ -15,7 +15,7 @@ public class AgentTemp {
 
         //check to see if solution exists
         boolean solutionFound = false;
-        for(int b = 0; b < 20; b++) {
+        for(int b = 0; b < 20000; b++) {
             if (Checker.checkRows(population[b].board) && Checker.checkCols(population[b].board) && Checker.checkMatrices(population[b].board)) {
                 Board.printBoard(population[b].board);
                 solutionFound = true;
@@ -75,27 +75,16 @@ public class AgentTemp {
                         }else parent2 = candidate2;
                     }
                 }
-                //crossover - one point (spot 60)
-                Board tempBoard1 = new Board();
-                Board tempBoard2 = new Board();
-                boolean cross_point = false;
-                for(int i = 0; i < 9; i++) {
-                    for (int j = 0; j < 9; j++) {
-                        if(i == 6 && j == 5){
-                            cross_point = true;
-                        }
-                        if (memory.board.board[i][j] == 0 && cross_point) {
-                            tempBoard1.board[i][j] = parent2.board[i][j];
-                            tempBoard2.board[i][j] = parent1.board[i][j];
-                        } else {
-                            tempBoard1.board[i][j] = parent1.board[i][j];
-                            tempBoard2.board[i][j] = parent2.board[i][j];
-                        }
-                    }
+                //crossover - random row crossover
+                int rand_row = rand.nextInt(9);
+                int temp;
+                //boolean cross_point = false;
+                for (int j = 0; j < 9; j++) {
+                    temp = parent1.board[rand_row][j];
+                    parent1.board[rand_row][j] = parent2.board[rand_row][j];
+                    parent2.board[rand_row][j] = temp;
                 }
 
-                parent1 = tempBoard1;
-                parent2 = tempBoard2;
                 //random mutation
                 parent1 = HelperFunctions.mutate(parent1);
                 parent2 = HelperFunctions.mutate(parent2);
@@ -103,24 +92,12 @@ public class AgentTemp {
                 new_population[new_gen_pop_size++] = parent1;
                 new_population[new_gen_pop_size++] = parent2;
                 //repeat entire process until a new 'generation' is reached and start over
-                if(new_gen_pop_size == 19){
+                if(new_gen_pop_size == 20000){
                     population = new_population;
-                    new_population = new Board[20];
+                    new_population = new Board[20000];
                 }
                 //finish when solution is found (fitness == 1) or number of iterations is reached
 
-//                if(iteration == 0){
-//                    float parent1_fitness = HelperFunctions.fitness(parent1);
-//                    float parent2_fitness = HelperFunctions.fitness(parent2);
-//
-//                    if(parent1_fitness > parent2_fitness){
-//                        solutionBoard = parent1;
-//                        Board.printBoard(parent1.board);
-//                    }else{
-//                        solutionBoard = parent2;
-//                        Board.printBoard(parent2.board);
-//                    }
-//                }
             }
 
             System.out.println("Generation: " + iteration + "\n");
