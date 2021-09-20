@@ -84,6 +84,13 @@ public class GeneticAgent {
                     }
                 }
 
+                //for video demonstration purposes
+                if(iteration == 2){
+                    System.out.println("Randomly selected parents (tournament winners): \n");
+                    Board.printBoard(parent1.board);
+                    Board.printBoard(parent2.board);
+                }
+
                 //crossover - random row crossover for the parents
                 int rand_row = rand.nextInt(9); //random row to perform crossover on
                 int temp;
@@ -101,6 +108,13 @@ public class GeneticAgent {
                 new_population[new_gen_pop_size++] = parent1;
                 new_population[new_gen_pop_size++] = parent2;
 
+                //for video demonstration purposes
+                if(iteration == 2){
+                    System. out.println("Children Boards: \n");
+                    Board.printBoard(parent1.board);
+                    Board.printBoard(parent2.board);
+                }
+
                 //repeat entire process until a new 'generation' is reached and start over
                 if(new_gen_pop_size == 20000){
                     population = new_population;
@@ -111,7 +125,8 @@ public class GeneticAgent {
 
             System.out.println("Generation: " + iteration + "\n");
             iteration++;
-    }while (!solutionFound);
+
+    }while (!solutionFound & iteration < 3);
 
     return solutionBoard;
     }
