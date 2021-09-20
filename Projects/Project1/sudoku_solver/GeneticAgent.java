@@ -11,6 +11,7 @@ public class GeneticAgent {
         Memory memory = new Memory(); //reference to the original board
         Random rand = new Random(); //using Java's random class in order to generate random values
 
+
         //initial population generation
         population = HelperFunctions.generateBoards(population);
 
