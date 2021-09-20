@@ -236,17 +236,20 @@ public class HelperFunctions {
     // Cost function used to compare it switching the values would reduce the cost on the board.
     // Goal is to have the cost be 0.
     public static int costFunction (int position[][], int currentValue){
+        Memory memory = new Memory();
+        int initialValues[][] = memory.board.board;
         int columnCost = 0;
         int rowCost = 0;
         int neighborValue = 0;
-        int neighbors[] = new int[81];
         int currentTotalErrors = 0;
         // check for duplicates in rows
         for (int row = 1; row < 10; row++) {
             for (int column = 1; column < 10; column++) {
+                int neighbors = initialValues[row][column];
+
                 // if the value in the current spot is the same as the value as a neighbor
                 // or the current value is equal to zero
-                if (currentValue == neighbors[neighborValue] || currentValue == 0) {
+                if (currentValue == neighbors || currentValue == 0) {
                     rowCost += 1;
                 }
             }
@@ -254,7 +257,8 @@ public class HelperFunctions {
         // check for duplicates in columns
         for (int column = 1; column < 10; column++) {
             for (int row = 1; row < 10; row++) {
-                if (currentValue == neighbors[neighborValue] || currentValue == 0) {
+                int neighbors = initialValues[row][column];
+                if (currentValue == neighbors || currentValue == 0) {
                     columnCost += 1;
                 }
             }

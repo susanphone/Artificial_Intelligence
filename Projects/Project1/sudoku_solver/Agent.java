@@ -137,7 +137,6 @@ public class Agent {
             System.out.println("Loops: " + loops);
             Board.printBoard(memory.board.board);
         }
-    }
 
     public static void backtrackArcConsistency() {
         //Init of memory related items
@@ -258,7 +257,7 @@ public class Agent {
         return true;
     }
 
-    public static void simulatedAnnealing() {
+    public static void simulatedAnnealing() throws InterruptedException {
         Random rand = new Random();
         int[] possibleValues = new int[]{
                 1, 1, 1, 1, 1, 1, 1, 1, 1,
@@ -275,7 +274,8 @@ public class Agent {
         Memory memory = new Memory();
         int currentCost = 81;
         int position[][] = memory.board.board;
-        int initialValue[] = new int[10];
+        int initialValue[] =  new int[position.length];
+        System.out.println(initialValue);
         int randomValue = rand.nextInt(9) + 1;
         //Loops through i values
         for (int i = 1; i < 10; i++) {
@@ -284,7 +284,9 @@ public class Agent {
                 int randomRow = rand.nextInt(9) + 1;
                 int randomColumn = rand.nextInt(9) + 1;
                 while(currentCost != 0) {
-                    if (initialValue[position[i][j]] != 0) {
+                    if (initialValue[memory.board.board[i][j]] != 0) {
+                        currentCost = currentCost - initialValue.length;
+                        System.out.println(currentCost);
                         // remove initial Values from possibleValues
                         HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
 
@@ -307,10 +309,10 @@ public class Agent {
                         // switch the values back and pick another spot
                         position[i][j] = position[randomRow][randomColumn];
                         // then try again
-                        continue;
+                        System.out.println("Please Wait, System Processing");
+//                        System.out.println(currentCost);
                     }
                 }
-                System.out.println(currentCost);
                 Board.printBoard(memory.board.board);
             }
         }
