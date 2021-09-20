@@ -261,12 +261,12 @@ public class Agent {
         Memory memory = new Memory();
         int currentCost = 81;
         int position[][] = memory.board.board;
-        int initialValue[] = new int[9];
+        int initialValue[] = new int[10];
         int randomValue = rand.nextInt(9) + 1;
         //Loops through i values
-        for (int i = 0; i < 9; i++) {
+        for (int i = 1; i < 10; i++) {
             //Loops through j values
-            for (int j = 0; j < 9; j++) {
+            for (int j = 1; j < 10; j++) {
                 int randomRow = rand.nextInt(9) + 1;
                 int randomColumn = rand.nextInt(9) + 1;
                 while(currentCost != 0) {
@@ -275,15 +275,16 @@ public class Agent {
                         HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
 
                     } else {
-                        // put remaining values into the spots whose value is 0, randomly
                         position[i][j] = position[randomRow][randomColumn];
-
+                        // put remaining values into the spots whose value is 0, randomly
+                        randomValue = position[randomRow][randomColumn];
                         // pick a random spot with 0
                         // and empty the array by placing numbers in random positions where the value is 0.
                         HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
+
                     }
                     // use the cost function to check if the switch reduced the current cost
-                    int cost = HelperFunctions.costFunction(position);
+                    int cost = HelperFunctions.costFunction(position, randomValue);
                     if (cost < currentCost) {
                         currentCost = cost;
                     } else {
@@ -295,6 +296,7 @@ public class Agent {
                         continue;
                     }
                 }
+                    System.out.println(currentCost);
                     Board.printBoard(memory.board.board);
             }
         }
