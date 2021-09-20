@@ -2,7 +2,7 @@
 package sudoku_solver;
 
 public class Memory {
-    Board board = new Board("Evil-P5.csv");
+    Board board = new Board("test_files/Easy-P5.csv");
     //+ currentBoard: Board
     
     
@@ -10,5 +10,6 @@ public class Memory {
     int[] past_moves = new int[81];
     int[][] past_move_coords = new int[81][2];
     int[][][] possible_moves = new int[9][9][9];
+
     //+ potentialBoards: Board[]
 }
