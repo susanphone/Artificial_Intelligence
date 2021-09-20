@@ -182,7 +182,7 @@ public class HelperFunctions {
         return possibleValues;
     }
   
-    public static Board[] gernerateBoards(Board[] population){
+    public static Board[] generateBoards(Board[] population){
 
         Memory memory = new Memory();
         Random rand = new Random();
