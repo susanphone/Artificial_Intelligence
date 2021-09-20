@@ -34,7 +34,7 @@ public class LocalSearchAgent {
             for (int j = 0; j < 9; j++) {
                 if (initialValue[j] != 0) {
                     // remove initial Values from possibleValues
-                    HelperFunctions.removeArrayElem(possibleValues);
+                    HelperFunctions.removeIntArrayElem(possibleValues, j);
 
                 } else {
                     // put remaining values into the spots whose value is 0, randomly
@@ -44,7 +44,7 @@ public class LocalSearchAgent {
                     // pick a random spot with 0
                     Board randomPos[][] = new Board[nRow][mColumn];
                     // and empty the array by placing numbers in random positions where the value is 0.
-                    HelperFunctions.removeArrayElem(randomPos);
+                    HelperFunctions.removeIntArrayElem(possibleValues, rand.nextInt(9)+1);
                 }
                 // use the cost function to check if the switch reduced the current cost
                 int cost = HelperFunctions.costFunction(position);
