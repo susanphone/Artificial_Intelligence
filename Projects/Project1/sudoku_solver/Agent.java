@@ -101,47 +101,47 @@ public class Agent {
                         loops++; //Increments for every loop done
 
 
-                    //Loops through possible numbers for a space
-                    for (int num = 1; num <= 9; num++) {
+                        //Loops through possible numbers for a space
+                        for (int num = 1; num <= 9; num++) {
 
 
-                        //Sets the space at the current index (i,j) to num
-                        memory.board.board[i][j] = num;
+                            //Sets the space at the current index (i,j) to num
+                            memory.board.board[i][j] = num;
 
-                        //If the number works, the move will be recorded
-                        if (Checker.checkRows(memory.board.board) && Checker.checkCols(memory.board.board) && Checker.checkMatrices(memory.board.board)) {
-                            memory.past_moves[memory.past_move_ind] = num; //Storage of move
+                            //If the number works, the move will be recorded
+                            if (Checker.checkRows(memory.board.board) && Checker.checkCols(memory.board.board) && Checker.checkMatrices(memory.board.board)) {
+                                memory.past_moves[memory.past_move_ind] = num; //Storage of move
 
-                            //Storage of move coordinates
-                            memory.past_move_coords[memory.past_move_ind] = new int[2];
-                            memory.past_move_coords[memory.past_move_ind][0] = i;
-                            memory.past_move_coords[memory.past_move_ind][1] = j;
+                                //Storage of move coordinates
+                                memory.past_move_coords[memory.past_move_ind] = new int[2];
+                                memory.past_move_coords[memory.past_move_ind][0] = i;
+                                memory.past_move_coords[memory.past_move_ind][1] = j;
 
-                            memory.past_move_ind++; //Increments the index for the next move
+                                memory.past_move_ind++; //Increments the index for the next move
 
-                            //Exits loop for current space
-                            num = 10;
-                        } //If the board is wrong and the last possible number is reached, backtracking starts
-                        else if (num == 9) {
-                            //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
-                            while (num == 9) {
-                                memory.board.board[i][j] = 0; //Resets current space
-                                i = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
-                                j = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
-                                num = memory.past_moves[memory.past_move_ind - 1]; //Sets the num to the past move's num
-                                memory.past_move_ind--; //Sets memory index to previous move
+                                //Exits loop for current space
+                                num = 10;
+                            } //If the board is wrong and the last possible number is reached, backtracking starts
+                            else if (num == 9) {
+                                //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
+                                while (num == 9) {
+                                    memory.board.board[i][j] = 0; //Resets current space
+                                    i = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
+                                    j = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
+                                    num = memory.past_moves[memory.past_move_ind - 1]; //Sets the num to the past move's num
+                                    memory.past_move_ind--; //Sets memory index to previous move
 
+                                }
                             }
                         }
                     }
                 }
             }
+
+            //Print the (hopefully) successful board
+            System.out.println("Loops: " + loops);
+            Board.printBoard(memory.board.board);
         }
-
-        //Print the (hopefully) successful board
-        System.out.println("Loops: " + loops);
-        Board.printBoard(memory.board.board);
-
     }
 
     public static void backtrackArcConsistency() {
@@ -280,12 +280,12 @@ public class Agent {
         Memory memory = new Memory();
         int currentCost = 81;
         int position[][] = memory.board.board;
-        int initialValue[] = new int[9];
+        int initialValue[] = new int[10];
         int randomValue = rand.nextInt(9) + 1;
         //Loops through i values
-        for (int i = 0; i < 9; i++) {
+        for (int i = 1; i < 10; i++) {
             //Loops through j values
-            for (int j = 0; j < 9; j++) {
+            for (int j = 1; j < 10; j++) {
                 int randomRow = rand.nextInt(9) + 1;
                 int randomColumn = rand.nextInt(9) + 1;
                 while(currentCost != 0) {
@@ -294,15 +294,16 @@ public class Agent {
                         HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
 
                     } else {
-                        // put remaining values into the spots whose value is 0, randomly
                         position[i][j] = position[randomRow][randomColumn];
-
+                        // put remaining values into the spots whose value is 0, randomly
+                        randomValue = position[randomRow][randomColumn];
                         // pick a random spot with 0
                         // and empty the array by placing numbers in random positions where the value is 0.
                         HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
+
                     }
                     // use the cost function to check if the switch reduced the current cost
-                    int cost = HelperFunctions.costFunction(position);
+                    int cost = HelperFunctions.costFunction(position, randomValue);
                     if (cost < currentCost) {
                         currentCost = cost;
                     } else {
@@ -314,7 +315,8 @@ public class Agent {
                         continue;
                     }
                 }
-                    Board.printBoard(memory.board.board);
+                System.out.println(currentCost);
+                Board.printBoard(memory.board.board);
             }
         }
     }
