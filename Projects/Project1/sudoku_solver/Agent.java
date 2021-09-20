@@ -1,13 +1,14 @@
 package sudoku_solver;
 
 import java.util.Arrays;
+import java.util.Random;
 
 public class Agent {
 
     public static void backtrackForwardCheck() {
         //Init of memory related items
         Memory memory = new Memory();
-        int loops = 0;
+        int loops = 0; //Counts number of loops
 
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -76,14 +77,15 @@ public class Agent {
         }
 
         //Print the (hopefully) succesful board
-        Board.printBoard(memory.board.board);
         System.out.println("Loops: " + loops);
+        Board.printBoard(memory.board.board);
+        
     }
 
     public static void backtrack() {
         //Init of memory related items
         Memory memory = new Memory();
-        Board.printBoard(memory.board.board);
+        int loops = 0; //Counts number of loops
 
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -91,10 +93,9 @@ public class Agent {
             for (int j = 0; j < 9; j++) {
                 //Checks for empty space; If it's empty, the algorithm changes it. Otherwise, it does not need to be changed
                 if (memory.board.board[i][j] == 0) {
-
                     //Loops through possible numbers for a space
                     for (int num = 1; num <= 9; num++) {
-
+                        loops++; //Increments for every loop done
                         //Sets the space at the current index (i,j) to num
                         memory.board.board[i][j] = num;
 
@@ -120,7 +121,7 @@ public class Agent {
                                 j = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
                                 num = memory.past_moves[memory.past_move_ind - 1]; //Sets the num to the past move's num
                                 memory.past_move_ind--; //Sets memory index to previous move
-                                
+
                             }
                         }
                     }
@@ -128,7 +129,8 @@ public class Agent {
             }
         }
 
-        //Print the (hopefully) succesful board
+        //Print the (hopefully) successful board
+        System.out.println("Loops: " + loops);
         Board.printBoard(memory.board.board);
 
     }
@@ -136,6 +138,7 @@ public class Agent {
     public static void backtrackArcConsistency() {
         //Init of memory related items
         Memory memory = new Memory();
+        int loops = 0; //Counts number of loops
 
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -145,7 +148,9 @@ public class Agent {
                 if (memory.board.board[i][j] == 0) {
                     //Loops through possible numbers for a space
                     for (int num = 1; num <= 9; num++) {
-                        memory.board.board[i][j] = num; //Sets the space at the current index (i,j) to num
+                        loops++;
+                         //Sets the space at the current index (i,j) to num
+                        memory.board.board[i][j] = num;
 
                         //Checks to see if the board is valid
                         Boolean valid = Checker.checkRows(memory.board.board) && Checker.checkCols(memory.board.board) && Checker.checkMatrices(memory.board.board) && arcConsistent(memory);
@@ -203,6 +208,7 @@ public class Agent {
         }
 
         //Print the (hopefully) succesful board
+        System.out.println("Loops: " + loops);
         Board.printBoard(memory.board.board);
     }
 
@@ -210,23 +216,23 @@ public class Agent {
     public static Boolean arcConsistent(Memory memory) {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                
+
                 //Checks to see if current space only has one possible move
                 int count = 0;
                 for (int x = 0; x < 9; x++) {
-                   if(memory.possible_moves[i][j][x] == 0 && memory.board.board[i][j] == 0){
-                       count++;
-                   }
+                    if(memory.possible_moves[i][j][x] == 0 && memory.board.board[i][j] == 0){
+                        count++;
+                    }
                 }
-                
+
                 //If space has only one move, makes sure space is arc consistent
                 if(count == 1){
                     //Loops through rows and cols
                     for (int x = 0; x < 9; x++) {
-                        //Checks the current space against another 
+                        //Checks the current space against another
                         Boolean row = x != i && memory.board.board[x][j] == 0 && Arrays.equals(memory.possible_moves[i][j], memory.possible_moves[x][j]);
                         Boolean col =  x != j && memory.board.board[i][x] == 0 && Arrays.equals(memory.possible_moves[i][j], memory.possible_moves[i][x]);
-                        
+
                         if(row || col){
                             for(int a : memory.possible_moves[i][j]){
                                 System.out.print(a);
@@ -241,5 +247,61 @@ public class Agent {
             }
         }
         return true;
+    }
+
+    public static void simulatedAnnealing() {
+        Random rand = new Random();
+        int[] possibleValues = new int[]{
+                1, 1, 1, 1, 1, 1, 1, 1, 1,
+                2, 2, 2, 2, 2, 2, 2, 2, 2,
+                3, 3, 3, 3, 3, 3, 3, 3, 3,
+                4, 4, 4, 4, 4, 4, 4, 4, 4,
+                5, 5, 5, 5, 5, 5, 5, 5, 5,
+                6, 6, 6, 6, 6, 6, 6, 6, 6,
+                7, 7, 7, 7, 7, 7, 7, 7, 7,
+                8, 8, 8, 8, 8, 8, 8, 8, 8,
+                9, 9, 9, 9, 9, 9, 9, 9, 9};
+
+//        Random randomValue = new Random();
+        Memory memory = new Memory();
+        int currentCost = 81;
+        int position[][] = memory.board.board;
+        int initialValue[] = new int[9];
+        int randomValue = rand.nextInt(9) + 1;
+        //Loops through i values
+        for (int i = 0; i < 9; i++) {
+            //Loops through j values
+            for (int j = 0; j < 9; j++) {
+                int randomRow = rand.nextInt(9) + 1;
+                int randomColumn = rand.nextInt(9) + 1;
+                while(currentCost != 0) {
+                    if (initialValue[position[i][j]] != 0) {
+                        // remove initial Values from possibleValues
+                        HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
+
+                    } else {
+                        // put remaining values into the spots whose value is 0, randomly
+                        position[i][j] = position[randomRow][randomColumn];
+
+                        // pick a random spot with 0
+                        // and empty the array by placing numbers in random positions where the value is 0.
+                        HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
+                    }
+                    // use the cost function to check if the switch reduced the current cost
+                    int cost = HelperFunctions.costFunction(position);
+                    if (cost < currentCost) {
+                        currentCost = cost;
+                    } else {
+                        // add random value back to possible values list
+                        HelperFunctions.addIntArrayElem(possibleValues, randomValue);
+                        // switch the values back and pick another spot
+                        position[i][j] = position[randomRow][randomColumn];
+                        // then try again
+                        continue;
+                    }
+                }
+                    Board.printBoard(memory.board.board);
+            }
+        }
     }
 }
