@@ -182,7 +182,7 @@ public class HelperFunctions {
         return possibleValues;
     }
   
-    public static Board[] generateBoards(Board[] population){
+    public static Board[] gernerateBoards(Board[] population){
 
         Memory memory = new Memory();
         Random rand = new Random();
@@ -242,6 +242,7 @@ public class HelperFunctions {
         int initialValues[][] = memory.board.board;
         int columnCost = 0;
         int rowCost = 0;
+        int currentValue = 0;
         int neighborValue = 0;
         int currentTotalErrors = 0;
         // check for duplicates in rows
@@ -263,10 +264,43 @@ public class HelperFunctions {
                     columnCost += 1;
                     break;
             }
-        }
 
+            currentTotalErrors = rowCost + columnCost;
+            int possibleTotalErrors = 81;
+
+            // if switching the values made the cost higher, then switch them back
+            if (possibleTotalErrors > currentTotalErrors) {
+
+            } else {
+                //update the board
+            }
+        }
         currentTotalErrors = rowCost + columnCost;
         return currentTotalErrors;
+    }
+    
+    //Gives the minimum amount of 
+    public static int[] minRemaining(int[][] board){
+        int[] temp = {-1,-1};
+        int temp_count = 0;
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                if(board[i][j] == 0){
+                    int count = 0;
+                    for(int x = 0; x < 9; x++){
+                        if(board[i][x] != 0){
+                            count ++;
+                        }
+                    }
+                    if(count > temp_count){
+                        temp[0] = i; temp[1] = j;
+                        temp_count = count;
+                    }
+                }
+            }
+        }
+        
+        return temp;
     }
 }
 
