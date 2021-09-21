@@ -182,7 +182,7 @@ public class HelperFunctions {
         return possibleValues;
     }
   
-    public static Board[] generateBoards(Board[] population){
+    public static Board[] gernerateBoards(Board[] population){
 
         Memory memory = new Memory();
         Random rand = new Random();
@@ -235,32 +235,68 @@ public class HelperFunctions {
 
     // Cost function used to compare it switching the values would reduce the cost on the board.
     // Goal is to have the cost be 0.
-    public static int costFunction (int position[][], int currentValue){
+    public static int costFunction ( int memory[][]){
         int columnCost = 0;
         int rowCost = 0;
+        int currentValue = 0;
         int neighborValue = 0;
-        int neighbors[] = new int[81];
         int currentTotalErrors = 0;
         // check for duplicates in rows
         for (int row = 1; row < 10; row++) {
             for (int column = 1; column < 10; column++) {
                 // if the value in the current spot is the same as the value as a neighbor
                 // or the current value is equal to zero
-                if (currentValue == neighbors[neighborValue] || currentValue == 0) {
-                    rowCost += 1;
+                if (currentValue == neighborValue || currentValue == 0) {
+                    columnCost += 1;
                 }
             }
         }
         // check for duplicates in columns
         for (int column = 1; column < 10; column++) {
             for (int row = 1; row < 10; row++) {
-                if (currentValue == neighbors[neighborValue] || currentValue == 0) {
-                    columnCost += 1;
+                if (currentValue == neighborValue || currentValue == 0) {
+                    for (int num = 1; num <= 9; num++) {
+//                                memory[row][column] = num; //Sets the space at the current index (i,j) to num
+                        rowCost += 1;
+                    }
+                }
+            }
+
+            currentTotalErrors = rowCost + columnCost;
+            int possibleTotalErrors = 81;
+
+            // if switching the values made the cost higher, then switch them back
+            if (possibleTotalErrors > currentTotalErrors) {
+
+            } else {
+                //update the board
+            }
+        }
+        return currentTotalErrors;
+    }
+    
+    //Gives the minimum amount of 
+    public static int[] minRemaining(int[][] board){
+        int[] temp = {-1,-1};
+        int temp_count = 0;
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                if(board[i][j] == 0){
+                    int count = 0;
+                    for(int x = 0; x < 9; x++){
+                        if(board[i][x] != 0){
+                            count ++;
+                        }
+                    }
+                    if(count > temp_count){
+                        temp[0] = i; temp[1] = j;
+                        temp_count = count;
+                    }
                 }
             }
         }
-        currentTotalErrors = rowCost + columnCost;
-        return currentTotalErrors;
+        
+        return temp;
     }
 }
 

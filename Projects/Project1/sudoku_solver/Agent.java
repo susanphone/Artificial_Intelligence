@@ -8,7 +8,7 @@ public class Agent {
     public static void backtrackForwardCheck() {
         //Init of memory related items
         Memory memory = new Memory();
-        int loops = 0; //Counts number of loops
+        int loops = 0, backtracks = 0; //Counts number of loops
 
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -62,6 +62,7 @@ public class Agent {
                         if (num == 9 && !valid || backtrack) {
                             //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
                             while (num == 9) {
+                                backtracks++;
                                 loops++;
                                 memory.board.board[i][j] = 0; //Resets current space
                                 i = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
@@ -89,6 +90,7 @@ public class Agent {
 
         //Print the (hopefully) succesful board
         System.out.println("Loops: " + loops);
+        System.out.println("Backtracks: " + backtracks);
         Board.printBoard(memory.board.board);
         
     }
@@ -96,54 +98,60 @@ public class Agent {
     public static void backtrack() {
         //Init of memory related items
         Memory memory = new Memory();
-        int loops = 0; //Counts number of loops
-
-        //Loops through i values
-        for (int i = 0; i < 9; i++) {
-            //Loops through j values
-            for (int j = 0; j < 9; j++) {
+        int loops = 0, backtracks = 0; //Counts number of loops
+        int[] coords = new int[] {0,0};
+        boolean backtracked = false;
+        while(coords[0] != -1 && coords[1] != -1){
+            if(!backtracked){
+                coords = HelperFunctions.minRemaining(memory.board.board);
+            }
+            backtracked = false;
                 //Checks for empty space; If it's empty, the algorithm changes it. Otherwise, it does not need to be changed
                 
-                if (memory.board.board[i][j] == 0) {
-                    //Loops through possible numbers for a space
-                    for (int num = 1; num <= 9; num++) {
-                        loops++; //Increments for every loop done
-                        //Sets the space at the current index (i,j) to num
-                        memory.board.board[i][j] = num;
+            if (coords[0] != -1 && coords[1] != -1 && memory.board.board[coords[0]][coords[1]] == 0) {
+                //Loops through possible numbers for a space
+                for (int num = 1; num <= 9; num++) {
+                    loops++; //Increments for every loop done
+                    //Sets the space at the current index (i,j) to num
+                    memory.board.board[coords[0]][coords[1]] = num;
 
-                        //If the number works, the move will be recorded
-                        if (Checker.checkRows(memory.board.board) && Checker.checkCols(memory.board.board) && Checker.checkMatrices(memory.board.board)) {
-                            memory.past_moves[memory.past_move_ind] = num; //Storage of move
+                    //If the number works, the move will be recorded
+                    if (Checker.checkRows(memory.board.board) && Checker.checkCols(memory.board.board) && Checker.checkMatrices(memory.board.board)) {
+                        memory.past_moves[memory.past_move_ind] = num; //Storage of move
+                        
+                        //Storage of move coordinates
+                        memory.past_move_coords[memory.past_move_ind] = new int[2];
+                        memory.past_move_coords[memory.past_move_ind][0] = coords[0];
+                        memory.past_move_coords[memory.past_move_ind][1] = coords[1];
+                        
+                        memory.past_move_ind++; //Increments the index for the next move
 
-                            //Storage of move coordinates
-                            memory.past_move_coords[memory.past_move_ind] = new int[2];
-                            memory.past_move_coords[memory.past_move_ind][0] = i;
-                            memory.past_move_coords[memory.past_move_ind][1] = j;
+                        //Exits loop for current space
+                        num = 10;
+                        backtracked = false;
+                    } //If the board is wrong and the last possible number is reached, backtracking starts
+                    else if (num == 9) {
+                        backtracked = true;
+                        //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
+                        while (num == 9) {
+                            backtracks++;
+                            loops++;
+                            memory.board.board[coords[0]][coords[1]] = 0; //Resets current space
+                            coords[0] = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
+                            coords[1] = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
+                            num = memory.past_moves[memory.past_move_ind - 1]; //Sets the num to the past move's num
+                            memory.past_move_ind--; //Sets memory index to previous move
 
-                            memory.past_move_ind++; //Increments the index for the next move
-
-                            //Exits loop for current space
-                            num = 10;
-                        } //If the board is wrong and the last possible number is reached, backtracking starts
-                        else if (num == 9) {
-                            //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
-                            while (num == 9) {
-                                loops++;
-                                memory.board.board[i][j] = 0; //Resets current space
-                                i = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
-                                j = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
-                                num = memory.past_moves[memory.past_move_ind - 1]; //Sets the num to the past move's num
-                                memory.past_move_ind--; //Sets memory index to previous move
-
-                            }
                         }
                     }
                 }
             }
+            
         }
 
         //Print the (hopefully) successful board
         System.out.println("Loops: " + loops);
+        System.out.println("Backtracks: " + backtracks);
         Board.printBoard(memory.board.board);
 
     }
@@ -251,6 +259,7 @@ public class Agent {
 
                 //If space has only one move, makes sure space is arc consistent
                 if(count == 1){
+                    System.out.println("Arc consistency checked for {row, col}: {" + i + "," + j + "}");
                     //Loops through rows and cols
                     for (int x = 0; x < 9; x++) {
                         //Checks the current space against another
