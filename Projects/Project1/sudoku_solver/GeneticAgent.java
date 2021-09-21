@@ -11,7 +11,7 @@ public class GeneticAgent {
         Memory memory = new Memory();
         Random rand = new Random();
 
-        population = HelperFunctions.gernerateBoards(population);
+        population = HelperFunctions.generateBoards(population);
 
         //check to see if solution exists
         boolean solutionFound = false;
