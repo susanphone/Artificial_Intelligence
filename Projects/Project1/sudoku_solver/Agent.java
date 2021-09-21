@@ -240,7 +240,7 @@ public class Agent {
         }
 
         //Print the (hopefully) succesful board
-        System.out.println("Loops: " + loops);
+        System.out.println("Backtracks: " + loops);
         Board.printBoard(memory.board.board);
     }
 
@@ -290,59 +290,78 @@ public class Agent {
         return true;
     }
 
-    public static void simulatedAnnealing() {
+    public static void simulatedAnnealing() throws InterruptedException {
         Random rand = new Random();
-        int[] possibleValues = new int[]{
-                1, 1, 1, 1, 1, 1, 1, 1, 1,
-                2, 2, 2, 2, 2, 2, 2, 2, 2,
-                3, 3, 3, 3, 3, 3, 3, 3, 3,
-                4, 4, 4, 4, 4, 4, 4, 4, 4,
-                5, 5, 5, 5, 5, 5, 5, 5, 5,
-                6, 6, 6, 6, 6, 6, 6, 6, 6,
-                7, 7, 7, 7, 7, 7, 7, 7, 7,
-                8, 8, 8, 8, 8, 8, 8, 8, 8,
-                9, 9, 9, 9, 9, 9, 9, 9, 9};
-
-//        Random randomValue = new Random();
         Memory memory = new Memory();
+        int[] possibleValues = HelperFunctions.generateRemainingValues(memory.board);
         int currentCost = 81;
         int position[][] = memory.board.board;
-        int initialValue[] = new int[9];
-        int randomValue = rand.nextInt(9) + 1;
-        //Loops through i values
-        for (int i = 0; i < 9; i++) {
-            //Loops through j values
-            for (int j = 0; j < 9; j++) {
-                int randomRow = rand.nextInt(9) + 1;
-                int randomColumn = rand.nextInt(9) + 1;
-                while(currentCost != 0) {
-                    if (initialValue[position[i][j]] != 0) {
-                        // remove initial Values from possibleValues
-                        HelperFunctions.removeIntArrayElem(possibleValues, initialValue[position[i][j]]);
+        Board originalBoard = new Board();
+        int initialValue[] =  new int[position.length];
+        int cost = 0;
+        System.out.println(initialValue);
+        //initialValue = new int[9];
 
-                    } else {
-                        // put remaining values into the spots whose value is 0, randomly
-                        position[i][j] = position[randomRow][randomColumn];
-
-                        // pick a random spot with 0
-                        // and empty the array by placing numbers in random positions where the value is 0.
-                        HelperFunctions.removeIntArrayElem(possibleValues, randomValue);
-                    }
-                    // use the cost function to check if the switch reduced the current cost
-                    int cost = HelperFunctions.costFunction(position);
-                    if (cost < currentCost) {
-                        currentCost = cost;
-                    } else {
-                        // add random value back to possible values list
-                        HelperFunctions.addIntArrayElem(possibleValues, randomValue);
-                        // switch the values back and pick another spot
-                        position[i][j] = position[randomRow][randomColumn];
-                        // then try again
-                        continue;
-                    }
-                }
-                    Board.printBoard(memory.board.board);
+        //creating the original board
+        for(int i = 0; i < 9; i++){
+            for(int j = 0; j < 9; j++){
+                originalBoard.board[i][j] = memory.board.board[i][j];
             }
         }
+
+        while(currentCost != 0) {
+            int randomValue = rand.nextInt(possibleValues.length);
+            int val = possibleValues[randomValue];
+            int randomRow = rand.nextInt(9);
+            int randomColumn = rand.nextInt(9);
+            if (memory.board.board[randomRow][randomColumn] != 0) {
+                currentCost = currentCost - 1;
+                //System.out.println(currentCost);
+                // remove initial Values from possibleValues
+            } else {
+                // put remaining values into the spots whose value is 0, randomly
+                //position[i][j] = position[randomRow][randomColumn];
+
+                // pick a random spot with 0
+                // and empty the array by placing numbers in random positions where the value is 0.
+                cost = HelperFunctions.costFunction(position, val, randomRow, randomColumn);
+            }
+            // use the cost function to check if the switch reduced the current cost
+
+            while (cost != 0) {
+                // add random value back to possible values list
+                // switch the values back and pick another spot
+                randomRow = rand.nextInt(9);
+                randomColumn = rand.nextInt(9);
+                if (memory.board.board[randomRow][randomColumn] == 0){
+                    cost = HelperFunctions.costFunction(position, val, randomRow, randomColumn);
+                }
+                else{
+                    cost = 1;
+                }
+                // then try again
+                if(cost == 0){
+                    position[randomRow][randomColumn] = val;
+                    currentCost = currentCost - 1;
+                    HelperFunctions.removeIntArrayElem(possibleValues, val);
+                }
+                if(currentCost == 0){
+                    if(Checker.checkRows(position) && Checker.checkCols(position) && Checker.checkMatrices(position)){
+                        currentCost = 81;
+                        for(int i = 0; i < 9; i++){
+                            for(int j = 0; j < 9; j++){
+                                position[i][j] = originalBoard.board[i][j];
+                            }
+                        }
+                        possibleValues = HelperFunctions.generateRemainingValues(originalBoard);
+                    }
+                }
+
+            }
+        }
+        System.out.println("Original Board: \n");
+        Board.printBoard(originalBoard.board);
+        System.out.println("Simulated Annealing Attempt: \n");
+        Board.printBoard(position);
     }
 }

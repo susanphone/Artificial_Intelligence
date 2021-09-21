@@ -85,10 +85,25 @@ public class GeneticAgent {
                     parent2.board[rand_row][j] = temp;
                 }
 
+                //for video demonstration purposes
+                if(iteration == 2){
+                    System.out.println("Random row: " + rand_row + "\n");
+                    System.out.println("Parent boards after crossover: \n");
+                    Board.printBoard(parent1.board);
+                    Board.printBoard(parent2.board);
+                }
+
                 //random mutation
                 parent1 = HelperFunctions.mutate(parent1);
                 parent2 = HelperFunctions.mutate(parent2);
 
+                //for video demonstration purposes
+                if(iteration == 2){
+                    System.out.println("Parent boards after mutation: \n");
+                    Board.printBoard(parent1.board);
+                    Board.printBoard(parent2.board);
+                }
+                //add the children to the new generation
                 new_population[new_gen_pop_size++] = parent1;
                 new_population[new_gen_pop_size++] = parent2;
                 //repeat entire process until a new 'generation' is reached and start over
