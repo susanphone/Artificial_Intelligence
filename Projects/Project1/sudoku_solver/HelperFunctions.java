@@ -222,7 +222,9 @@ public class HelperFunctions {
                 mutationPoint_row = rand.nextInt(9);
             }else mutationValid = true;
         }
+        System.out.println("Random row, col of mutation: " + mutationPoint_row + ", " + mutationPoint_col + "\n");
         int new_val = rand.nextInt(9) + 1;// add 1 to make the range 1-9
+        System.out.println("Random mutation value: " + new_val);
 
         parent.board[mutationPoint_row][mutationPoint_col] = new_val;
         return parent;
@@ -235,7 +237,7 @@ public class HelperFunctions {
 
     // Cost function used to compare it switching the values would reduce the cost on the board.
     // Goal is to have the cost be 0.
-    public static int costFunction (int position[][], int currentValue){
+    public static int costFunction (int position[][], int currentValue, int row, int col){
         Memory memory = new Memory();
         int initialValues[][] = memory.board.board;
         int columnCost = 0;
@@ -243,26 +245,26 @@ public class HelperFunctions {
         int neighborValue = 0;
         int currentTotalErrors = 0;
         // check for duplicates in rows
-        for (int row = 1; row < 10; row++) {
-            for (int column = 1; column < 10; column++) {
-                int neighbors = initialValues[row][column];
 
+        for (int c = 0; c < 9; c++) {
+                int neighbors = initialValues[row][c];
                 // if the value in the current spot is the same as the value as a neighbor
                 // or the current value is equal to zero
-                if (currentValue == neighbors || currentValue == 0) {
+                if (currentValue == neighbors) {
                     rowCost += 1;
+                    break;
                 }
             }
-        }
+
         // check for duplicates in columns
-        for (int column = 1; column < 10; column++) {
-            for (int row = 1; row < 10; row++) {
-                int neighbors = initialValues[row][column];
-                if (currentValue == neighbors || currentValue == 0) {
+        for (int r = 0; r < 9; r++) {
+                int neighbors = initialValues[r][col];
+                if (currentValue == neighbors) {
                     columnCost += 1;
-                }
+                    break;
             }
         }
+
         currentTotalErrors = rowCost + columnCost;
         return currentTotalErrors;
     }
