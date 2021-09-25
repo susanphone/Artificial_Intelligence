@@ -160,6 +160,7 @@ public class Agent {
         //Init of memory related items
         Memory memory = new Memory();
         int loops = 0; //Counts number of loops
+        int backtracks = 0; //Counts number of backtracks
 
         //Loops through i values
         for (int i = 0; i < 9; i++) {
@@ -215,6 +216,7 @@ public class Agent {
                             //Guarantess that, if a 9 is backtracked to, the algorithm will backtrack until a different number is reached
                             while (num == 9) {
                                 loops++;
+                                backtracks++;
                                 memory.board.board[i][j] = 0; //Resets current space
                                 i = memory.past_move_coords[memory.past_move_ind - 1][0]; //Sets current i to previous move's i value
                                 j = memory.past_move_coords[memory.past_move_ind - 1][1]; //Sets current j to previous move's j value
@@ -240,7 +242,8 @@ public class Agent {
         }
 
         //Print the (hopefully) succesful board
-        System.out.println("Backtracks: " + loops);
+        System.out.println("Loops: " + loops);
+        System.out.println("Backtracks: " + backtracks);
         Board.printBoard(memory.board.board);
     }
 
@@ -249,6 +252,7 @@ public class Agent {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
 
+                System.out.println("Arc consistency checked for {row, col}: {" + i + "," + j + "}");
                 //Checks to see if current space only has one possible move
                 int count = 0;
                 for (int x = 0; x < 9; x++) {
@@ -259,7 +263,6 @@ public class Agent {
 
                 //If space has only one move, makes sure space is arc consistent
                 if(count == 1){
-                    System.out.println("Arc consistency checked for {row, col}: {" + i + "," + j + "}");
                     //Loops through rows and cols
                     for (int x = 0; x < 9; x++) {
                         //Checks the current space against another

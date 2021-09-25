@@ -11,7 +11,7 @@ public class GeneticAgent {
         Memory memory = new Memory();
         Random rand = new Random();
 
-        population = HelperFunctions.gernerateBoards(population);
+        population = HelperFunctions.generateBoards(population);
 
         //check to see if solution exists
         boolean solutionFound = false;
@@ -50,9 +50,9 @@ public class GeneticAgent {
                     float fitness2 = HelperFunctions.fitness(candidate2);
 
                     //Board.printBoard(candidate1.board);
-                    //System.out.println("Fitness 1: " + fitness1 + "\n");
+                    System.out.println("Fitness 1: " + fitness1 + "\n");
                     //Board.printBoard(candidate1.board);
-                    //System.out.println("Fitness 2: " + fitness2 + "\n");
+                    System.out.println("Fitness 2: " + fitness2 + "\n");
 
                     if(fitness1 == 1){
                         Board.printBoard(candidate1.board);
@@ -66,15 +66,20 @@ public class GeneticAgent {
                     }
                     //use the two candidates with the highest fitness from each 'tournament'  to be parents
                     if(fitness1 > fitness2){
+                        System.out.println("Fitness chosen: " + fitness1 + "\n");
                         if(l ==0){
                             parent1 = candidate1;
                         }else parent2 = candidate1;
                     }else {
+                        System.out.println("Fitness chosen: " + fitness2 + "\n");
                         if(l == 0){
                             parent1 = candidate2;
                         }else parent2 = candidate2;
                     }
                 }
+                System.out.println("Parent Boards: \n");
+                Board.printBoard(parent1.board);
+                Board.printBoard(parent2.board);
                 //crossover - random row crossover
                 int rand_row = rand.nextInt(9);
                 int temp;
@@ -117,7 +122,7 @@ public class GeneticAgent {
 
             System.out.println("Generation: " + iteration + "\n");
             iteration++;
-    }while (!solutionFound);
+    }while (!solutionFound & iteration != 3);
 
     return solutionBoard;
     }

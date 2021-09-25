@@ -5,12 +5,13 @@ public class HelperFunctions {
 
     public static float fitness(Board board){
 
+        //uses number of constraints that are not violated
         //find number of correct rows and divide by total rows
         //find number of correct columns and divide by total columns
         //find number of correct matrices and divide by total matrices
-        // add up all three values and divide by 3
+        //add up all three values and divide by 3
 
-
+        //checks how many rows out of 9 are valid
         int[] vals = new int[9];
         boolean isValidRow = true;
         float valid_rows = 9;
@@ -30,8 +31,9 @@ public class HelperFunctions {
                 valid_rows--;
             }
         }
-        float row_val = valid_rows / 9;
+        float row_val = valid_rows / 9; //divide number of valid rows by 9 to get a value between 0 and 1
 
+        //checks how many columns out of 9 are valid
         boolean isValidCol = true;
         float valid_cols = 9;
         for(int i = 0; i < 9; i++){
@@ -50,8 +52,9 @@ public class HelperFunctions {
                 valid_cols--;
             }
         }
-        float col_val = valid_cols / 9;
+        float col_val = valid_cols / 9; //divide number of valid columns by 9 to get a value between 0 and 1
 
+        //checks the number of valid 3x3 matrices
         float valid_matrices = 9;
         boolean isValidMatrix = true;
         int[] vals1;
@@ -100,18 +103,23 @@ public class HelperFunctions {
                 }
             }
         }
-        float matrix_val = valid_matrices / 9;
+        float matrix_val = valid_matrices / 9; //divide number of valid 3x3 matrices by 9 to get a value between 0 and 1
 
+        //add all the three values from above and divide by 3 to get a final fitness value from 0 to 1
         float fitness_val = (row_val + col_val + matrix_val) / 3;
         return fitness_val;
 
     }
+
+    //removes an element from an array and returns the new array
     public static int[] removeIntArrayElem(int[] arr, int index){
         int[] tempArray = new int[arr.length - 1];
 
+        //if array isn't valid return the original array
         if(arr == null || index < 0 || index >= arr.length){
             return  arr;
         }
+        //loop through array and add all elements except the desired element to remove
         for(int i = 0, j = 0; i < arr.length; i ++){
             if(i == index){
                 continue;
@@ -119,6 +127,7 @@ public class HelperFunctions {
                 tempArray[j++] = arr[i];
             }
         }
+        //return newly formed array
         return tempArray;
     }
 
@@ -138,12 +147,15 @@ public class HelperFunctions {
         return tempArray;
     }
 
+    //remove an element from an array of Board elements
     public static Board[] removeBoardArrayElem(Board[] boards, int index){
         Board[] tempArray = new Board[boards.length - 1];
 
+        //if array isn't valid return the original array
         if(boards == null || index < 0 || index >= boards.length){
             return  boards;
         }
+        //loop through original array adding all elements to tempArray except the desired element to remove
         for(int i = 0, j = 0; i < boards.length; i ++){
             if(i == index){
                 continue;
@@ -151,9 +163,11 @@ public class HelperFunctions {
                 tempArray[j++] = boards[i];
             }
         }
+        //return newly formed array
         return tempArray;
     }
 
+    //generate all possible remaining values for a board
     public static int[] generateRemainingValues(Board b){
         Memory memory = new Memory();
         int[] possibleValues = new int[]{
@@ -167,6 +181,7 @@ public class HelperFunctions {
                 8, 8, 8, 8, 8, 8, 8, 8, 8,
                 9, 9, 9, 9, 9, 9, 9, 9, 9};
 
+        //loop through board and remove the current values in the board from possibleValues
         for(int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (memory.board.board[i][j] != 0) {
@@ -181,41 +196,46 @@ public class HelperFunctions {
         }
         return possibleValues;
     }
-  
-    public static Board[] gernerateBoards(Board[] population){
 
-        Memory memory = new Memory();
+    //used to generate the initial population
+    public static Board[] generateBoards(Board[] population){
+        Memory memory = new Memory(); //reference to original board in memory
         Random rand = new Random();
-        int[] possibleValues = generateRemainingValues(memory.board);
+        int[] possibleValues;
         //fill the empty spaces with a random value to create the initial population of boards
         for(int k = 0; k < 20000; k++){
             Board tempBoard = new Board();
+            //find what values are still needed for the given board
             possibleValues = generateRemainingValues(memory.board);
+
+            //fill the empty spaces in the board with random values taken from the possibleValues that are left
             for(int i = 0; i < 9; i++){
                 for(int j = 0; j < 9; j++){
                     if(memory.board.board[i][j] == 0){
                         int n = rand.nextInt(possibleValues.length);
                         tempBoard.board[i][j] = possibleValues[n];
-                        possibleValues = removeIntArrayElem(possibleValues, n);
+                        possibleValues = removeIntArrayElem(possibleValues, n); //update the possible values that are left
                     }else{
                         tempBoard.board[i][j] = memory.board.board[i][j];
                     }
                 }
             }
-            //Board.printBoard(tempBoard.board);
             population[k] = tempBoard;
         }
         return population;
     }
 
+    //random point mutation
     public static Board mutate(Board parent){
         Memory memory = new Memory();
         Random rand = new Random();
 
+        //pick a random point on the board to mutate
         int mutationPoint_row = rand.nextInt(9);
         int mutationPoint_col = rand.nextInt(9);
         boolean mutationValid = false;
 
+        //make sure the point was originally empty
         while(!mutationValid){
             if(memory.board.board[mutationPoint_row][mutationPoint_col] != 0){
                 mutationPoint_col = rand.nextInt(9);
@@ -226,13 +246,9 @@ public class HelperFunctions {
         int new_val = rand.nextInt(9) + 1;// add 1 to make the range 1-9
         System.out.println("Random mutation value: " + new_val);
 
+        //change the value at the random position to the random selected value
         parent.board[mutationPoint_row][mutationPoint_col] = new_val;
         return parent;
-    }
-
-    public static void tournamentSelection( Board[] population, Board candidate1, Board candidate2, Board parent1, Board parent2){
-        //create two tournaments and select 'winners' from each to be parents
-        Random rand = new Random();
     }
 
     // Cost function used to compare it switching the values would reduce the cost on the board.
