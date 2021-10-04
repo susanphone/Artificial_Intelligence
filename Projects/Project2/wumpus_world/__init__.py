@@ -1,0 +1,1 @@
+import wumpus_world

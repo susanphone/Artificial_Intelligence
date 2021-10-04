@@ -1,4 +1,4 @@
-from Project2 import Statistics, Logic, Explorer, Board
+import wumpus_world
 class Cell():
     # fields
     

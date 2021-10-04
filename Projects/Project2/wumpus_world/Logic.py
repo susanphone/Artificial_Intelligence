@@ -1,4 +1,4 @@
-from Project2 import Statistics, Explorer, Cell, Board
+import wumpus_world
 class Logic():
     
     def __init__(self):
