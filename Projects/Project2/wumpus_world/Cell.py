@@ -14,9 +14,13 @@ class Cell():
     def setCell(self):
         pass
 
-    def updateCell(self):
+    def updateCell(self, isSafe):
+        if self.isSafe == False:
+            isSafe = True
+        if self.isSafe == True:
+            isSafe = False
         # update cell to explored or danger cell to safe cell
-        pass
+        return isSafe
 
 
 # booleans are the following
