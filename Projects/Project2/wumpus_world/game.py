@@ -1,4 +1,4 @@
-from Project2 import Statistics, Logic, Cell, Board, Explorer
+import wumpus_world
 
 """1. Generate Board and Cells, probability based
 # 2. Build Logic - truth tables for ea cell

@@ -1,4 +1,4 @@
-from Project2 import Statistics, Logic, Cell, Board
+import wumpus_world
 class Explorer():
     pass
 

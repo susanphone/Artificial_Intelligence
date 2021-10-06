@@ -1,4 +1,4 @@
-from Project2 import Explorer, Logic, Cell, Board
+import wumpus_world
 class Statistics():
     
 
