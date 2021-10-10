@@ -1,38 +1,16 @@
-import wumpus_world
-class Cell():
 
-    # constructor
+
+class Cell:
+
+    """
+    :param int x: the x position for the current cell
+    :param int y: the y position for the current cell
+    :param char state: maintains the state of the current cell
+    state will be G (gold), W (wumpus), P (pit), O (obstacle), or S (safe)
+    """
     def __init__(self, x, y, state):
         self.x = x
         self.y = y
-        self.state = state #state will either be P, O, W, G, or S
+        self.state = state
 
-    def getCell(self):
-        # get table and state of cell
-        pass
-
-    def setCell(self):
-        pass
-
-    def updateCell(self, isSafe):
-        if self.isSafe == False:
-            isSafe = True
-        if self.isSafe == True:
-            isSafe = False
-        # update cell to explored or danger cell to safe cell
-        return isSafe
-
-
-# booleans are the following
-def gold():
-        pass
-
-def wumpus():
-        pass
-
-def obstacle():
-        pass
-
-def empty():
-        pass
 

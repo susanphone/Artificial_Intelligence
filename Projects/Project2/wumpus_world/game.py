@@ -21,8 +21,9 @@ if __name__ == "__main__":
     prob_obs = int(input("What is the probability of generating an obstacle?\n"))
     prob_wumpus = int(input("What is the probability of generating a wumpus?\n"))
 
+    # empty board with no wumpus before generation
+    w = 0
     cells = []
-    board = Board(cells)
-    Board.generateBoard(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
-    Board.printBoard(board)
-
+    board = Board(cells, w)
+    Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
+    Board.print_board(board)
