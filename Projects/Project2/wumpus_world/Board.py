@@ -7,7 +7,10 @@ class Board():
 
     def generateBoard(self, size):
         pass
-
+    
+    def getStartingPosition(self):
+        # Get random cell
+        pass
 
 def main():
     userinput = input("Choose Board Size")

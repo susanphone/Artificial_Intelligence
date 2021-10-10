@@ -22,3 +22,28 @@ Each cell contains it's own logic and the agent retrieves the logic from the cur
 The agent is the explorer and can perceive everything about the board. The explorer can smell a wumpus nearby, see the gold, feel a breeze, hear the screams of a wumpus, and shoot at the wumpus. 
 
 The agent can also move up, down, left, or right around the board, and if it runs into a wumpus the agent will die. Or if the agent shoots and hits the wumpus, then the wumpus will die.
+
+
+# Notes
+turning counts as 1
+turning around counts a 2
+points for getting gold
+points for killing the wumpus
+agent can only move in the direction facing
+percepts and map
+kill agent if its been going too long
+know how many wumpuses -> that many arrows
+
+
+## Logic
+Map of all the cells -> knowledge
+Update Map using Logic based on input from explorer
+If next cell is safe, move there
+If not, check other cells
+in none-> got back
+key(position) value(knowledge about cell)
+
+if bump-> then obstacle
+if scream -> wumpus dead and cell facing is safe
+if breeze in one cell has been explored and not in the neighbor, then no pit in the neighbor
+if there is one unexplore neighboring cell, then go to that cell, unless there is a smell or a breeze

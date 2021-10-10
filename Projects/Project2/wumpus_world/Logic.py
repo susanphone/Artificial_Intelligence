@@ -1,11 +1,10 @@
-from Artificial_Intelligence.Projects.Project2.wumpus_world.Explorer import Explorer
-from wumpus_world import Cell, Statistics
+from wumpus_world import Cell, Statistics, Explorer
 class Logic():
     
     def __init__(self):
         currentCell = Cell.getCell(self.currentCell)
         previousCell = Statistics.cellsExplored(self.previousCell)
-        
+    #  know number of wumpuses, starting position, number of arrows
 
     def getKnowledge(self, currentCell):
         safeCell = False
@@ -49,5 +48,9 @@ def decide(currentCell, neighbors):
         if neighbor["obstacle"] == True:
             neighbors = neighbors.remove(neighbor)
         else: status[neighbors] = True
-
+    # Move to the closest safe cell
     return neighbors
+
+# number of wumpuses remaining?
+# number of arrows remaining?
+
