@@ -1,11 +1,11 @@
 import wumpus_world
 class Cell():
-    # fields
-    
 
     # constructor
-    def __init__(self):
-        pass
+    def __init__(self, x, y, state):
+        self.x = x
+        self.y = y
+        self.state = state #state will either be P, O, W, G, or S
 
     def getCell(self):
         # get table and state of cell
