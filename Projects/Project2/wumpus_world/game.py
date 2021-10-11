@@ -1,7 +1,7 @@
 from wumpus_world.Board import Board
 """
 1. Generate Board and Cells, probability based
- 2. Build Logic - truth tables for ea cell
+ 2. Build Logic - truth tables for each cell
  3. Run Explorer
     - use Logic to solve the board
     - expands upon logic

@@ -2,9 +2,9 @@ import wumpus_world
 class Explorer():
     pass
 
-    def __init__(self):
-        position = self.position
-        stats = Statistics.cellExplored
+    def __init__(self, x, y):
+        self.position = x, y
+        stats = Statistics.cellExplored()
         
 
     # Booleans

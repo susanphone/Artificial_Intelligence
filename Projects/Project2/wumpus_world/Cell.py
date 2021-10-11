@@ -12,5 +12,3 @@ class Cell:
         self.x = x
         self.y = y
         self.state = state
-
-
