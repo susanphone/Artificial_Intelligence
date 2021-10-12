@@ -11,8 +11,11 @@ def getNeighbors(currentCell, board):
     currentRow = currentCell.y
     currentColumn = currentCell.x
     neighbors = []
+    maxRow = board.cells[-1].y #the row for the last cell in the list
+    maxColumn = board.cells[-1].x #the col for the last cell in the list
 
-    for c in board:
+
+    for c in board.cells:
         if c.x == currentRow + 1 and c.y == currentColumn:
             northState = c.state
         if c.x == currentRow - 1 and c.y == currentColumn:
@@ -22,17 +25,29 @@ def getNeighbors(currentCell, board):
         if c.x == currentRow and c.y == currentColumn + 1:
             eastState = c.state
 
-    northNeighbor = Cell(currentRow + 1, currentColumn, northState)
-    neighbors.append(northNeighbor)
+    if currentRow + 1 <= maxRow:
+        northNeighbor = Cell(currentRow + 1, currentColumn, northState)
+        neighbors.append(northNeighbor)
+    else:
+        neighbors.append(None)
 
-    southNeighbor = Cell(currentRow - 1, currentColumn, southState)
-    neighbors.append(southNeighbor)
+    if currentRow - 1 >= 0:
+        southNeighbor = Cell(currentRow - 1, currentColumn, southState)
+        neighbors.append(southNeighbor)
+    else:
+        neighbors.append(None)
 
-    westNeighbor = Cell(currentRow, currentColumn - 1, westState)
-    neighbors.append(westNeighbor)
+    if currentColumn - 1 >= 0:
+        westNeighbor = Cell(currentRow, currentColumn - 1, westState)
+        neighbors.append(westNeighbor)
+    else:
+        neighbors.append(None)
 
-    eastNeighbor = Cell(currentRow, currentColumn + 1, eastState)
-    neighbors.append(eastNeighbor)
+    if currentColumn + 1 <= maxColumn:
+        eastNeighbor = Cell(currentRow, currentColumn + 1, eastState)
+        neighbors.append(eastNeighbor)
+    else:
+        neighbors.append(None)
 
     return neighbors
 
@@ -56,7 +71,8 @@ class Logic():
     :param board: the board the explorer is on
     :return: cell for explorer to move to
     '''
-    def decide(self, cell, neighbors):
+    def decide(self, neighbors):
+        # first order logic
         # lets look at the neighbor in front of the explorer
         bestMove = [neighbors]
         for cell in neighbors:
