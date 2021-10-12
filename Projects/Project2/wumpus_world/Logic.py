@@ -1,5 +1,5 @@
 from Artificial_Intelligence.Projects.Project2.wumpus_world.Board import Board
-from wumpus_world import Cell, Statistics, Explorer
+from wumpus_world import Cell, Explorer
 class Logic():
     
     def __init__(self, currentCell, previousCell):
@@ -21,11 +21,11 @@ class Logic():
         eastNeighbor = [0,0, current[2]]
 
         for row in currentCell:
-            northNeighbor = [row - 1,currentColumn, current[2]]
-            southNeighbor = [row + 1, currentColumn, current[2]]
+            northNeighbor = [row - 1,currentColumn, current[2], currentState]
+            southNeighbor = [row + 1, currentColumn, current[2], currentState]
             for column in currentCell:
-                eastNeighbor = [currentRow, column - 1, current[2]]
-                westNeighbor = [currentRow, column + 1, current[2]]
+                eastNeighbor = [currentRow, column - 1, current[2], currentState]
+                westNeighbor = [currentRow, column + 1, current[2], currentState]
         neighbors = [northNeighbor, southNeighbor, eastNeighbor, westNeighbor]
         return neighbors
     
@@ -44,30 +44,31 @@ class Logic():
     # state will be G (gold), W (wumpus), P (pit), O (obstacle), or S (safe)
 def decidingMove(currentCell, neighbors):
     knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
-    status = neighbors[2]
     bestMoves = []
     for neighbor in neighbors:
+        status = neighbor[2]
         # if any neighbors have stench, set status of neighbor cells to danger, 
         # give option to shoot
-        if knowledgeMap[neighbors[2] == "W"]:
+        if knowledgeMap[status == "W"]:
             Explorer.shootArrow(neighbors[0] or neighbors[1])
         # if any neighbors have breeze, set status of neighbor cells to danger
-        if knowledgeMap[neighbors[2] == "P"]:
+        if knowledgeMap[status == "P"]:
             continue
 
         # this is not a possible move
-        if knowledgeMap[neighbors[2] == "O"]:
+        if knowledgeMap[status == "O"]:
             neighbors = neighbors.remove(neighbor)
         else: 
-            if knowledgeMap[neighbors[2] == "S" or "G"]:
+            if knowledgeMap[status == "S" or "G"]:
                 bestMoves = bestMoves.append(neighbor)
     # Move to the closest safe cell
     return bestMoves
 
-def bestMove(bestMoves, neighbors):
+def bestMove(bestMoves):
     choices = []
     for choice in bestMoves:
-        if neighbors[2] == "S" or "G":
+        
+        if choice == "S" or choice == "G":
             choices = choices.append(choice)
     return choices
                 
