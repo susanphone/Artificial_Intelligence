@@ -1,4 +1,4 @@
-from wumpus_world import Cell
+from wumpus_world.Cell import Cell
     
 '''
 :param current_cell: the specified cell
@@ -6,33 +6,47 @@ from wumpus_world import Cell
 :return: returns a list of the neighbor cells & their states in N, S, W, E
 '''
 
-def getNeighbors(currentCell, board):
+def get_neighbors(current_cell, board):
 
-    currentRow = currentCell.y
-    currentColumn = currentCell.x
+    current_row = current_cell.y
+    current_column = current_cell.x
     neighbors = []
+    max_row = board.cells[-1].y #the row for the last cell in the list
+    max_col = board.cells[-1].x #the col for the last cell in the list
 
-    for c in board:
-        if c.x == currentRow + 1 and c.y == currentColumn:
-            northState = c.state
-        if c.x == currentRow - 1 and c.y == currentColumn:
-            southState = c.state
-        if c.x == currentRow and c.y == currentColumn - 1:
-            westState = c.state
-        if c.x == currentRow and c.y == currentColumn + 1:
-            eastState = c.state
+    for c in board.cells:
+        if c.x == current_row + 1 and c.y == current_column:
+            north_state = c.state
+        if c.x == current_row - 1 and c.y == current_column:
+            south_state = c.state
+        if c.x == current_row and c.y == current_column - 1:
+            west_state = c.state
+        if c.x == current_row and c.y == current_column + 1:
+            east_state = c.state
 
-    northNeighbor = Cell(currentRow + 1, currentColumn, northState)
-    neighbors.append(northNeighbor)
+    if current_row + 1 <= max_row:
+        north_neighbor = Cell( current_column, current_row + 1, north_state)
+        neighbors.append(north_neighbor)
+    else:
+        neighbors.append(None)
 
-    southNeighbor = Cell(currentRow - 1, currentColumn, southState)
-    neighbors.append(southNeighbor)
+    if current_row - 1 >= 0:
+        south_neighbor = Cell(current_column, current_row - 1,  south_state)
+        neighbors.append(south_neighbor)
+    else:
+        neighbors.append(None)
 
-    westNeighbor = Cell(currentRow, currentColumn - 1, westState)
-    neighbors.append(westNeighbor)
+    if current_column - 1 >= 0:
+        west_neighbor = Cell( current_column - 1, current_row, west_state)
+        neighbors.append(west_neighbor)
+    else:
+        neighbors.append(None)
 
-    eastNeighbor = Cell(currentRow, currentColumn + 1, eastState)
-    neighbors.append(eastNeighbor)
+    if current_column + 1 <= max_col:
+        east_neighbor = Cell( current_column + 1, current_row, east_state)
+        neighbors.append(east_neighbor)
+    else:
+        neighbors.append(None)
 
     return neighbors
 
@@ -56,11 +70,11 @@ class Logic():
     :param board: the board the explorer is on
     :return: cell for explorer to move to
     '''
-    def decide(self, cell, neighbors):
+    def decide(self, neighbors):
         # lets look at the neighbor in front of the explorer
         bestMove = [neighbors]
         for cell in neighbors:
-            if cell.state == "w":
+            if cell.state == "W":
                 bestMove.remove(cell)
             if cell.state == "P":
                 bestMove.remove(cell)
