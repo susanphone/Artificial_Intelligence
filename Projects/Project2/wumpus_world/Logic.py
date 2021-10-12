@@ -2,9 +2,10 @@ from Artificial_Intelligence.Projects.Project2.wumpus_world.Board import Board
 from wumpus_world import Cell, Explorer
 class Logic():
     
-    def __init__(self, currentCell, previousCell):
+    def __init__(self, currentCell, previousCell, board):
         Cell(self.x, self.y, self.state) = currentCell
         Statistics.cellsExplored(self.previousCell) = previousCell
+        Board.generate_board(self) = board
     #  know number of wumpuses, starting position, number of arrows
 
     
@@ -30,19 +31,17 @@ class Logic():
         return neighbors
     
 
-    def getMap(self):
+    def getMap(self, board):
         # Create an empty Map
         knowledgeMap = {}
-        # Generate the board and loop through the board
-        board = Board.generate_board(self)
         # loop through board, key is position on board
         for row in board:
             for column in board:
-                knowledgeMap[row, column] = Logic.getKnowledge(Cell.getCell(self.currentCell))
+                knowledgeMap[row, column] = Logic.getKnowledge(Cell(self.currentCell))
         return knowledgeMap
         # value will be the percepts from that cell
-    # state will be G (gold), W (wumpus), P (pit), O (obstacle), or S (safe)
-def decidingMove(currentCell, neighbors):
+
+def decidingMove(currentCell, neighbors, previousCell):
     knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
     bestMoves = []
     for neighbor in neighbors:
@@ -60,7 +59,9 @@ def decidingMove(currentCell, neighbors):
             neighbors = neighbors.remove(neighbor)
         else: 
             if knowledgeMap[status == "S" or "G"]:
-                bestMoves = bestMoves.append(neighbor)
+                bestMoves.append(neighbor)
+                # add the previous cell as a possible choice
+            bestMoves.append(previousCell)
     # Move to the closest safe cell
     return bestMoves
 

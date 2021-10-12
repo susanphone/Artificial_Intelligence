@@ -27,3 +27,5 @@ if __name__ == "__main__":
     board = Board(cells, w)
     Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
+
+    
