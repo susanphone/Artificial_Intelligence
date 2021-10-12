@@ -56,9 +56,17 @@ class Logic():
     :param board: the board the explorer is on
     :return: cell for explorer to move to
     '''
-    def decide(self, cell, board):
+    def decide(self, cell, neighbors):
         # lets look at the neighbor in front of the explorer
-        pass
+        bestMove = [neighbors]
+        for cell in neighbors:
+            if cell.state == "w":
+                bestMove.remove(cell)
+            if cell.state == "P":
+                bestMove.remove(cell)
+            else:
+                return bestMove
+                
 
     # def decidingMove(currentCell, neighbors, previousCell):
     #     knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
@@ -84,11 +92,11 @@ class Logic():
     #     # Move to the closest safe cell
     #     return bestMoves
 
-    def bestMove(self, bestMoves):
-        choices = []
-        for choice in bestMoves:
+    # def bestMove(self, bestMoves):
+    #     choices = []
+    #     for choice in bestMoves:
             
-            if choice == "S" or choice == "G":
-                choices = choices.append(choice)
-        return choices
+    #         if choice == "S" or choice == "G":
+    #             choices = choices.append(choice)
+    #     return choices
                 
