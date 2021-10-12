@@ -1,80 +1,94 @@
-from Artificial_Intelligence.Projects.Project2.wumpus_world.Board import Board
-from wumpus_world import Cell, Explorer
+from wumpus_world import Cell
+    
+'''
+:param current_cell: the specified cell
+:param board: the current board the explorer is on
+:return: returns a list of the neighbor cells & their states in N, S, W, E
+'''
+
+def getNeighbors(currentCell, board):
+
+    currentRow = currentCell.y
+    currentColumn = currentCell.x
+    neighbors = []
+
+    for c in board:
+        if c.x == currentRow + 1 and c.y == currentColumn:
+            northState = c.state
+        if c.x == currentRow - 1 and c.y == currentColumn:
+            southState = c.state
+        if c.x == currentRow and c.y == currentColumn - 1:
+            westState = c.state
+        if c.x == currentRow and c.y == currentColumn + 1:
+            eastState = c.state
+
+    northNeighbor = Cell(currentRow + 1, currentColumn, northState)
+    neighbors.append(northNeighbor)
+
+    southNeighbor = Cell(currentRow - 1, currentColumn, southState)
+    neighbors.append(southNeighbor)
+
+    westNeighbor = Cell(currentRow, currentColumn - 1, westState)
+    neighbors.append(westNeighbor)
+
+    eastNeighbor = Cell(currentRow, currentColumn + 1, eastState)
+    neighbors.append(eastNeighbor)
+
+    return neighbors
+
+def getMap(board):
+    c = Cell()
+    # Create an empty Map
+    knowledgeMap = {}
+    # loop through board, key is position on board
+    for c in board:
+            knowledgeMap[c.row, c.column] = c.state
+    return knowledgeMap
+    # value will be the percepts from that cell
+
 class Logic():
-    
-    def __init__(self, currentCell, previousCell, board):
-        Cell(self.x, self.y, self.state) = currentCell
-        Statistics.cellsExplored(self.previousCell) = previousCell
-        Board.generate_board(self) = board
-    #  know number of wumpuses, starting position, number of arrows
 
-    
-    def getKnowledge(self, currentCell):
-        # separate row and column
-        current = currentCell.split(",")
-        currentRow = current[0]
-        currentColumn = current[1]
-        currentState = current[2]
-        # get truth table from neighbors
-        northNeighbor = [0,0, current[2]]
-        southNeighbor = [0,0, current[2]]
-        westNeighbor = [0,0, current[2]]
-        eastNeighbor = [0,0, current[2]]
+    def __init__(self, kb):
+        self.knowledge_base = kb
 
-        for row in currentCell:
-            northNeighbor = [row - 1,currentColumn, current[2], currentState]
-            southNeighbor = [row + 1, currentColumn, current[2], currentState]
-            for column in currentCell:
-                eastNeighbor = [currentRow, column - 1, current[2], currentState]
-                westNeighbor = [currentRow, column + 1, current[2], currentState]
-        neighbors = [northNeighbor, southNeighbor, eastNeighbor, westNeighbor]
-        return neighbors
-    
+    '''
+    :param cell: current cell the explorer is in
+    :param board: the board the explorer is on
+    :return: cell for explorer to move to
+    '''
+    def decide(self, cell, board):
+        # lets look at the neighbor in front of the explorer
+        pass
 
-    def getMap(self, board):
-        # Create an empty Map
-        knowledgeMap = {}
-        # loop through board, key is position on board
-        for row in board:
-            for column in board:
-                knowledgeMap[row, column] = Logic.getKnowledge(Cell(self.currentCell))
-        return knowledgeMap
-        # value will be the percepts from that cell
+    # def decidingMove(currentCell, neighbors, previousCell):
+    #     knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
+    #     bestMoves = []
+    #     for neighbor in neighbors:
+    #         status = neighbor[2]
+    #         # if any neighbors have stench, set status of neighbor cells to danger, 
+    #         # give option to shoot
+    #         if knowledgeMap[status == "W"]:
+    #             Explorer.shootArrow(neighbors[0] or neighbors[1])
+    #         # if any neighbors have breeze, set status of neighbor cells to danger
+    #         if knowledgeMap[status == "P"]:
+    #             continue
 
-def decidingMove(currentCell, neighbors, previousCell):
-    knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
-    bestMoves = []
-    for neighbor in neighbors:
-        status = neighbor[2]
-        # if any neighbors have stench, set status of neighbor cells to danger, 
-        # give option to shoot
-        if knowledgeMap[status == "W"]:
-            Explorer.shootArrow(neighbors[0] or neighbors[1])
-        # if any neighbors have breeze, set status of neighbor cells to danger
-        if knowledgeMap[status == "P"]:
-            continue
+    #         # this is not a possible move
+    #         if knowledgeMap[status == "O"]:
+    #             neighbors = neighbors.remove(neighbor)
+    #         else: 
+    #             if knowledgeMap[status == "S" or "G"]:
+    #                 bestMoves.append(neighbor)
+    #                 # add the previous cell as a possible choice
+    #             bestMoves.append(previousCell)
+    #     # Move to the closest safe cell
+    #     return bestMoves
 
-        # this is not a possible move
-        if knowledgeMap[status == "O"]:
-            neighbors = neighbors.remove(neighbor)
-        else: 
-            if knowledgeMap[status == "S" or "G"]:
-                bestMoves.append(neighbor)
-                # add the previous cell as a possible choice
-            bestMoves.append(previousCell)
-    # Move to the closest safe cell
-    return bestMoves
-
-def bestMove(bestMoves):
-    choices = []
-    for choice in bestMoves:
-        
-        if choice == "S" or choice == "G":
-            choices = choices.append(choice)
-    return choices
+    def bestMove(self, bestMoves):
+        choices = []
+        for choice in bestMoves:
+            
+            if choice == "S" or choice == "G":
+                choices = choices.append(choice)
+        return choices
                 
-
-
-# number of wumpuses remaining?
-# number of arrows remaining?
-
