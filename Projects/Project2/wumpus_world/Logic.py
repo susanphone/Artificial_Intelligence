@@ -75,11 +75,7 @@ class Logic():
     :return: cell for explorer to move to
     '''
     def decide(self, neighbors):
-        stench = False
-        breeze = False
-        bump = False
-        safe = False
-        glitter = False
+        kb = self.knowledge_base
         clauses = []
 
 
@@ -88,27 +84,16 @@ class Logic():
         for cell in neighbors:
             # if a Wumpus is in a neighboring cell, then stench is true
             if cell.state == 'W':
-                stench = True
-                clauses.append(stench)
+                clauses.append("stench")
             # if a pit is in a neighboring cell, then breeze is true
             if cell.state == 'P':
-                breeze = True
-                clauses.append(breeze)
-            # if no pit or wumpus
-            if cell.state == 'G':
-                glitter = True
-                clauses.append(glitter)
-            if cell.state == 'B':
-                bump = True
-                clauses.append(bump)
-            else:
-                safe = True
-                clauses.append(safe)
-        return clauses
+                clauses.append("breeze")
+
+            kb[cell].append(clauses)
 
     #  the best choice for the explorer
-    def bestMove(self, clauses):
-        self.knowledge_base
+    def bestMove(self):
+        kb = self.knowledge_base
         for choice in clauses:
             # if Wumpus in neighbor, give explorer chance to shoot
             if choice.state == 'W':
