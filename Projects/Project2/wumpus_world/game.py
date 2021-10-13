@@ -1,4 +1,6 @@
-
+from wumpus_world.Board import Board
+from wumpus_world.Cell import Cell
+from wumpus_world.Logic import get_neighbors, Logic
 
 """
 1. Generate Board and Cells, probability based
@@ -8,13 +10,6 @@
     - expands upon logic
 """
 # this is where we will play the game
-
-
-# from wumpus_world import __init__
-
-from wumpus_world.Board import Board
-from wumpus_world.Logic import Logic
-from wumpus_world.Logic import get_neighbors
 
 
 if __name__ == "__main__":
@@ -33,20 +28,19 @@ if __name__ == "__main__":
     w = 0
     cells = []
     board = Board(cells, w)
-    Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
+    fullBoard = Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
     remainingArrows = w
 
     # testing decide()
-    cell1 = board.cells[0]
-    n = get_neighbors(cell1, board)
+    pos = Board.starting_position(board)
+    n = get_neighbors(pos, board)
+    for cell in n:
+        print(__repr__(cell))
     kb = {}
     logic = Logic(kb)
-    bestCell = logic.decide(n)
-    print(bestCell)
-    #best = logic.bestMove(bestCell)
+    bestCell = logic.decide(pos, n, board)
+    print(repr(bestCell))
+    # best = logic.bestMove(bestCell)
 
-    #print(best.state)
-
-
-    
+    # print(best.state)
