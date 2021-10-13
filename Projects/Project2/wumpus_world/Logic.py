@@ -8,11 +8,12 @@ from wumpus_world.Cell import Cell
 
 
 def get_neighbors(current_cell, board):
-    current_row = current_cell.y
-    current_column = current_cell.x
+    current_row = current_cell.x
+    current_column = current_cell.y
     neighbors = []
-    max_row = board.cells[-1].y  # the row for the last cell in the list
-    max_column = board.cells[-1].x  # the col for the last cell in the list
+    max_row = board.cells[-1].x  # the row for the last cell in the list
+    max_column = board.cells[-1].y  # the col for the last cell in the list
+    east_state, west_state, north_state, south_state = None, None, None, None
 
     for c in board.cells:
         if c.x == current_row + 1 and c.y == current_column:
@@ -26,28 +27,28 @@ def get_neighbors(current_cell, board):
 
     if current_row + 1 <= max_row:
         north_neighbor = Cell(current_row + 1, current_column, north_state)
-        neighbors.append(north_neighbor)
-    else:
-        neighbors.append(None)
+        neighbors.append([north_neighbor.x, north_neighbor.y, north_neighbor.state])
 
     if current_row - 1 >= 0:
         south_neighbor = Cell(current_row - 1, current_column, south_state)
-        neighbors.append(south_neighbor)
-    else:
-        neighbors.append(None)
+        neighbors.append([south_neighbor.x, south_neighbor.y, south_neighbor.state])
 
     if current_column - 1 >= 0:
         west_neighbor = Cell(current_row, current_column - 1, west_state)
-        neighbors.append(west_neighbor)
-    else:
-        neighbors.append(None)
+        neighbors.append([west_neighbor.x, west_neighbor.y, west_neighbor.state])
 
     if current_column + 1 <= max_column:
         east_neighbor = Cell(current_row, current_column + 1, east_state)
-        neighbors.append(east_neighbor)
-    else:
-        neighbors.append(None)
+        neighbors.append([east_neighbor.x, east_neighbor.y, east_neighbor.state])
 
+    # if current_column - 1 < 0 or current_row -1 < 0:
+    #     continue
+    # else:
+    #     neighbors.append(None)
+    # for n in neighbors:
+    #     for i in n:
+    #         print(i)
+    print(neighbors)
     return neighbors
 
 
@@ -72,7 +73,7 @@ class Logic:
         # first order logic
         # lets look at the neighbor in front of the explorer
         for cell in neighbors:
-            if cell is not None:
+            if cell.state is not None:
                 # if a Wumpus is in a neighboring cell, then stench is true
                 if cell.state == 'W':
                     clauses.append("stench")
@@ -82,6 +83,7 @@ class Logic:
 
         if not clauses:
             kb.update({curr_cell: 'S'})
+            clauses.append(curr_cell)
 
         kb.update({curr_cell: clauses})
 

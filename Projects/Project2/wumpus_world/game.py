@@ -34,13 +34,16 @@ if __name__ == "__main__":
 
     # testing decide()
     pos = Board.starting_position(board)
+    print("Position")
+    print(pos.x, pos.y, pos.state)
     n = get_neighbors(pos, board)
-    for cell in n:
-        print(__repr__(cell))
+    print("Neighbors")
+    print([n.x, n.y, n.state])
     kb = {}
     logic = Logic(kb)
     bestCell = logic.decide(pos, n, board)
-    print(repr(bestCell))
+    print("Best Choice")
+    print(bestCell.x, bestCell.y, bestCell.state)
     # best = logic.bestMove(bestCell)
 
     # print(best.state)
