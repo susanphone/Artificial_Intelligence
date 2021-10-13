@@ -9,7 +9,7 @@ class Explorer():
         self.pos = Board.starting_position()
         self.stats.cells_explored += 1
         self.dead = False
-        self.direction = [0, 1]
+        self.direction = 'n'
 
     def die(self, current_cell):
         state = current_cell.state
@@ -41,7 +41,9 @@ class Explorer():
     
     		return false
 
-#	def move(dest):
+	def move(dest):
+		
+
 #		move_direction = {dest[0] - pos[0], pos[1] - dest[1]}
 
 #		if Math.abs(move_direction[0] - direction[0]) == 2 or Math.abs(move_direction[1] - direction[1]) == 2 :
@@ -63,24 +65,26 @@ class Explorer():
 
 #     return dest[0] == pos[0] && dest[1] == pos[1]
 
-# public void turnright():
-#     if direction[0] != 0 :
-#         direction[1] = direction[0] * -1
-#         direction[0] = 0
+	def turnright():
+		directions = ['n', 'e', 's', 'w']
 
-#     if direction[1] != 0 :
-#         direction[0] = direction[1]
-#         direction[1] = 0
+		index = directions.index(self.direction)
 
-#     moves++
+		if index == 3 :
+			index = 0
+		else:
+			index +=1
+		self.direction = directions[index]
+		return
+		
+	def turnleft():
+		directions = ['n', 'e', 's', 'w']
 
-# public void turnleft():
-#     if direction[0] != 0 :
-#         direction[1] = direction[0]
-#         direction[0] = 0
+		index = directions.index(self.direction)
 
-#     if direction[1] != 0 :
-#         direction[0] = direction[1] * -1
-#         direction[1] = 0
-
-#     moves++
+		if index == 3 :
+			index = 0
+		else:
+			index +=1
+		self.direction = directions[index]
+		return
