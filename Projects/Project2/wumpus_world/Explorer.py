@@ -99,10 +99,10 @@ class Explorer():
 
         index = directions.index(self.direction)
 
-        if index == 3:
-            index = 0
+        if index == 0:
+            index = 3
         else:
-            index += 1
+            index -= 1
         self.direction = directions[index]
 
         self.stats.incrementMoves()
