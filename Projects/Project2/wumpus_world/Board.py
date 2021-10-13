@@ -8,9 +8,9 @@ class Board:
     i.e. all the values in row 0 make up the first part of the list, and all the values in row 1 make up the next part
     :param int wumpus: value used by the "scout" to inform the agents of the number of wumpus on a given board
     """
-    def __init__(self, cells, wumpus):
-        self.cells = cells
-        self.wumpus = wumpus
+    def __init__(self):
+        self.cells
+        self.wumpus
 
     def generate_board(self, d1, d2, pit, obs, wumpus):
         # first randomly select a cell to hold the gold

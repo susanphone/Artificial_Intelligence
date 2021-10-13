@@ -65,29 +65,25 @@ class Explorer():
             self.turn_left()
 
         neighbors = get_neighbors(self.pos, self.board)
-        success = False
-        if dest == 'n':
-            self.pos = neighbors[0]
-            success = True
-            return success
-        elif dest == 's':
-            self.pos = neighbors[1]
-            success = True
-            return success
-        elif dest == 'w':
-            self.pos = neighbors[2]
-            success = True
-            return success
-        elif dest == 'e':
-            self.pos = neighbors[3]
-            success = True
-            return success
 
+        if dest == 'n':
+            new_pos = neighbors[0]
+        elif dest == 's':
+            new_pos = neighbors[1]
+        elif dest == 'w':
+            new_pos = neighbors[2]
+        elif dest == 'e':
+            new_pos = neighbors[3]
+
+		if new_pos.state = 'O':
+			success = False
+		else:
+			self.pos = new_pos
+
+		self.stats.incrementMoves()
         return success
 
     def turn_right(self):
-        stats = Statistics()
-        stats.increment_moves()
         index = directions.index(self.direction)
 
         if index == 3:
@@ -100,14 +96,12 @@ class Explorer():
         return
 
     def turn_left(self):
-        stats = Statistics()
-        stats.increment_moves()
         index = directions.index(self.direction)
 
-        if index == 3:
-            index = 0
+        if index == 0:
+            index = 3
         else:
-            index += 1
+            index -= 1
         self.direction = directions[index]
 
         self.stats.incrementMoves()
