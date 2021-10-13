@@ -1,4 +1,4 @@
-from wumpus_world import Statistics, Board
+from wumpus_world import Statistics, Board, Cell, Logic
 
 
 class Explorer():
@@ -6,7 +6,7 @@ class Explorer():
     def __init__(self):
         self.stats = Statistics()
         self.board = Board()
-        startPos = Board.starting_position()
+        self.pos = Board.starting_position()
         self.stats.cells_explored += 1
         self.dead = False
         self.direction = [0, 1]
@@ -27,45 +27,36 @@ class Explorer():
         return False
 
         # Used to detect either a scent, breeze, or glimmer. Pass in the truth table index and the function returns true if there is one nearby.
-        # def sense(ind):
-        sense = False
-    # /*
-    # if(pos[0]-1 >= 0):
-    #     if(board.cells[pos[0]-1][pos[1]][ind] == True):
-    #         sense = True
+		'''
+		:param state: the type of object being looked for, refrence cell for better description
+		:return: returns whether the explorer senses the state
+		'''
+        def sense(self, state):
+			#n s w e
+			neighbors = getNeighbors(Cell(pos[0], pos[1], 'S'), self.board)
+			for cell in neighbors:
+				if cell != None and cell.state == state:
+					return true
 
-    # if(pos[1]-1 >= 0):
-    #     if(board.cells[pos[0]][pos[1]-1][ind]] == True ):
-    #         sense = True
+    
+    		return false
 
-    # if(pos[0]+1 < board.size):
-    #     if(board.cells[pos[0]+1][pos[1]][ind]] == True ):
-    #         sense = True
+#	def move(dest):
+#		move_direction = {dest[0] - pos[0], pos[1] - dest[1]}
 
-    # if(pos[1]+1 < board.size):
-    #     if( board.cells[pos[0]][pos[1]+1][ind]] == True):
-    #         sense = True
+#		if Math.abs(move_direction[0] - direction[0]) == 2 or Math.abs(move_direction[1] - direction[1]) == 2 :
+#			turnright()
+#			turnright()
+#			pos[0] += move_direction[0]
+#			pos[1] += move_direction[1]
 
-    # */
-    # return sense
+#		else:
+#			if pos[1] == dest[0] or pos[0] == -1*dest[1]:
+#				turnright()
+#				pos[0] += move_direction[0]
+#				pos[1] += move_direction[1]
 
-# def move(dest):
-#     move_direction = {dest[0] - pos[0], pos[1] - dest[1]}
-
-#     if Math.abs(move_direction[0] - direction[0]) == 2 or Math.abs(move_direction[1] - direction[1]) == 2 :
-#         turnright()
-#         turnright()
-#         pos[0] += move_direction[0]
-#         pos[1] += move_direction[1]
-
-#     else:
-#         if pos[1] == dest[0] or pos[0] == -1*dest[1]:
-#             turnright()
-#             pos[0] += move_direction[0]
-#             pos[1] += move_direction[1]
-
-#         else:
-# 			if pos[1] == -1*dest[0] or pos[0] == dest[1]:
+#			elif pos[1] == -1*dest[0] or pos[0] == dest[1]:
 # 				turnleft()
 # 				pos[0] += move_direction[0]
 # 				pos[1] += move_direction[1]
