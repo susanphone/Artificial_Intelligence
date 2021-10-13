@@ -35,15 +35,18 @@ if __name__ == "__main__":
     # testing decide()
     pos = Board.starting_position(board)
     print("Position")
-    print(pos.x, pos.y, pos.state)
-    n = get_neighbors(pos, board)
-    print("Neighbors")
-    print([n.x, n.y, n.state])
-    kb = {}
-    logic = Logic(kb)
-    bestCell = logic.decide(pos, n, board)
-    print("Best Choice")
-    print(bestCell.x, bestCell.y, bestCell.state)
+    count = 0
+    while count < 100:
+        print(pos.x, pos.y, pos.state)
+        n = get_neighbors(pos, board)
+        print("Neighbors")
+        print(n)
+        kb = {}
+        logic = Logic(kb)
+        bestCell = logic.decide(pos, n, board)
+        print("Best Choice")
+        print(bestCell)
+        count += 1
     # best = logic.bestMove(bestCell)
 
     # print(best.state)

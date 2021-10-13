@@ -43,12 +43,11 @@ def get_neighbors(current_cell, board):
 
     # if current_column - 1 < 0 or current_row -1 < 0:
     #     continue
-    # else:
-    #     neighbors.append(None)
+    else:
+        neighbors.append(None)
     # for n in neighbors:
     #     for i in n:
     #         print(i)
-    print(neighbors)
     return neighbors
 
 
@@ -57,8 +56,6 @@ class Logic:
     def __init__(self, kb):
         self.knowledge_base = kb
 
-    def __repr__(self):
-        return self
     '''
     :param cell: current cell the explorer is in
     :param board: the board the explorer is on
@@ -67,19 +64,21 @@ class Logic:
 
     def decide(self, curr_cell, neighbors, board):
         kb = self.knowledge_base
-
         clauses = []
 
         # first order logic
-        # lets look at the neighbor in front of the explorer
-        for cell in neighbors:
-            if cell.state is not None:
-                # if a Wumpus is in a neighboring cell, then stench is true
-                if cell.state == 'W':
-                    clauses.append("stench")
-                # if a pit is in a neighboring cell, then breeze is true
-                if cell.state == 'P':
-                    clauses.append("breeze")
+        for neighbor in neighbors:
+            if neighbor is not None:
+                for state in neighbor:
+                    if state is not None:
+                        # if a Wumpus is in a neighboring cell, then stench is true
+                        if state == 'W':
+                            clauses.append("stench")
+                        # if a pit is in a neighboring cell, then breeze is true
+                        if state == 'P':
+                            clauses.append("breeze")
+                        if state == 'S':
+                            clauses.append(state)
 
         if not clauses:
             kb.update({curr_cell: 'S'})
@@ -89,25 +88,27 @@ class Logic:
 
         if len(kb) < 1:
             for n in neighbors:
-                if None is not n:
-                    return n
-
-        if 'S' in clauses:
-            for n in neighbors:
                 if n is not None:
                     return n
+        for clause in clauses:
+            print(clauses)
+            print(clause)
 
-        else:
-            safe_neighbor = False
-            for cell in neighbors:
-                if cell is not None:
-                    if cell in kb:
-                        cell_values = kb[cell]
-                        if not "stench" in cell_values and \
-                                not "breeze" in cell_values and \
-                                not 'O' in cell_values:
-                            safe_neighbor = True
-                            return cell
+        for n in neighbors:
+            if n is not None:
+                return n
+
+            else:
+                safe_neighbor = False
+                for cell in neighbors:
+                    if cell is not None:
+                        if cell in kb:
+                            cell_values = kb[cell]
+                            if not "stench" in cell_values and \
+                                    not "breeze" in cell_values and \
+                                    not 'O' in cell_values:
+                                safe_neighbor = True
+                                return cell
             if not safe_neighbor:
                 # we need to check to see if neighbor's neighbors are in the kb
                 for cell in neighbors:
