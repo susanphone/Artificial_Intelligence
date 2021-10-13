@@ -83,7 +83,6 @@ class Explorer():
         return success
 
     def turn_right(self):
-
         index = directions.index(self.direction)
 
         if index == 3:
@@ -96,13 +95,12 @@ class Explorer():
         return
 
     def turn_left(self):
-
         index = directions.index(self.direction)
 
-        if index == 3:
-            index = 0
+        if index == 0:
+            index = 3
         else:
-            index += 1
+            index -= 1
         self.direction = directions[index]
 
         self.stats.incrementMoves()
