@@ -14,20 +14,19 @@ class Explorer():
         self.direction = 'n'
 
     def die(self, current_cell):
+        stats = Statistics()
         state = current_cell.state
         if state == 'W':
             self.dead = True
+            stats.death_by_wumpus()
             print("Explorer died to a wumpus")
-            Statistics.death_by_wumpus()
-            return self.dead
 
         if state == 'P':
             self.dead = True
+            stats.death_by_pit()
             print("Explorer died to a pit :(")
-            Statistics.death_by_pit()
-            return self.dead
 
-        return self.dead
+        return
 
     # Used to detect either a scent, breeze, or glimmer.
     # Pass in the truth table index and the function returns true
@@ -50,6 +49,8 @@ class Explorer():
     # denoted by 'n', 's', 'e', and 'w' respectively :return: returns whether the explorer moved or not '''
 
     def move(self, dest):
+        stats = Statistics()
+        stats.increment_moves()
         current_index = directions.index(self.direction)
         dest_index = directions.index(dest)
 
