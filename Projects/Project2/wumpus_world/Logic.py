@@ -105,7 +105,6 @@ class Logic():
                 clauses.append(safe)
         return clauses
 
-
     #  the best choice for the explorer
     def bestMove(self, clauses):
         self.knowledge_base
@@ -135,3 +134,8 @@ class Logic():
                 Explorer.turnRight() or Explorer.turnLeft()
                 continue
         return
+
+    # if we know the states of the surrounding cells, 
+    # then we can infer the state of a neighboring cell
+    def elementaryMyDearWatson(self):
+        pass
