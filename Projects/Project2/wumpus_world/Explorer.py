@@ -1,9 +1,10 @@
 from wumpus_world import Statistics, Board, Cell, Logic
+from wumpus_world.Logic import get_neighbors
 
 
 class Explorer():
 
-    def __init__(self):
+    def __init__(self, Statistics, Board):
         self.stats = Statistics()
         self.board = Board()
         self.pos = Board.starting_position()
@@ -13,96 +14,100 @@ class Explorer():
 
     def die(self, current_cell):
         state = current_cell.state
-
-        if (state == 'W'):
+        if state == 'W':
+            self.dead = True
             print("Explorer died to a wumpus")
-            Statistics.deathByWumpus()
-            return True
+            Statistics.death_by_wumpus()
+            return self.dead
 
-        if (state == 'P'):
+        if state == 'P':
+            self.dead = True
             print("Explorer died to a pit :(")
-            Statistics.deathByPit()
-            return True
+            Statistics.death_by_pit()
+            return self.dead
 
-        return False
+        return self.dead
 
-        # Used to detect either a scent, breeze, or glimmer. Pass in the truth table index and the function returns true if there is one nearby.
-		'''
-		:param state: the type of object being looked for, refrence cell for better description
-		:return: returns whether the explorer senses the state
-		'''
-    def sense(self, state):
-		#n s w e
-		neighbors = getNeighbors(Cell(pos[0], pos[1], 'S'), self.board)
-		for cell in neighbors:
-			if cell != None and cell.state == state:
-				return true
+    # Used to detect either a scent, breeze, or glimmer. Pass in the truth table index and the function returns true if there is one nearby.
+    '''
+    :param state: the type of object being looked for, reference cell for better description
+    :return: returns whether the explorer senses the state
+    '''
+    def sense(self, state, pos):
+    #n s w e
+        danger = False
+        neighbors = get_neighbors(Cell(pos[0], pos[1], 'S'), self.board)
+        for cell in neighbors:
+            if cell != None and cell.state == state:
+                return danger
+            return danger
 
-    
-    	return false
 
+        # Used to move to a neighboring cell
+        '''
+        :param dest: a character denoting either north, south, east, or west, denoted by 'n', 's', 'e', and 'w' respectively
+        :return: returns whether the explorer moved or not
+        '''
+    def move(self, dest):
+        directions = ['n', 'e', 's', 'w']
+        current_index = directions.index(self.direction)
+        dest_index = directions.index(dest)
 
-		# Used to move to a neighboring cell
-		'''
-		:param dest: a character denoting either north, south, east, or west, denoted by 'n', 's', 'e', and 'w' respectively
-		:return: returns whether the explorer moved or not
-		'''
-	def move(dest):
-		directions = ['n', 'e', 's', 'w']
-		current_index = directions.index(self.direction)
-		dest_index = directions.index(dest)
+        diff = current_index - dest_index
 
-		diff = current_index - dest_index
+        if abs(diff) == 2:
+            self.turn_left()
+            self.turn_left()
+        elif diff == 1 or diff == 3:
+            self.turn_right()
+        elif diff == -1 or diff == -3:
+            self.turnleft()
 
-		if abs(diff) == 2:
-			self.turnleft()
-			self.turnleft()
-		elif diff == 1 or diff == 3:
-			self.turnright()
-		elif diff == -1 or diff == -3:
-			self.turnleft()
+        neighbors = get_neighbors(self.pos, self.board)
+        success = False
+        if dest == 'n':
+            self.pos = neighbors[0]
+            success = True
+            return success
+        elif dest == 's':
+            self.pos = neighbors[1]
+            success = True
+            return success
+        elif dest == 'w':
+            self.pos = neighbors[2]
+            success = True
+            return success
+        elif dest == 'e':
+            self.pos = neighbors[3]
+            success = True
+            return success
 
-		neighbors = getNeighbors(self.pos, self.board)
+        return success
 
-		if dest = 'n':
-			self.pos = neighbors[0]
-			return true
-		elif dest = 's':
-			self.pos = neighbors[1]
-			return true
-		elif dest = 'w':
-			self.pos = neighbors[2]
-			return true
-		elif dest = 'e':
-			self.pos = neighbors[3]
-			return true
-		else:
-			return false
+    def turn_right(self):
+        directions = ['n', 'e', 's', 'w']
 
-	def turnright():
-		directions = ['n', 'e', 's', 'w']
+        index = directions.index(self.direction)
 
-		index = directions.index(self.direction)
+        if index == 3 :
+            index = 0
+        else:
+            index +=1
+        self.direction = directions[index]
 
-		if index == 3 :
-			index = 0
-		else:
-			index +=1
-		self.direction = directions[index]
+        self.stats.incrementMoves()
+        return
 
-		self.stats.incrementMoves()
-		return
-		
-	def turnleft():
-		directions = ['n', 'e', 's', 'w']
+    def turn_left(self):
+        directions = ['n', 'e', 's', 'w']
 
-		index = directions.index(self.direction)
+        index = directions.index(self.direction)
 
-		if index == 3 :
-			index = 0
-		else:
-			index +=1
-		self.direction = directions[index]
+        if index == 3 :
+            index = 0
+        else:
+            index +=1
+        self.direction = directions[index]
 
-		self.stats.incrementMoves()
-		return
+        self.stats.incrementMoves()
+        return
