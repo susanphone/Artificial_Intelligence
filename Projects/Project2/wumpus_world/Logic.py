@@ -1,12 +1,12 @@
-from wumpus_world import Cell
+from wumpus_world import Cell, Explorer, Statistics
     
 '''
-:param current_cell: the specified cell
+:param currentCell: the specified cell
 :param board: the current board the explorer is on
 :return: returns a list of the neighbor cells & their states in N, S, W, E
 '''
 
-def getNeighbors(currentCell, board):
+def get_neighbors(currentCell, board):
 
     currentRow = currentCell.y
     currentColumn = currentCell.x
@@ -61,6 +61,8 @@ def getMap(board):
     return knowledgeMap
     # value will be the percepts from that cell
 
+
+
 class Logic():
 
     def __init__(self, kb):
@@ -72,47 +74,64 @@ class Logic():
     :return: cell for explorer to move to
     '''
     def decide(self, neighbors):
+        stench = False
+        breeze = False
+        bump = False
+        safe = False
+        glitter = False
+        clauses = []
+
+
         # first order logic
         # lets look at the neighbor in front of the explorer
-        bestMove = [neighbors]
         for cell in neighbors:
-            if cell.state == "w":
-                bestMove.remove(cell)
-            if cell.state == "P":
-                bestMove.remove(cell)
+            # if a Wumpus is in a neighboring cell, then stench is true
+            if cell.state == 'W':
+                stench = True
+                clauses.append(stench)
+            # if a pit is in a neighboring cell, then breeze is true
+            if cell.state == 'P':
+                breeze = True
+                clauses.append(breeze)
+            # if no pit or wumpus
+            if cell.state == 'G':
+                glitter = True
+                clauses.append(glitter)
+            if cell.state == 'B':
+                bump = True
+                clauses.append(bump)
             else:
-                return bestMove
-                
+                safe = True
+                clauses.append(safe)
+        return clauses
 
-    # def decidingMove(currentCell, neighbors, previousCell):
-    #     knowledgeMap = Logic.getMap(Logic.getKnowledge(currentCell))
-    #     bestMoves = []
-    #     for neighbor in neighbors:
-    #         status = neighbor[2]
-    #         # if any neighbors have stench, set status of neighbor cells to danger, 
-    #         # give option to shoot
-    #         if knowledgeMap[status == "W"]:
-    #             Explorer.shootArrow(neighbors[0] or neighbors[1])
-    #         # if any neighbors have breeze, set status of neighbor cells to danger
-    #         if knowledgeMap[status == "P"]:
-    #             continue
 
-    #         # this is not a possible move
-    #         if knowledgeMap[status == "O"]:
-    #             neighbors = neighbors.remove(neighbor)
-    #         else: 
-    #             if knowledgeMap[status == "S" or "G"]:
-    #                 bestMoves.append(neighbor)
-    #                 # add the previous cell as a possible choice
-    #             bestMoves.append(previousCell)
-    #     # Move to the closest safe cell
-    #     return bestMoves
+    #  the best choice for the explorer
+    def bestMove(self, clauses):
+        self.knowledge_base
+        for choice in clauses:
+            # if Wumpus in neighbor, give explorer chance to shoot
+            if choice.state == 'W':
+                print("shoot")
+                Explorer.shootArrow()
+                hit = False
+                if Explorer.shootArrow():
+                    pass
+                    # if hit == True:
+                    #     Statistics.wumpusKilled()
+                    #     remainingArrows -= 1
+                    # else: 
+                    #     remainingArrows -= 1
+                else:
+                    continue
 
-    # def bestMove(self, bestMoves):
-    #     choices = []
-    #     for choice in bestMoves:
-            
-    #         if choice == "S" or choice == "G":
-    #             choices = choices.append(choice)
-    #     return choices
-                
+            #  if safe cell, in current direction, go forward
+            if choice == "S" or choice == "G":
+                print("move")
+                Explorer.move()
+                # else turn to nearest safe cell
+            else:
+                print("turn") 
+                Explorer.turnRight() or Explorer.turnLeft()
+                continue
+        return

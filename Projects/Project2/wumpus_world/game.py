@@ -1,5 +1,5 @@
-from Artificial_Intelligence.Projects.Project2.wumpus_world.Logic import getNeighbors
-from wumpus_world.Board import Board, Logic
+
+
 """
 1. Generate Board and Cells, probability based
  2. Build Logic - truth tables for each cell
@@ -8,6 +8,12 @@ from wumpus_world.Board import Board, Logic
     - expands upon logic
 """
 # this is where we will play the game
+
+
+# from wumpus_world import __init__
+
+from wumpus_world import Board, Logic
+from wumpus_world.Logic import get_neighbors
 
 
 if __name__ == "__main__":
@@ -28,9 +34,17 @@ if __name__ == "__main__":
     board = Board(cells, w)
     Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
+    remainingArrows = w
 
-    # testing
+    # testing decide()
     cell1 = board.cells[0]
-    n = getNeighbors(cell1, board)
+    n = get_neighbors(cell1, board)
     kb = {}
-    Logic.decide(n)
+    logic = Logic(kb)
+    bestCell = logic.decide(n)
+    best = logic.bestMove(bestCell)
+
+    print(best.state)
+
+
+    
