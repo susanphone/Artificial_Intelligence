@@ -1,4 +1,5 @@
-from wumpus_world import Cell, Explorer, Statistics
+from wumpus_world.Cell import Cell
+from wumpus_world.Explorer import Explorer
     
 '''
 :param currentCell: the specified cell

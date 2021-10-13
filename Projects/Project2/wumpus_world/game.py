@@ -12,7 +12,8 @@
 
 # from wumpus_world import __init__
 
-from wumpus_world import Board, Logic
+from wumpus_world.Board import Board
+from wumpus_world.Logic import Logic
 from wumpus_world.Logic import get_neighbors
 
 
@@ -42,9 +43,10 @@ if __name__ == "__main__":
     kb = {}
     logic = Logic(kb)
     bestCell = logic.decide(n)
-    best = logic.bestMove(bestCell)
+    print(bestCell)
+    #best = logic.bestMove(bestCell)
 
-    print(best.state)
+    #print(best.state)
 
 
     
