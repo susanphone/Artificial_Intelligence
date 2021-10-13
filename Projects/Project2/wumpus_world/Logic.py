@@ -74,54 +74,85 @@ class Logic():
     :param board: the board the explorer is on
     :return: cell for explorer to move to
     '''
-    def decide(self, neighbors):
+    def decide(self, curr_cell, neighbors, board):
         kb = self.knowledge_base
-        clauses = []
 
+        clauses = []
 
         # first order logic
         # lets look at the neighbor in front of the explorer
         for cell in neighbors:
-            # if a Wumpus is in a neighboring cell, then stench is true
-            if cell.state == 'W':
-                clauses.append("stench")
-            # if a pit is in a neighboring cell, then breeze is true
-            if cell.state == 'P':
-                clauses.append("breeze")
+            if cell != None:
+                # if a Wumpus is in a neighboring cell, then stench is true
+                if cell.state == 'W':
+                    clauses.append("stench")
+                # if a pit is in a neighboring cell, then breeze is true
+                if cell.state == 'P':
+                    clauses.append("breeze")
 
-            kb[cell].append(clauses)
+        if not clauses:
+            kb[curr_cell].append('S')
 
-    #  the best choice for the explorer
-    def bestMove(self):
-        kb = self.knowledge_base
-        for choice in clauses:
-            # if Wumpus in neighbor, give explorer chance to shoot
-            if choice.state == 'W':
-                print("shoot")
-                Explorer.shootArrow()
-                hit = False
-                if Explorer.shootArrow():
-                    pass
-                    # if hit == True:
-                    #     Statistics.wumpusKilled()
-                    #     remainingArrows -= 1
-                    # else: 
-                    #     remainingArrows -= 1
-                else:
-                    continue
+        kb[curr_cell].append(clauses)
 
-            #  if safe cell, in current direction, go forward
-            if choice == "S" or choice == "G":
-                print("move")
-                Explorer.move()
-                # else turn to nearest safe cell
-            else:
-                print("turn") 
-                Explorer.turnRight() or Explorer.turnLeft()
-                continue
-        return
+        if len(kb) < 1:
+            for n in neighbors:
+                if None != n:
+                    return n
 
-    # if we know the states of the surrounding cells, 
-    # then we can infer the state of a neighboring cell
-    def elementaryMyDearWatson(self):
-        pass
+        if 'S' in clauses:
+            for n in neighbors:
+                if n != None:
+                    return n
+
+        else:
+            safe_neighbor = False
+            for cell in neighbors:
+                if cell != None:
+                    if cell in kb.keys():
+                        cell_vals = kb[cell]
+                        if not "stench" in cell_vals and not "breeze" in cell_vals and not "O" in cell_vals:
+                            safe_neighbor = True
+                            return cell
+            if not safe_neighbor:
+                # we need to check to see if neighbor's neighbors are in the kb
+                for cell in neighbors:
+                    if cell != None:
+                        new_neighbors = get_neighbors(cell, board)
+                        for n in new_neighbors:
+                            if n in kb.keys():
+                                return n
+
+
+('\n'
+ '    #  the best choice for the explorer\n'
+ '    def bestMove(self, cell):\n'
+ '        kb = self.knowledge_base\n'
+ '\n'
+ '\n'
+ '        for choice in clauses:\n'
+ '            # if Wumpus in neighbor, give explorer chance to shoot\n'
+ '            if choice.state == \'W\':\n'
+ '                print("shoot")\n'
+ '                Explorer.shootArrow()\n'
+ '                hit = False\n'
+ '                if Explorer.shootArrow():\n'
+ '                    pass\n'
+ '                    # if hit == True:\n'
+ '                    #     Statistics.wumpusKilled()\n'
+ '                    #     remainingArrows -= 1\n'
+ '                    # else: \n'
+ '                    #     remainingArrows -= 1\n'
+ '                else:\n'
+ '                    continue\n'
+ '\n'
+ '            #  if safe cell, in current direction, go forward\n'
+ '            if choice == "S" or choice == "G":\n'
+ '                print("move")\n'
+ '                Explorer.move()\n'
+ '                # else turn to nearest safe cell\n'
+ '            else:\n'
+ '                print("turn") \n'
+ '                Explorer.turnRight() or Explorer.turnLeft()\n'
+ '                continue\n'
+ '        return\n')
