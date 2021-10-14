@@ -1,5 +1,6 @@
 from wumpus_world.Board import Board
 from wumpus_world.Cell import Cell
+from wumpus_world.Explorer import Explorer
 from wumpus_world.Logic import get_neighbors, Logic
 
 """
@@ -46,6 +47,7 @@ if __name__ == "__main__":
         bestCell = logic.decide(pos, n, board)
         print("Best Choice")
         print(bestCell)
+        Explorer.move(bestCell)
         count += 1
     # best = logic.bestMove(bestCell)
 

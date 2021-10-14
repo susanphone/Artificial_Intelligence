@@ -5,104 +5,77 @@ directions = ['n', 'e', 's', 'w']
 
 
 class Explorer():
-    def __init__(self):
-        self.stats = Statistics()
-        self.board = Board()
-        self.pos = Board.starting_position()
+    def __init__(self, curr_cell):
+        self.stats = Statistics
+        self.board = Board
+        self.pos = curr_cell
         self.stats.cells_explored += 1
         self.dead = False
         self.direction = 'n'
+        self.logic = Logic
 
     def die(self, current_cell):
-        stats = Statistics()
         state = current_cell.state
+
         if state == 'W':
             self.dead = True
-            stats.death_by_wumpus()
+            self.stats.death_by_wumpus()
             print("Explorer died to a wumpus")
-
         if state == 'P':
             self.dead = True
-            stats.death_by_pit()
+            self.stats.death_by_pit()
             print("Explorer died to a pit :(")
 
         return
 
-    # Used to detect either a scent, breeze, or glimmer.
-    # Pass in the truth table index and the function returns true
-    # if there is one nearby.
-    '''
-    :param state: the type of object being looked for, reference cell for better description
-    :return: returns whether the explorer senses the state
-    '''
-
-    # def sense(self, state):
-    #     # n s w e
-    #     danger = False
-    #     neighbors = get_neighbors(self.pos, self.board)
-    #     for cell in neighbors:
-    #         if cell is not None and cell.state == state:
-    #             return danger
-    #         return danger
-    #
-    # # Used to move to a neighboring cell ''' :param dest: a character denoting either north, south, east, or west,
+    # :param dest: a character denoting either north, south, east, or west,
     # denoted by 'n', 's', 'e', and 'w' respectively :return: returns whether the explorer moved or not '''
 
-    def move(self, dest):
-        stats = Statistics()
-        stats.increment_moves()
-        current_index = directions.index(self.direction)
-        dest_index = directions.index(dest)
+    def move(self, curr_cell):
+        success = True
+        new_pos = curr_cell
+        neighbors = get_neighbors(curr_cell, self.board)
 
-        diff = current_index - dest_index
+        while success:
+            n = self.logic.decide(curr_cell, neighbors, self.board)
+            if n == 'n':
+                new_pos = neighbors[0]
+            elif n == 's':
+                new_pos = neighbors[1]
+            elif n == 'w':
+                new_pos = neighbors[2]
+            elif n == 'e':
+                new_pos = neighbors[3]
+            if new_pos.state == 'O':
+                success = False
 
-        if abs(diff) == 2:
-            self.turn_left()
-            self.turn_left()
-        elif diff == 1 or diff == 3:
-            self.turn_right()
-        elif diff == -1 or diff == -3:
-            self.turn_left()
+            if not success:
+                neighbors.remove(new_pos)
+                Explorer.turn_left() or Explorer.turn_right()
+                new_pos = curr_cell
+                self.logic.decide(curr_cell, neighbors, self.board)
+            self.stats.increment_moves()
 
-        neighbors = get_neighbors(self.pos, self.board)
-
-        if dest == 'n':
-            new_pos = neighbors[0]
-        elif dest == 's':
-            new_pos = neighbors[1]
-        elif dest == 'w':
-            new_pos = neighbors[2]
-        elif dest == 'e':
-            new_pos = neighbors[3]
-
-		if new_pos.state = 'O':
-			success = False
-		else:
-			self.pos = new_pos
-
-		self.stats.incrementMoves()
-        return success
+        return new_pos
 
     def turn_right(self):
         index = directions.index(self.direction)
-
         if index == 3:
             index = 0
         else:
             index += 1
-        self.direction = directions[index]
+        direction = directions[index]
 
-        self.stats.incrementMoves()
-        return
+        self.stats.increment_moves()
+        return direction
 
     def turn_left(self):
         index = directions.index(self.direction)
-
         if index == 0:
             index = 3
         else:
             index -= 1
-        self.direction = directions[index]
+        direction = directions[index]
 
-        self.stats.incrementMoves()
-        pass
+        self.stats.increment_moves()
+        return direction
