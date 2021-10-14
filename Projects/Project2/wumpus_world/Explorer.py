@@ -53,7 +53,7 @@ class Explorer:
 	:return: returns true if the explorer moved, false if the explorer hit an object 
 	'''
 
-    def move(self, dest):
+    def move(self, dest, kb):
         stats = Statistics()
         stats.increment_moves()
 
@@ -87,7 +87,8 @@ class Explorer:
 
 		#Tests for an obstacle, if there is none then the explorer moves
         if new_pos.state == 'O':
-			success = False
+            success = False
+         
         else:
             self.pos = new_pos
 

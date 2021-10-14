@@ -1,7 +1,7 @@
 from wumpus_world.Board import Board
 from wumpus_world.Cell import Cell
 from wumpus_world.Logic import get_neighbors, Logic
-
+from collections import defaultdict
 """
 1. Generate Board and Cells, probability based
  2. Build Logic - truth tables for each cell
@@ -40,10 +40,20 @@ if __name__ == "__main__":
         # print(pos.x, pos.y, pos.state)
         n = get_neighbors(pos, board)
         print("Neighbors")
-        print(n)
-        kb = {}
+        for friend in n:
+            print(friend.state)
+        kb = defaultdict(list)
         logic = Logic(kb)
         bestCell = logic.decide(pos, n, board)
+        if bestCell == 0:
+            dest = 'n'
+        elif bestCell == 1:
+            dest = 's'
+        elif bestCell == 2:
+            dest = 'w'
+        else:
+            dest = 'e'
+        
         print("Best Choice")
         print(bestCell)
 
