@@ -9,42 +9,42 @@ from collections import defaultdict
 
 
 def get_neighbors(current_cell, board):
-    current_row = current_cell.x
-    current_column = current_cell.y
+    current_row = current_cell.y
+    current_column = current_cell.x
     neighbors = []
-    max_row = board.cells[-1].x  # the row for the last cell in the list
-    max_column = board.cells[-1].y  # the col for the last cell in the list
+    max_row = board.cells[-1].y  # the row for the last cell in the list
+    max_column = board.cells[-1].x  # the col for the last cell in the list
     east_state, west_state, north_state, south_state = None, None, None, None
 
     for c in board.cells:
-        if c.x == current_row + 1 and c.y == current_column:
+        if c.y == current_row + 1 and c.x == current_column:
             north_state = c.state
-        if c.x == current_row - 1 and c.y == current_column:
+        if c.y == current_row - 1 and c.x == current_column:
             south_state = c.state
-        if c.x == current_row and c.y == current_column - 1:
+        if c.y == current_row and c.x == current_column - 1:
             west_state = c.state
-        if c.x == current_row and c.y == current_column + 1:
+        if c.y == current_row and c.x == current_column + 1:
             east_state = c.state
 
     if current_row + 1 <= max_row:
-        north_neighbor = Cell(current_row + 1, current_column, north_state)
+        north_neighbor = Cell(current_column, current_row + 1, north_state)
         neighbors.append(north_neighbor)
     else:
         neighbors.append(None)
     if current_row - 1 >= 0:
-        south_neighbor = Cell(current_row - 1, current_column, south_state)
+        south_neighbor = Cell(current_column, current_row - 1, south_state)
         neighbors.append(south_neighbor)
     else:
         neighbors.append(None)
 
     if current_column - 1 >= 0:
-        west_neighbor = Cell(current_row, current_column - 1, west_state)
+        west_neighbor = Cell(current_column - 1, current_row, west_state)
         neighbors.append(west_neighbor)
     else:
         neighbors.append(None)
 
     if current_column + 1 <= max_column:
-        east_neighbor = Cell(current_row, current_column + 1, east_state)
+        east_neighbor = Cell(current_column + 1, current_row, east_state)
         neighbors.append(east_neighbor)
     else:
         neighbors.append(None)
@@ -63,7 +63,7 @@ class Logic:
     :return: cell for explorer to move to
     '''
 
-    def decide(self, curr_cell, neighbors, board):
+    def decide(self, curr_cell, neighbors, board, previous):
         kb = self.knowledge_base
         clauses = []
 
@@ -84,13 +84,13 @@ class Logic:
             if curr_cell not in kb.keys():
                 kb[curr_cell] = []
 
-        if len(kb) < 1:
+        if len(kb) <= 1:
             cnt = 0
             for n in neighbors:
-                if n is not None:
-                  
+                if n != None and n != previous:
                     return cnt
                 cnt += 1
+
             else:
                 safe_neighbor = False
                 cnt = 0
@@ -136,8 +136,11 @@ class Logic:
                     else:
                         unknown_neighbors.append(n)
                     if known_neighbors == 3 and stench:
+                        kb[unknown_neighbors[0]].append('W')
+                    elif known_neighbors == 3 and breeze:
+                        kb[unknown_neighbors[0]].append('P')
 
-
+        return previous
 
 
 #
