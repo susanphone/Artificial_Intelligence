@@ -70,6 +70,7 @@ class Logic:
         # first order logic
         for neighbor in neighbors:
             if neighbor is not None:
+
                 # if a Wumpus is in a neighboring cell, then stench is true
                 if neighbor.state == 'W':
                     clauses.append("stench")
@@ -87,6 +88,7 @@ class Logic:
             cnt = 0
             for n in neighbors:
                 if n is not None:
+                  
                     return cnt
                 cnt += 1
             else:
@@ -134,6 +136,7 @@ class Logic:
                     else:
                         unknown_neighbors.append(n)
                     if known_neighbors == 3 and stench:
+
 
 
 
