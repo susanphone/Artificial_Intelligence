@@ -1,6 +1,6 @@
+from wumpus_world.Explorer import Explorer, move
 from wumpus_world.Board import Board
 from wumpus_world.Cell import Cell
-from wumpus_world.Explorer import Explorer
 from wumpus_world.Logic import get_neighbors, Logic
 
 """
@@ -28,6 +28,7 @@ if __name__ == "__main__":
     # empty board with no wumpus before generation
     w = 0
     cells = []
+    explorer = Explorer
     board = Board(cells, w)
     fullBoard = Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
@@ -47,8 +48,10 @@ if __name__ == "__main__":
         bestCell = logic.decide(pos, n, board)
         print("Best Choice")
         print(bestCell)
-        Explorer.move(bestCell)
+        n = move(pos, bestCell, board)
+        print("n")
+        n = pos
+        print(n)
         count += 1
-    # best = logic.bestMove(bestCell)
 
     # print(best.state)

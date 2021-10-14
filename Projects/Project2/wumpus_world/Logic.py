@@ -96,6 +96,7 @@ class Logic:
 
         for n in neighbors:
             if n is not None:
+
                 return n
 
             else:
@@ -104,9 +105,9 @@ class Logic:
                     if cell is not None:
                         if cell in kb:
                             cell_values = kb[cell]
-                            if not "stench" in cell_values and \
-                                    not "breeze" in cell_values and \
-                                    not 'O' in cell_values:
+                            if "stench" not in cell_values and \
+                                    "breeze" not in cell_values and \
+                                    'O' not in cell_values:
                                 safe_neighbor = True
                                 return cell
             if not safe_neighbor:

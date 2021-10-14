@@ -31,51 +31,52 @@ class Explorer():
     # :param dest: a character denoting either north, south, east, or west,
     # denoted by 'n', 's', 'e', and 'w' respectively :return: returns whether the explorer moved or not '''
 
-    def move(self, curr_cell):
-        success = True
-        new_pos = curr_cell
-        neighbors = get_neighbors(curr_cell, self.board)
 
+def move(curr_cell, destination, board):
+    success = True
+    new_pos = curr_cell
+    for n in destination:
         while success:
-            n = self.logic.decide(curr_cell, neighbors, self.board)
             if n == 'n':
-                new_pos = neighbors[0]
+                new_pos = destination[n]
             elif n == 's':
-                new_pos = neighbors[1]
+                new_pos = destination[n]
             elif n == 'w':
-                new_pos = neighbors[2]
+                new_pos = destination[n]
             elif n == 'e':
-                new_pos = neighbors[3]
+                new_pos = destination[n]
             if new_pos.state == 'O':
                 success = False
 
-            if not success:
-                neighbors.remove(new_pos)
-                Explorer.turn_left() or Explorer.turn_right()
-                new_pos = curr_cell
-                self.logic.decide(curr_cell, neighbors, self.board)
-            self.stats.increment_moves()
+        if not success:
+            destination.remove(new_pos)
+            Explorer.turn_left(n) or Explorer.turn_right(n)
+            new_pos = curr_cell
+            Logic.decide(curr_cell, destination, board)
+        Statistics.increment_moves()
 
-        return new_pos
+    return new_pos
 
-    def turn_right(self):
-        index = directions.index(self.direction)
-        if index == 3:
-            index = 0
-        else:
-            index += 1
-        direction = directions[index]
 
-        self.stats.increment_moves()
-        return direction
+def turn_right(direction):
+    index = directions.index(direction)
+    if index == 3:
+        index = 0
+    else:
+        index += 1
+    direction = directions[index]
 
-    def turn_left(self):
-        index = directions.index(self.direction)
-        if index == 0:
-            index = 3
-        else:
-            index -= 1
-        direction = directions[index]
+    Statistics.increment_moves()
+    return direction
 
-        self.stats.increment_moves()
-        return direction
+
+def turn_left(direction):
+    index = directions.index(direction)
+    if index == 0:
+        index = 3
+    else:
+        index -= 1
+    direction = directions[index]
+
+    Statistics.increment_moves()
+    return direction
