@@ -37,14 +37,15 @@ if __name__ == "__main__":
     previous = pos
     print("Position")
     count = 0
+    kb = defaultdict(list)
     while count < 100:
         explorer = Explorer(pos)
         #print(type(pos))
-        #print(pos.x, pos.y, pos.state)
+        print(pos.y, pos.x, pos.state)
         n = get_neighbors(pos, board)
-        kb = defaultdict(list)
         logic = Logic(kb)
         bestCell = logic.decide(pos, n, board, previous)
+        print(n[bestCell].y, n[bestCell].x)
         if bestCell == 0:
             dest = 'n'
         elif bestCell == 1:
@@ -58,6 +59,7 @@ if __name__ == "__main__":
         print(bestCell)
         print(n[bestCell].state)
         previous = pos
+        print(previous.y, previous.x)
         explorer.move(dest, kb, n)
         pos = n[bestCell]
         count += 1

@@ -86,9 +86,13 @@ class Logic:
 
         if len(kb) <= 1:
             cnt = 0
+
             for n in neighbors:
-                if n != None and n != previous:
-                    return cnt
+                if n != None:
+                    if n.y == previous.y and n.x == previous.x:
+                        pass
+                    else:
+                        return cnt
                 cnt += 1
 
             else:
