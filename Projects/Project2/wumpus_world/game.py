@@ -37,7 +37,7 @@ if __name__ == "__main__":
     print("Position")
     count = 0
     while count < 100:
-        print(pos.x, pos.y, pos.state)
+        # print(pos.x, pos.y, pos.state)
         n = get_neighbors(pos, board)
         print("Neighbors")
         print(n)
@@ -46,6 +46,7 @@ if __name__ == "__main__":
         bestCell = logic.decide(pos, n, board)
         print("Best Choice")
         print(bestCell)
+
         count += 1
     # best = logic.bestMove(bestCell)
 

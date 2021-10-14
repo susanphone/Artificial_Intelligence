@@ -79,6 +79,7 @@ class Logic:
                             clauses.append("breeze")
                         if state == 'S':
                             clauses.append(state)
+                            return neighbor
 
         if not clauses:
             kb.update({curr_cell: 'S'})
@@ -90,9 +91,6 @@ class Logic:
             for n in neighbors:
                 if n is not None:
                     return n
-        for clause in clauses:
-            print(clauses)
-            print(clause)
 
         for n in neighbors:
             if n is not None:
@@ -118,6 +116,7 @@ class Logic:
                             if n is not None:
                                 if n in kb:
                                     return n
+
 
 #
 # ('\n'
