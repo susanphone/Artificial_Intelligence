@@ -1,5 +1,5 @@
 from wumpus_world.Board import Board
-from wumpus_world.Cell import Cell
+from wumpus_world.Explorer import Explorer
 from wumpus_world.Logic import get_neighbors, Logic
 from collections import defaultdict
 """
@@ -30,21 +30,21 @@ if __name__ == "__main__":
     board = Board(cells, w)
     fullBoard = Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
-    remainingArrows = w
+    remainingArrows = board.wumpus
 
     # testing decide()
     pos = Board.starting_position(board)
+    previous = pos
     print("Position")
     count = 0
     while count < 100:
-        # print(pos.x, pos.y, pos.state)
+        explorer = Explorer(pos)
+        #print(type(pos))
+        #print(pos.x, pos.y, pos.state)
         n = get_neighbors(pos, board)
-        print("Neighbors")
-        for friend in n:
-            print(friend.state)
         kb = defaultdict(list)
         logic = Logic(kb)
-        bestCell = logic.decide(pos, n, board)
+        bestCell = logic.decide(pos, n, board, previous)
         if bestCell == 0:
             dest = 'n'
         elif bestCell == 1:
@@ -56,7 +56,10 @@ if __name__ == "__main__":
         
         print("Best Choice")
         print(bestCell)
-
+        print(n[bestCell].state)
+        previous = pos
+        explorer.move(dest, kb, n)
+        pos = n[bestCell]
         count += 1
     # best = logic.bestMove(bestCell)
 

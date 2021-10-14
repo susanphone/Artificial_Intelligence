@@ -1,15 +1,15 @@
 import wumpus_world
 
 
-class Statistics():
+class Statistics:
 
-    def __init__(self):
+    def __init__(self, moves):
         self.gold_found = 0
         self.wumps_killed = 0
         self.deaths_by_wumps = 0
         self.deaths_by_pit = 0
         self.cells_explored = 0
-        self.moves = 0
+        self.moves = moves
 
     def gold_found(self):
         gf = self.gold_found + 1
