@@ -48,7 +48,7 @@ class Explorer:
     # # Used to move to a neighboring cell ''' :param dest: a character denoting either north, south, east, or west,
     # denoted by 'n', 's', 'e', and 'w' respectively :return: returns whether the explorer moved or not '''
 
-    def move(self, dest):
+    def move(self, dest, kb):
         stats = Statistics()
         stats.increment_moves()
         current_index = directions.index(self.direction)
@@ -76,6 +76,7 @@ class Explorer:
             new_pos = neighbors[3]
 
         if new_pos.state == 'O':
+
             success = False
         else:
             self.pos = new_pos

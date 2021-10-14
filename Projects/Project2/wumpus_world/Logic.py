@@ -1,4 +1,5 @@
 from wumpus_world.Cell import Cell
+from collections import defaultdict
 
 '''
 :param current_cell: the specified cell
@@ -27,27 +28,27 @@ def get_neighbors(current_cell, board):
 
     if current_row + 1 <= max_row:
         north_neighbor = Cell(current_row + 1, current_column, north_state)
-        neighbors.append([north_neighbor.x, north_neighbor.y, north_neighbor.state])
-
+        neighbors.append(north_neighbor)
+    else:
+        neighbors.append(None)
     if current_row - 1 >= 0:
         south_neighbor = Cell(current_row - 1, current_column, south_state)
-        neighbors.append([south_neighbor.x, south_neighbor.y, south_neighbor.state])
+        neighbors.append(south_neighbor)
+    else:
+        neighbors.append(None)
 
     if current_column - 1 >= 0:
         west_neighbor = Cell(current_row, current_column - 1, west_state)
-        neighbors.append([west_neighbor.x, west_neighbor.y, west_neighbor.state])
+        neighbors.append(west_neighbor)
+    else:
+        neighbors.append(None)
 
     if current_column + 1 <= max_column:
         east_neighbor = Cell(current_row, current_column + 1, east_state)
-        neighbors.append([east_neighbor.x, east_neighbor.y, east_neighbor.state])
-
-    # if current_column - 1 < 0 or current_row -1 < 0:
-    #     continue
+        neighbors.append(east_neighbor)
     else:
         neighbors.append(None)
-    # for n in neighbors:
-    #     for i in n:
-    #         print(i)
+
     return neighbors
 
 
@@ -69,37 +70,28 @@ class Logic:
         # first order logic
         for neighbor in neighbors:
             if neighbor is not None:
-                for state in neighbor:
-                    if state is not None:
-                        # if a Wumpus is in a neighboring cell, then stench is true
-                        if state == 'W':
-                            clauses.append("stench")
-                        # if a pit is in a neighboring cell, then breeze is true
-                        if state == 'P':
-                            clauses.append("breeze")
-                        if state == 'S':
-                            clauses.append(state)
+                # if a Wumpus is in a neighboring cell, then stench is true
+                if neighbor.state == 'W':
+                    clauses.append("stench")
+                # if a pit is in a neighboring cell, then breeze is true
+                if neighbor.state == 'P':
+                    clauses.append("breeze")
 
-        if not clauses:
-            kb.update({curr_cell: 'S'})
-            clauses.append(curr_cell)
-
-        kb.update({curr_cell: clauses})
+        if clauses:
+            kb[curr_cell].append(clauses)
+        else:
+            if curr_cell not in kb.keys():
+                kb[curr_cell] = []
 
         if len(kb) < 1:
+            cnt = 0
             for n in neighbors:
                 if n is not None:
-                    return n
-        for clause in clauses:
-            print(clauses)
-            print(clause)
-
-        for n in neighbors:
-            if n is not None:
-                return n
-
+                    return cnt
+                cnt += 1
             else:
                 safe_neighbor = False
+                cnt = 0
                 for cell in neighbors:
                     if cell is not None:
                         if cell in kb:
@@ -108,16 +100,42 @@ class Logic:
                                     not "breeze" in cell_values and \
                                     not 'O' in cell_values:
                                 safe_neighbor = True
-                                return cell
+                                return cnt
+                    cnt += 1
+
             if not safe_neighbor:
                 # we need to check to see if neighbor's neighbors are in the kb
+                cell_direction = 0
                 for cell in neighbors:
+                    breeze = True
+                    stench = True
                     if cell is not None:
                         new_neighbors = get_neighbors(cell, board)
                         for n in new_neighbors:
                             if n is not None:
-                                if n in kb:
-                                    return n
+                                if "breeze" not in kb[n]:
+                                    breeze = False
+                                if "stench" not in kb[n]:
+                                    stench = False
+                    if not breeze and not stench:
+                        return cell_direction
+                    breeze = True
+                    stench = True
+                    cell_direction += 1
+
+                known_neighbors = 0
+                unknown_neighbors = []
+
+                for n in neighbors:
+                    stench = True
+                    breeze = True
+                    if n in kb.keys:
+                        known_neighbors += 1
+                    else:
+                        unknown_neighbors.append(n)
+                    if known_neighbors == 3 and stench:
+
+
 
 #
 # ('\n'
