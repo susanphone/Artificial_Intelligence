@@ -1,6 +1,7 @@
 from wumpus_world.Board import Board
 from wumpus_world.Explorer import Explorer
 from wumpus_world.Logic import get_neighbors, Logic
+from wumpus_world.Statistics import Statistics
 from collections import defaultdict
 """
 1. Generate Board and Cells, probability based
@@ -27,11 +28,12 @@ if __name__ == "__main__":
     # empty board with no wumpus before generation
     w = 0
     cells = []
+    score = 0
     board = Board(cells, w)
     fullBoard = Board.generate_board(board, b1, b2, prob_pit, prob_obs, prob_wumpus)
     Board.print_board(board)
     remainingArrows = board.wumpus
-
+    statistics = Statistics(score)
     # testing decide()
     pos = Board.starting_position(board)
     previous = pos
@@ -40,12 +42,11 @@ if __name__ == "__main__":
     kb = defaultdict(list)
     while count < 100:
         explorer = Explorer(pos)
-        #print(type(pos))
         print(pos.y, pos.x, pos.state)
         n = get_neighbors(pos, board)
         logic = Logic(kb)
         bestCell = logic.decide(pos, n, board, previous)
-        print(n[bestCell].y, n[bestCell].x)
+        print(n[bestCell].y, n[bestCell].x, n[bestCell].state)
         if bestCell == 0:
             dest = 'n'
         elif bestCell == 1:
@@ -55,14 +56,29 @@ if __name__ == "__main__":
         else:
             dest = 'e'
         
-        print("Best Choice")
-        print(bestCell)
-        print(n[bestCell].state)
-        previous = pos
-        print(previous.y, previous.x)
+        print("Best Choice: direction, state, position, best")
+        print(dest)
+        if n[bestCell].state == 'O':
+            pos = previous
+        else:
+            previous = pos
+        # print(previous.y, previous.x)
         explorer.move(dest, kb, n)
         pos = n[bestCell]
-        count += 1
+        if pos.state == 'G':
+            print("Winner")
+            statistics.gold_found()
+            break
+        if pos.state == 'W':
+            print("Killed by Wumpus")
+            statistics.death_by_wumpus()
+            break
+        if pos.state == 'P':
+            print("Fell into Pit")
+            statistics.death_by_pit()
+            break
+        else:
+            count += 1
     # best = logic.bestMove(bestCell)
 
     # print(best.state)

@@ -84,65 +84,66 @@ class Logic:
             if curr_cell not in kb.keys():
                 kb[curr_cell] = []
 
-        if len(kb) <= 1:
+        if len(kb) >= 1:
             cnt = 0
 
             for n in neighbors:
-                if n != None:
+                if n is not None:
                     if n.y == previous.y and n.x == previous.x:
                         pass
                     else:
                         return cnt
                 cnt += 1
 
-            else:
-                safe_neighbor = False
-                cnt = 0
-                for cell in neighbors:
-                    if cell is not None:
-                        if cell in kb:
-                            cell_values = kb[cell]
-                            if not "stench" in cell_values and \
-                                    not "breeze" in cell_values and \
-                                    not 'O' in cell_values:
-                                safe_neighbor = True
-                                return cnt
-                    cnt += 1
-
-            if not safe_neighbor:
-                # we need to check to see if neighbor's neighbors are in the kb
-                cell_direction = 0
-                for cell in neighbors:
-                    breeze = True
-                    stench = True
-                    if cell is not None:
-                        new_neighbors = get_neighbors(cell, board)
-                        for n in new_neighbors:
-                            if n is not None:
-                                if "breeze" not in kb[n]:
-                                    breeze = False
-                                if "stench" not in kb[n]:
-                                    stench = False
-                    if not breeze and not stench:
-                        return cell_direction
-                    breeze = True
-                    stench = True
-                    cell_direction += 1
-
-                known_neighbors = 0
-                unknown_neighbors = []
-
-                for n in neighbors:
-                    stench = True
-                    breeze = True
-                    if n in kb.keys:
-                        known_neighbors += 1
+        else:
+            safe_neighbor = False
+            cnt = 0
+            for cell in neighbors:
+                if cell is not None:
+                    if cell in kb:
+                        cell_values = kb[cell]
+                        if not "stench" in cell_values and \
+                                not "breeze" in cell_values and \
+                                not 'O' in cell_values:
+                            safe_neighbor = True
+                            return cnt
                     else:
-                        unknown_neighbors.append(n)
-                    if known_neighbors == 3 and stench:
-                        kb[unknown_neighbors[0]].append('W')
-                    elif known_neighbors == 3 and breeze:
-                        kb[unknown_neighbors[0]].append('P')
+                        cnt += 1
+
+        if not safe_neighbor:
+            # we need to check to see if neighbor's neighbors are in the kb
+            cell_direction = 0
+            for cell in neighbors:
+                breeze = True
+                stench = True
+                if cell is not None:
+                    new_neighbors = get_neighbors(cell, board)
+                    for n in new_neighbors:
+                        if n is not None:
+                            if "breeze" not in kb[n]:
+                                breeze = False
+                            if "stench" not in kb[n]:
+                                stench = False
+                if not breeze and not stench:
+                    return cell_direction
+                breeze = True
+                stench = True
+                cell_direction += 1
+
+            known_neighbors = 0
+            unknown_neighbors = []
+
+            for n in neighbors:
+                stench = True
+                breeze = True
+                if n in kb.keys:
+                    known_neighbors += 1
+                else:
+                    unknown_neighbors.append(n)
+                if known_neighbors == 3 and stench:
+                    kb[unknown_neighbors[0]].append('W')
+                elif known_neighbors == 3 and breeze:
+                    kb[unknown_neighbors[0]].append('P')
 
         return previous
 
