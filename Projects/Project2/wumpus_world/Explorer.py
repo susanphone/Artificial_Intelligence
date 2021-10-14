@@ -4,7 +4,7 @@ from wumpus_world.Logic import get_neighbors
 directions = ['n', 'e', 's', 'w']
 
 
-class Explorer():
+class Explorer:
     def __init__(self):
         self.stats = Statistics()
         self.board = Board()
@@ -53,7 +53,7 @@ class Explorer():
         stats.increment_moves()
         current_index = directions.index(self.direction)
         dest_index = directions.index(dest)
-
+        success = True
         diff = current_index - dest_index
 
         if abs(diff) == 2:
@@ -75,12 +75,12 @@ class Explorer():
         elif dest == 'e':
             new_pos = neighbors[3]
 
-		if new_pos.state = 'O':
-			success = False
-		else:
-			self.pos = new_pos
+        if new_pos.state == 'O':
+            success = False
+        else:
+            self.pos = new_pos
 
-		self.stats.incrementMoves()
+        self.stats.incrementMoves()
         return success
 
     def turn_right(self):
