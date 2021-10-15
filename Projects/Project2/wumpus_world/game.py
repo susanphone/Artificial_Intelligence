@@ -3,6 +3,7 @@ from wumpus_world.Explorer import Explorer
 from wumpus_world.Logic import get_neighbors, Logic
 from wumpus_world.Statistics import Statistics
 from collections import defaultdict
+import random
 
 if __name__ == "__main__":
 
@@ -30,21 +31,94 @@ if __name__ == "__main__":
 
         # initializing statistics
         remainingArrows = board.wumpus
+        r_statistics = Statistics(0)
         statistics = Statistics(0)
 
         # explorer starting position
         pos = Board.starting_position(board)
         previous = pos  # keep track of previous position
 
-        count = 0  # limit the number of loops if stuck
+        # create a reactive explorer that in the starting position
+        r_explorer = Explorer(pos, r_statistics)
 
+        # reactive agent loop
+        print("Reactive Agent: ")
+        count = 0  # limit the number of loops if stuck
+        while count < 1000:
+            n = get_neighbors(pos, board)
+            clauses = []
+            for neighbor in n:
+                if neighbor is not None:
+                    # if a Wumpus is in a neighboring cell, then stench is true
+                    if neighbor.state == 'W':
+                        clauses.append("stench")
+                    # if a pit is in a neighboring cell, then breeze is true
+                    if neighbor.state == 'P':
+                        clauses.append("breeze")
+
+            if "stench" in clauses or "breeze" in clauses and pos != previous:
+                possible_moves = [previous]
+                for neighbor in n:
+                    if neighbor != None:
+                        possible_moves.append(neighbor)
+            else:
+                possible_moves = []
+                for neighbor in n:
+                    if neighbor != None:
+                        possible_moves.append(neighbor)
+            r = random.randrange(0, len(possible_moves))
+            previous_p = previous
+            previous = pos
+            pos = possible_moves[r]
+            for i in range(len(n)):
+                if n[i] != None:
+                    if pos.y == n[i].y and pos.x == n[i].x:
+                        direction = i
+
+            if direction == 0:
+                dest = 'n'
+            elif direction == 1:
+                dest = 's'
+            elif direction == 2:
+                dest = 'w'
+            else:
+                dest = 'e'
+
+            r_explorer.move(dest, n)
+
+            if pos.state == 'O':
+                pos = previous
+                previous = previous_p
+
+            # end if explorer runs into a wumpus, pit, or gold
+            if pos.state == 'G':
+                print("Winner")
+                r_statistics.gold_found = r_statistics.update_gold_found()
+                break
+            if pos.state == 'W':
+                print("Killed by Wumpus")
+                r_statistics.deaths_by_wumps = r_statistics.death_by_wumpus()
+                break
+            if pos.state == 'P':
+                print("Fell into Pit")
+                r_statistics.deaths_by_pit = r_statistics.death_by_pit()
+                break
+            else:
+                count += 1
+        print("Score: ", r_statistics.moves)
+
+        # explorer starting position
+        pos = Board.starting_position(board)
+        previous = pos  # keep track of previous position
         # initialize the knowledge base to be an empty dictionary
         kb = defaultdict(list)  # use this kind of dictionary to allow the value to be a list
         # create a logic object using current knowledge base
         logic = Logic(kb)
         # create an explorer that in the starting position
         explorer = Explorer(pos, statistics)
-
+        # logic agent loop
+        print("Logical Agent: ")
+        count = 0
         while count < 1000:
             # get neighbors of the current cell the explorer is in
             n = get_neighbors(pos, board)
@@ -63,7 +137,7 @@ if __name__ == "__main__":
                 dest = 'e'
 
             # move the explorer to the next best cell
-            explorer.move(dest, kb, n)
+            explorer.move(dest, n)
             previous_p = previous  # the previous previous
             previous = pos  # set previous to be the last position before move
             pos = n[bestCell]  # set the explorer's position to the new cell

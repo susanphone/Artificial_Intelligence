@@ -43,7 +43,7 @@ class Explorer:
         :return: True if explorer can move, False if not
     """
 
-    def move(self, dest, kb, neighbors):
+    def move(self, dest, neighbors):
 
         stats = self.stats
         stats.moves = stats.increment_moves()
