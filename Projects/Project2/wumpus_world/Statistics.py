@@ -11,7 +11,7 @@ class Statistics:
         self.cells_explored = 0
         self.moves = moves
 
-    def gold_found(self):
+    def update_gold_found(self):
         gf = self.gold_found + 1
         return gf
 
