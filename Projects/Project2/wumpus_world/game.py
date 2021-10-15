@@ -45,8 +45,11 @@ if __name__ == "__main__":
         print("Reactive Agent: ")
         count = 0  # limit the number of loops if stuck
         while count < 1000:
+            # look at the neighbors at the current position
             n = get_neighbors(pos, board)
             clauses = []
+
+            # go through the neighbors to see if there is a stench or breeze
             for neighbor in n:
                 if neighbor is not None:
                     # if a Wumpus is in a neighboring cell, then stench is true
@@ -56,25 +59,34 @@ if __name__ == "__main__":
                     if neighbor.state == 'P':
                         clauses.append("breeze")
 
+            # if there is a stench or breeze present, then we do not know if the neighbor's are safe
+            # the only place we do know that is safe is the previous spot
+            # give a greater chance to returning to the only known safe spot (previous)
             if "stench" in clauses or "breeze" in clauses and pos != previous:
                 possible_moves = [previous]
                 for neighbor in n:
                     if neighbor != None:
                         possible_moves.append(neighbor)
+
+            # if there is no stench or breeze, then we know all neighbor's are safe
             else:
                 possible_moves = []
                 for neighbor in n:
                     if neighbor != None:
                         possible_moves.append(neighbor)
+            # randomly select from the possible moves
             r = random.randrange(0, len(possible_moves))
             previous_p = previous
             previous = pos
             pos = possible_moves[r]
+
+            # find the direction of the selected neighbor
             for i in range(len(n)):
                 if n[i] != None:
                     if pos.y == n[i].y and pos.x == n[i].x:
                         direction = i
 
+            # assign a cardinal direction
             if direction == 0:
                 dest = 'n'
             elif direction == 1:
@@ -84,8 +96,10 @@ if __name__ == "__main__":
             else:
                 dest = 'e'
 
+            # move the explorer to the randomly selected position
             r_explorer.move(dest, n)
 
+            # if its an obstacle, bounce back to orignal spot
             if pos.state == 'O':
                 pos = previous
                 previous = previous_p
@@ -110,12 +124,16 @@ if __name__ == "__main__":
         # explorer starting position
         pos = Board.starting_position(board)
         previous = pos  # keep track of previous position
+
         # initialize the knowledge base to be an empty dictionary
         kb = defaultdict(list)  # use this kind of dictionary to allow the value to be a list
+
         # create a logic object using current knowledge base
         logic = Logic(kb)
+
         # create an explorer that in the starting position
         explorer = Explorer(pos, statistics)
+        
         # logic agent loop
         print("Logical Agent: ")
         count = 0
