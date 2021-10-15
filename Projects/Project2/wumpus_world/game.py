@@ -56,7 +56,7 @@ if __name__ == "__main__":
         else:
             dest = 'e'
         
-        print("Best Choice: direction, state, position, best")
+        print("Best Choice: direction, position, best")
         print(dest)
         if n[bestCell].state == 'O':
             pos = previous
@@ -79,6 +79,7 @@ if __name__ == "__main__":
             break
         else:
             count += 1
+            score += 1
     # best = logic.bestMove(bestCell)
-
+    print("Score" + score)
     # print(best.state)
