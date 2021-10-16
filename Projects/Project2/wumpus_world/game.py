@@ -44,7 +44,7 @@ if __name__ == "__main__":
         # reactive agent loop
         print("Reactive Agent: ")
         count = 0  # limit the number of loops if stuck
-        while count < 1000:
+        while count < 1000000:
             # look at the neighbors at the current position
             n = get_neighbors(pos, board)
             clauses = []
@@ -62,13 +62,14 @@ if __name__ == "__main__":
             # if there is a stench or breeze present, then we do not know if the neighbor's are safe
             # the only place we do know that is safe is the previous spot
             # give a greater chance to returning to the only known safe spot (previous)
-            if "stench" in clauses or "breeze" in clauses and pos != previous:
+            if ("stench" in clauses or "breeze" in clauses) and pos != previous:
                 possible_moves = [previous]
                 for neighbor in n:
                     if neighbor != None:
                         possible_moves.append(neighbor)
 
             # if there is no stench or breeze, then we know all neighbor's are safe
+            # or if we are at starting place, then we have to randomly pick from neighbors
             else:
                 possible_moves = []
                 for neighbor in n:
@@ -81,6 +82,7 @@ if __name__ == "__main__":
             pos = possible_moves[r]
 
             # find the direction of the selected neighbor
+            direction = 0
             for i in range(len(n)):
                 if n[i] != None:
                     if pos.y == n[i].y and pos.x == n[i].x:
@@ -133,11 +135,11 @@ if __name__ == "__main__":
 
         # create an explorer that in the starting position
         explorer = Explorer(pos, statistics)
-        
+
         # logic agent loop
         print("Logical Agent: ")
         count = 0
-        while count < 1000:
+        while count < 1000000:
             # get neighbors of the current cell the explorer is in
             n = get_neighbors(pos, board)
 
