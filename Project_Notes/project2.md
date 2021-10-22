@@ -47,3 +47,26 @@ if bump-> then obstacle
 if scream -> wumpus dead and cell facing is safe
 if breeze in one cell has been explored and not in the neighbor, then no pit in the neighbor
 if there is one unexplore neighboring cell, then go to that cell, unless there is a smell or a breeze
+
+
+Each Function and its Purpose(just for reference while writing paper)
+Get_neighbors(): takes in the current cell and the board, and returns a list of all possible neighbors
+
+Logic.decide(): take in current cell, neighbors and board-> gets the clauses and returns of the possible neighbors, which is the best choice. 
+
+Explorer.die(): takes in current cell, if state of cell contains a ‘W’ or a ‘P’ then return dead = true.
+
+Explorer.move() : take in cardinal direction of destination, then determines how to proceed with the best move by moving forward or turning and then moving forward. If the best move is an obstacle, then the function returns false. Otherwise, the move is successful and returns true.
+	turn_right(): (north to east, east to south, south to west, or west to north)
+	turn_left(): (north to west, west to south, south to east, east to north)
+Statistics:
+	gold-found(): add 1 to score 
+	wumpus-killed(): add 1 to score
+	death-by-wumpus(): add 1 to score
+	death-by-pit(): add 1 to score
+	cells-explored(): add 1 to score
+	increment-moves(): add 1 to score
+Cell: contains x, y, and state of the cell
+Board.generateBoard(): takes in the size of the board, and the probability of pits, obstacles, and wumpuses. Returns a completed board.
+Board.printBoard(): returns a visual of the board with the states of each cell
+Board.starting-position(): returns a random cell with a safe state.
