@@ -112,6 +112,34 @@ class Logic:
 
         # when we have information in the knowledge base
         else:
+            wumpus_cell = None
+            pit_cell = None
+            # check if we know where the stench or breeze is coming from
+            if "stench" in clauses or "breeze" in clauses:
+                for cell in neighbors:
+                    if cell != None:
+                        if cell in kb:
+                            if 'W' in kb[cell]:
+                                wumpus_cell = cell
+                                # print("Cell with wumpus: ", cell.y, cell.x)
+                            if 'P' in kb[cell]:
+                                pit_cell = cell
+                                # print("Cell with pit: ", cell.y, cell.x)
+                # if we have already determined a neighbor has a pit or wumpus
+                # we choose from any of the other neighbors
+                if pit_cell != None and ("stench" not in clauses or wumpus_cell != None):
+                    position = 0
+                    for n in neighbors:
+                        if n != pit_cell and n != wumpus_cell:
+                            return position
+                        position += 1
+
+                if wumpus_cell != None and ("breeze" not in clauses or pit_cell != None):
+                    position = 0
+                    for n in neighbors:
+                        if n != pit_cell and n != wumpus_cell:
+                            return position
+                        position += 1
             cnt = 0
             for cell in neighbors:
                 if cell is not None:
@@ -119,9 +147,7 @@ class Logic:
                         cell_values = kb[cell]
                         if not "stench" in cell_values and \
                                 not "breeze" in cell_values and \
-                                not 'O' in cell_values and \
-                                not 'W' in cell_values and \
-                                not 'P' in cell_values:
+                                not 'O' in cell_values:
                             return cnt
                     else:
                         cnt += 1
@@ -149,18 +175,35 @@ class Logic:
             # logic for if we can determine a cell has a wumpus or pit
             known_neighbors = 0
             unknown_neighbors = []
+            stench = False
+            breeze = False
+
+            if "stench" in clauses:
+                stench = True
+            if "breeze" in clauses:
+                breeze = True
 
             for n in neighbors:
-                stench = True
-                breeze = True
-                if n in kb.keys:
-                    known_neighbors += 1
-                else:
-                    unknown_neighbors.append(n)
-                if known_neighbors == 3 and stench:
-                    kb[unknown_neighbors[0]].append('W')
-                elif known_neighbors == 3 and breeze:
-                    kb[unknown_neighbors[0]].append('P')
+                if n != None:
+                    # do not add another Wumpus or Pit if it has already been determined
+                    # should avoid setting a neighbor to have both a pit and a wumpus
+                    if 'W' in kb[n]:
+                        stench = False
+                    if 'P' in kb[n]:
+                        breeze = False
+                    # if neighbor in kb add to known_neighbors
+                    if n in kb.keys:
+                        known_neighbors += 1
+                    else:
+                        unknown_neighbors.append(n)
+            # if we know three of our neighbors are safe, but there is still a stench,
+            # then the 4th neighbor has a wumpus
+            if known_neighbors == 3 and stench:
+                kb[unknown_neighbors[0]].append('W')
+            # if we know three of our neighbors are safe, buth there is still a breeze,
+            # then the 4th neighbor has a pit
+            elif known_neighbors == 3 and breeze:
+                kb[unknown_neighbors[0]].append('P')
 
         return previous
 
