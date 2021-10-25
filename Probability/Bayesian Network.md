@@ -1,3 +1,4 @@
+# Bayes Net
 direct edges to nodes
     relationship between node
         P(x|y)P(y) 
