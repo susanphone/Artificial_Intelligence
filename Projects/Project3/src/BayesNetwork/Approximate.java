@@ -18,6 +18,10 @@ public class Approximate {
     }
 
     public void gibbs(BayesNet currentNet, String query, String[] observed){
+    // returns double
+    }
 
+    public void normalize(double c){
+    // returns double
     }
 }

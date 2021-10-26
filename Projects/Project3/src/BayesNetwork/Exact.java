@@ -13,12 +13,18 @@ public class Exact {
         this.currentNet = new BayesNet(name, prop, prob);
         this.query = query;
         this.observations = observed;
-
-
     }
 //    Variable Elimination
     public void variableElimination(BayesNet currentNet, String query, String[] observed){
+    // returns double
+    }
 
+    public void pointwiseProduct(double[] factors){
+        //returns double
+    }
+
+    public void normalize(double c){
+    // returns double
     }
 
 
