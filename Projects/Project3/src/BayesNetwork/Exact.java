@@ -1,31 +1,59 @@
 package BayesNetwork;
 
 import java.util.HashMap;
-
+import java.util.Arrays;
 public class Exact {
-    String name;
-    double[] prop;
-    HashMap prob;
-    BayesNet currentNet = new BayesNet(null, null, null);
-    String query;
-    String[] observations;
-    public Exact(BayesNet currentNet, String query, String[] observed){
-        this.currentNet = new BayesNet(name, prop, prob);
-        this.query = query;
-        this.observations = observed;
+
+    public Exact(BayesNet currNet, String q, String[] observed){
+        BayesNet currentNet = currNet;
+        String query = q;
+        String[] observations = observed;
     }
 //    Variable Elimination
-    public void variableElimination(BayesNet currentNet, String query, String[] observed){
+    public double variableElimination(BayesNet currentNet, String query, String[] observed){
     // returns double
+        double[] factors = new double[currentNet.variables.size()];
+        String[] varNames = new String[currentNet.variables.size()];
+
+        //fill in the array of variables
+        int i = 0;
+        for(String key : currentNet.variables.keySet()){
+            varNames[i] = key;
+            i++;
+        }
+        //sort the array
+        Arrays.sort(varNames);
+
+        for(String var: varNames){
+            factors = makeFactors(var, observed, factors);
+
+            if(!var.equals(query)){
+                factors = sumOut(var, factors);
+            }
+        }
+        double c = pointwiseProduct(factors);
+        c = normalize(c);
+        return c;
     }
 
-    public void pointwiseProduct(double[] factors){
+    public double pointwiseProduct(double[] factors){
         //returns double
+        double c = 0.0;
+        return c;
     }
 
-    public void normalize(double c){
-    // returns double
+    public double normalize(double c){
+        // returns double
+        return c;
+
     }
 
+    public double[] makeFactors(String var, String[] e, double[] f){
+        return f;
+    }
+
+    public double[] sumOut(String v, double[] f){
+        return f;
+    }
 
 }
