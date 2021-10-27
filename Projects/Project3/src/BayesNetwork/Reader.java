@@ -1,63 +1,64 @@
 package BayesNetwork;
 
+import javax.sql.rowset.serial.SerialArray;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.HashMap;
-import java.util.Scanner;
+import java.security.Key;
+import java.sql.Array;
+import java.util.*;
 
 public class Reader {
-    public HashMap readBIF(File file) throws FileNotFoundException {
-        HashMap scenario = new HashMap();
-        HashMap probabilities = new HashMap();
+
+    public static ArrayList cleanUpFile(File file) throws FileNotFoundException {
         Scanner bifScanner = new Scanner(file);
-        while (bifScanner.hasNextLine()){
+        ArrayList list = new ArrayList();
+        while (bifScanner.hasNextLine()) {
             String data = bifScanner.nextLine();
-            data.split("}");
-            if(bifScanner.hasNext("}")){
-                continue;
-            }
-            if (bifScanner.hasNext("variable")) {
-                String[] var = data.split(" ");
-                scenario.get(var[1]);
-                bifScanner.nextLine();
-                if(bifScanner.hasNext("  tyoe")) {
-                    String[] states = data.split(" ");
-                    for (int i = 9; i < states.length; i++) {
-                        scenario.replace(var, "", states[i]);
-                        if (bifScanner.hasNext("}"));
-                        break;
-                    }
+//                System.out.println(data);
 
-                }
-            }
-            if (bifScanner.hasNext("probability")) {
-                String[] prob = data.split("\n");
-                for (int i = 0; i < prob.length; i++){
-                    if (i == scenario.containsKey()) {
-                        probabilities.get(i);
-                    }
-                    if (i == scenario.containsValue()) {
-                        String[] p = data.split(" ");
-                        probabilities.values(p[i]);
-                    }
-                }
-            }
-            bifScanner.close();
+            String d = data.replaceAll("[^a-zA-Z0-9. ]", "");
+//            System.out.println(d);
+            list.add(d);
+
         }
-    /* TODO:
-    1. read in file
-    2. split file
-        if line starts with variable
-        if line starts with probability
-    3a. for variable type discrete[i] = number of states
-        and {i,j,k} are the states.
-    3b. for probaility (var 1 given var 2)
-        (state1) probability1, probabilityi
-        (statei) probability1, probabilityi
-    4. store we variable and corresponding probailities into a haspmap
-     */
-
-        //returns hashmap
-        return scenario;
+        return list;
     }
+
+    public HashMap<String, String> getVariables(ArrayList list) {
+        Object k = null;
+        Object val = null;
+        HashMap<String, String> variables = new HashMap<String, String>();
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+            if (list.get(i) == "variable") {
+                k = list.get(i+1);
+            }
+
+            if (list.get(i) == "discrete") {
+                val = list.get(i+1);
+                variables.put((String) k, (String) val);
+            }
+
+        }
+        return variables;
+    }
+
+    public HashMap<String, String> getProbabilities(ArrayList list) {
+        Object k = null;
+        Object val = null;
+        HashMap<String, String> probabilities = new HashMap<String, String>();
+        for (int i = 0; i < list.size(); i++) {
+            System.out.println(list.get(i));
+            if (list.get(i) == "probability") {
+                k = list.get(i + 1);
+            }
+            if (list.get(i) == "[^0-9.]") {
+                val = list.get(i + 1);
+                probabilities.put((String)k, (String)val);
+            }
+
+        }
+        return probabilities;
+    }
+
 }
