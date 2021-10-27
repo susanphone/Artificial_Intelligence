@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class BayesNet {
     String networkName;
     double[] properties;
-    HashMap variables = new HashMap();
+    HashMap<String, Variable> variables = new HashMap<String, Variable>();
 
     public BayesNet(String network, double[] prop, HashMap var){
         this.networkName = network;
