@@ -1,14 +1,18 @@
 package BayesNetwork;
 
-import javax.sql.rowset.serial.SerialArray;
+import com.sun.jdi.Value;
+import com.sun.source.tree.Tree;
+import com.sun.source.tree.TreeVisitor;
+import org.w3c.dom.Node;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.security.Key;
-import java.sql.Array;
 import java.util.*;
 
-public class Reader {
+public class Reader implements Comparator<Key> {
 
+//    cleans up file and strips away any unnecessary characters
     public static ArrayList cleanUpFile(File file) throws FileNotFoundException {
         Scanner bifScanner = new Scanner(file);
         ArrayList list = new ArrayList();
@@ -24,41 +28,58 @@ public class Reader {
         return list;
     }
 
-    public HashMap<String, String> getVariables(ArrayList list) {
-        Object k = null;
-        Object val = null;
-        HashMap<String, String> variables = new HashMap<String, String>();
-        for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
+//    create a tree for the variables
+    public TreeMap<Key, ArrayList> getVariables(ArrayList list){
+        TreeMap<Key, ArrayList> variables = new TreeMap<>();
+        Key k = null;
+        Value v = null;
+        ArrayList <Key> keys = new ArrayList<>();
+        for (int i=0; i < list.size(); i++) {
             if (list.get(i) == "variable") {
-                k = list.get(i+1);
+                k = (Key) list.get(i + 1);
+                keys.add(k);
             }
-
             if (list.get(i) == "discrete") {
-                val = list.get(i+1);
-                variables.put((String) k, (String) val);
+                ArrayList vs = new ArrayList();
+                while (list.get(i) != "\n") {
+                    v = (Value) list.get(i + 1);
+                    vs.add((Value) v);
+                }
+                compare(k, keys.get(keys.indexOf(i-1)));
+                variables.put(keys.get(keys.lastIndexOf(k)), vs);
             }
-
         }
-        return variables;
+        return  variables;
     }
 
-    public HashMap<String, String> getProbabilities(ArrayList list) {
-        Object k = null;
-        Object val = null;
-        HashMap<String, String> probabilities = new HashMap<String, String>();
+//    create a tree for the probabilities
+    public TreeMap<Key, ArrayList> getProbabilities(ArrayList list) {
+        TreeMap<Key, ArrayList>probabilities = new TreeMap<>();
+        Key k = null;
+        Value v = null;
+        ArrayList <Key> keys = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
-            System.out.println(list.get(i));
             if (list.get(i) == "probability") {
-                k = list.get(i + 1);
+                k = (Key)list.get(i + 1);
+                keys.add(k);
             }
             if (list.get(i) == "[^0-9.]") {
-                val = list.get(i + 1);
-                probabilities.put((String)k, (String)val);
+                ArrayList ps = new ArrayList();
+                while (list.get(i) != "\n") {
+                    v = (Value)list.get(i + 1);
+                    ps.add(v);
+                }
+                compare(k, keys.get(keys.indexOf(i-1)));
+                probabilities.put(k, ps);
             }
 
         }
         return probabilities;
     }
 
+    @Override
+//    need to compare the keys in order to place them in the tree
+    public int compare(Key o1, Key o2) {
+        return 0;
+    }
 }
