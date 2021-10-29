@@ -21,13 +21,11 @@ public class Exact {
             varNames[i] = key;
             i++;
         }
-        //sort the array
-        Arrays.sort(varNames);
 
         for(String var: varNames){
             factors = makeFactors(var, observed, factors);
 
-            if(!var.equals(query)){
+            if(!var.equals(query) && !isInEvidence(var, observed)){
                 factors = sumOut(var, factors);
             }
         }
@@ -38,7 +36,10 @@ public class Exact {
 
     public double pointwiseProduct(double[] factors){
         //returns double
-        double c = 0.0;
+        double c = factors[0];
+        for(int i = 1; i < factors.length; i++){
+            c = c * factors[i];
+        }
         return c;
     }
 
@@ -56,4 +57,13 @@ public class Exact {
         return f;
     }
 
+    public boolean isInEvidence(String v, String[] e){
+        boolean isEvidence = false;
+        for(String s : e){
+            if(s.equals(v)){
+                isEvidence = true;
+            }
+        }
+        return isEvidence;
+    }
 }
