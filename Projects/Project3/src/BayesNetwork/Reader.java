@@ -46,21 +46,35 @@ public class Reader {
                 if (!Objects.equals(list.get(i), "variable") && !Objects.equals(list.get(i), " probability")) {
                     v = (String) list.get(i + 2);
                     vs.add(v);
+
                 }
+
                 if (!Objects.equals(list.get(i), "variable") && !Objects.equals(list.get(i), " probability")) {
                     v = (String) list.get(i + 3);
                     vs.add(v);
+                    if (vs.contains("LOW") && vs.contains("NORMAL") && vs.contains("HIGH") &&
+                            vs.contains("TRUE") && vs.contains("FALSE") && vs.contains("ZERO")) {
+                        vs.remove(v);
+                        vs.remove("variable");
+                        vs.remove("probability");
+                    }
+
                 }
+
                 if (!Objects.equals(list.get(i), "variable") && !Objects.equals(list.get(i), " probability")) {
                     v = (String) list.get(i + 4);
                     vs.add(v);
+                    if (vs.contains("LOW") || vs.contains("NORMAL") || vs.contains("HIGH") ||
+                            vs.contains("TRUE") || vs.contains("FALSE") || vs.contains("ZERO")  ||
+                            vs.contains("variable") || vs.contains("probability")) {
+                        vs.remove(v);
+                        vs.remove("variable");
+                        vs.remove("probability");
+                    }
                 }
 
-                vs.remove(vs.contains(keys));
-                vs.remove("variable");
-                vs.remove("probability");
 
-                    variables.put(k, vs);
+                variables.put(k, vs);
 
             }
         }
