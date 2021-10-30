@@ -1,0 +1,17 @@
+network unknown {
+}
+variable HISTORY {
+  type discrete [ 2 ] { TRUE, FALSE };
+}
+variable CVP {
+  type discrete [ 3 ] { LOW, NORMAL, HIGH };
+}
+probability ( HISTORY | LVFAILURE ) {
+  (TRUE) 0.9, 0.1;
+  (FALSE) 0.01, 0.99;
+}
+probability ( CVP | LVEDVOLUME ) {
+  (LOW) 0.95, 0.04, 0.01;
+  (NORMAL) 0.04, 0.95, 0.01;
+  (HIGH) 0.01, 0.29, 0.70;
+}
