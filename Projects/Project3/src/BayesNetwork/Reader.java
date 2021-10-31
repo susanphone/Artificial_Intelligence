@@ -58,9 +58,7 @@ public class Reader {
                         vs.remove("variable");
                         vs.remove("probability");
                     }
-
                 }
-
                 if (!Objects.equals(list.get(i), "variable") && !Objects.equals(list.get(i), " probability")) {
                     v = (String) list.get(i + 4);
                     vs.add(v);
@@ -72,63 +70,48 @@ public class Reader {
                         vs.remove("probability");
                     }
                 }
-
-
+                if (!Objects.equals(list.get(i), "variable") && !Objects.equals(list.get(i), " probability")) {
+                    v = (String) list.get(i + 5);
+                    vs.add(v);
+                    if (vs.contains("LOW") || vs.contains("NORMAL") || vs.contains("HIGH") ||
+                            vs.contains("TRUE") || vs.contains("FALSE") || vs.contains("ZERO")  ||
+                            vs.contains("variable") || vs.contains("probability")) {
+                        vs.remove(v);
+                        vs.remove("variable");
+                        vs.remove("probability");
+                    }
+                }
                 variables.put(k, vs);
-
             }
         }
             return variables;
     }
-
     //    create a tree for the probabilities
-    public static TreeMap<ArrayList, ArrayList> getProbabilities(ArrayList list) {
-        TreeMap<ArrayList, ArrayList>probabilities = new TreeMap<>();
+    public static TreeMap<String, ArrayList> getProbabilities(File file) throws FileNotFoundException {
+        TreeMap<String, ArrayList>probabilities = new TreeMap<>();
         String k = null;
-        String v = null;
-        ArrayList keys = new ArrayList<>();
-        for (int i = 0; i < list.size(); i++) {
-            if (Objects.equals(list.get(i), "probability")) {
-                i = i + 1;
-                if (!Objects.equals(list.get(i), "")) {
-                    k = (String) list.get(i);
-                    keys.add(k);
-                    k = (String) list.get(i + 1);
-                    keys.add(k);
-                } if (!Objects.equals(list.get(i), "(\\W)")) {
-                    k = (String) list.get(i);
-                    keys.add(k);
-                } else {
-                    keys.add(1);
-                }
-            }
-            if (Objects.equals(list.get(i), "[*0-9]")) {
-                i = i + 1;
+        String v;
+        Scanner bifScanner = new Scanner(file);
+        ArrayList list = new ArrayList();
+        while (bifScanner.hasNextLine()) {
+            String line = bifScanner.nextLine();
+            list.add(line);
+        }
+        String keys;
+        List l = list.subList(113, 428);
+        for (int i = 0; i < l.size(); i++) {
+            if (l.get(i).equals(list.contains("probability"))) {
                 ArrayList ps = new ArrayList();
-                String state = (String) list.get(i - 1);
-                ps.add(state);
-
-                if (!Objects.equals(list.get(i), ";")) {
-                    v = (String) list.get(i);
+                k = (String) l.get(i);
+                keys = k;
+                if (!Objects.equals(list.get(i + 1), "}")) {
+                    i = i + 1;
+                    v = (String) l.get(i);
                     ps.add(v);
                 }
-                if (!Objects.equals(list.get(i), "")){
-                    v = (String) list.get(i + 1);
-                    ps.add(v);
-                } else {
-                    ps.add(0);
-                }
-
                 probabilities.put(keys, ps);
             }
-
         }
         return probabilities;
     }
-
-//    @Override
-////    need to compare the keys in order to place them in the tree
-//    public int compare(Key o1, Key o2) {
-//        return 0;
-//    }
 }
