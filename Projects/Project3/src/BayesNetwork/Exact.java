@@ -13,7 +13,8 @@ public class Exact {
     public double[] variableElimination(BayesNet currentNet, String query, String[] observed){
     // returns double
         double[] factors = new double[currentNet.variables.size()];
-        String[] varNames = new String[currentNet.variables.size()];
+        String[] varNames = new String[currentNet.variables.size()]; //since these vars are coming from a treemap
+        //we should be able to extract them so that they are topographically sorted
 
         //fill in the array of variables
         int i = 0;
@@ -22,6 +23,8 @@ public class Exact {
             i++;
         }
 
+        //every variable that is not an ancestor of the query variable or an evidence variable is
+        //irrelevant to the query
         for(String var: varNames){
             factors = makeFactors(var, observed, factors);
 
@@ -61,10 +64,16 @@ public class Exact {
     }
 
     public double[] makeFactors(String var, String[] e, double[] f){
+
+        //add var to the list of factors
+        //return the updated list of factors
         return f;
     }
 
     public double[] sumOut(String v, double[] f){
+        //marginalization
+        //go through the factors and marginalize based on the evidence and what is known about the factors
+        //i.e. remove any irrelevant factors
         return f;
     }
 
