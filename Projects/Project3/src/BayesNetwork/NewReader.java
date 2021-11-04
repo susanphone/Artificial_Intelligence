@@ -45,106 +45,41 @@ public class NewReader {
     }
 
 
-    public static TreeMap<ArrayList, Map> getProbabilities(File file, TreeMap variables) throws FileNotFoundException {
-        TreeMap<ArrayList, Map> probabilities = new TreeMap<>();
+    public static TreeMap<ArrayList, ArrayList> getProbabilities(File file, TreeMap variables) throws FileNotFoundException {
+        TreeMap<ArrayList, ArrayList> probabilities = new TreeMap<>();
         Scanner bifScanner = new Scanner(file);
         ArrayList list = new ArrayList();
         while (bifScanner.hasNext()) {
             String item = bifScanner.next();
-            list.add(item);
+            if (!Objects.equals(item, "(") && !Objects.equals(item, ")")) {
+                list.add(item);
+            }
         }
-        Map<ArrayList, ArrayList> probMap = new Map<>() {
-            @Override
-            public int size() {
-                return 0;
-            }
-
-            @Override
-            public boolean isEmpty() {
-                return false;
-            }
-
-            @Override
-            public boolean containsKey(Object key) {
-                return false;
-            }
-
-            @Override
-            public boolean containsValue(Object value) {
-                return false;
-            }
-
-            @Override
-            public ArrayList get(Object key) {
-                return null;
-            }
-
-            @Override
-            public ArrayList put(ArrayList key, ArrayList value) {
-                return null;
-            }
-
-            @Override
-            public ArrayList remove(Object key) {
-                return null;
-            }
-
-            @Override
-            public void putAll(Map<? extends ArrayList, ? extends ArrayList> m) {
-
-            }
-
-            @Override
-            public void clear() {
-
-            }
-
-            @Override
-            public Set<ArrayList> keySet() {
-                return null;
-            }
-
-            @Override
-            public Collection<ArrayList> values() {
-                return null;
-            }
-
-            @Override
-            public Set<Entry<ArrayList, ArrayList>> entrySet() {
-                return null;
-            }
-        };
-        String[] parents = null;
-        String child = null;
-
-        for (int i = 515; i < list.size(); i++){
-            ArrayList pc = new ArrayList();
-            if (Objects.equals(list.get(i), "probability")){
-                while (!Objects.equals(list.get(i), "}")) {
-                    if (list.get(i).equals("|")) {
-                        while (!list.get(i).equals("}")) {
-                            parents = (String[]) list.get(i);
-                            i++;
+        String keys = null;
+        String num = null;
+        int p = 0;
+        for (int i = 0; i < list.size(); i++) {
+            if (Objects.equals(list.get(i), "probability")) {
+                p = i + 1;
+                for (int j = p; j < list.size(); j++) {
+                    ArrayList pc = new ArrayList();
+                    ArrayList prob = new ArrayList();
+                    if (variables.containsKey(list.get(j)) || Objects.equals(list.get(j), "|")) {
+                        if (Objects.equals(list.get(j), "|") || !Objects.equals(list.get(j), "{")) {
+                            keys = (String) list.get(j);
+                            pc.add(keys);
+                            continue;
                         }
-                    } else {
-                        child = (String) list.get(i);
                     }
-                    i++;
+                    if (variables.containsValue(list.get(j))  || !Objects.equals(list.get(j), "}")) {
+                        num = (String) list.get(j);
+                        prob.add(num);
+                        continue;
+                    }
+                    probabilities.put(pc, prob);
+                    continue;
                 }
-                pc.add(parents);
-                pc.add(child);
             }
-            ArrayList states = new ArrayList();
-            if (Objects.equals(list.get(i), variables.values())) {
-                states.add(list.get(i));
-            }
-            ArrayList prob = new ArrayList();
-            while (!Objects.equals(list.get(i), "}")) {
-                prob.add(list);
-            }
-
-            probMap.put(states, prob);
-            probabilities.put(pc, probMap);
         }
         return probabilities;
     }
