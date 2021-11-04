@@ -72,7 +72,7 @@ public class Reader {
 
         int p = 0;
         for (int i = 0; i < list.size(); i++) {
-            if (Objects.equals(list.get(i), "probability")) {
+            if (Objects.equals(list.get(i), "variable")) {
                 p = i + 1;
             }
         }
@@ -99,8 +99,10 @@ public class Reader {
                     } while (!Objects.equals(list.get(j), "}"));
                     probabilities.put(pc, prob);
                     pc = null;
+//                    return probabilities;
                 }
             }
+            j++;
         }
         return probabilities;
     }
