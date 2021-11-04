@@ -19,10 +19,10 @@ public class Main {
 //        String d  = Arrays.toString(data);
 //        String[] str = d.split(" ");
 //        System.out.println(Arrays.toString(str));
-        TreeMap<String, ArrayList> dat = Reader.getVariables(file);
+        TreeMap<String, ArrayList<String>> dat = Reader.getVariables(file);
         System.out.println(dat);
-        TreeMap<ArrayList, ArrayList> probs = Reader.getProbabilities(file, dat);
-//        System.out.println(probs);
+        Map<String, ArrayList<String>> probs = Reader.getProbabilities(file, dat);
+        System.out.println(probs);
 
     }
 
