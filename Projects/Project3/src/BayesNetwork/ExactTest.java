@@ -132,6 +132,14 @@ public class ExactTest {
             }
             System.out.println("");
         }
-
+        ArrayList<Variable> factors = new ArrayList<>();
+        factors.add(johnCalls);
+        System.out.println("Pointwise Product: ");
+        Variable product = Exact.pointwiseProduct(maryCalls, factors, alarm);
+        System.out.println(product.name);
+        for (Map.Entry<String, ArrayList> item: product.probabilities.entrySet()) {
+            System.out.print(item.getKey() + " ");
+            System.out.println(Arrays.toString(item.getValue().toArray()));
+        }
     }
 }

@@ -1,89 +1,223 @@
 package BayesNetwork;
 
-import java.util.HashMap;
-import java.util.Arrays;
-public class Exact {
+import javax.xml.crypto.dom.DOMCryptoContext;
+import java.util.*;
 
-    public Exact(BayesNet currNet, String q, String[] observed){
-        BayesNet currentNet = currNet;
-        String query = q;
-        String[] observations = observed;
+public class Exact {
+    BayesNet currentNet;
+    Variable query;
+    ArrayList<Variable> observations;
+
+    public Exact(BayesNet currNet, Variable q, ArrayList<Variable> observed){
+        this.currentNet = currNet;
+        this.query = q;
+        this.observations = observed;
     }
 //    Variable Elimination
-    public double[] variableElimination(BayesNet currentNet, String query, String[] observed){
+    public ArrayList<Double> variableElimination(BayesNet currentNet, String query, ArrayList<Variable> observed){
     // returns double
-        double[] factors = new double[currentNet.variables.size()];
-        String[] varNames = new String[currentNet.variables.size()]; //since these vars are coming from a treemap
+        ArrayList<Variable> factors = new ArrayList<>();
+        ArrayList<Variable> varOrder = new ArrayList<>(); //since these vars are coming from a treemap
         //we should be able to extract them so that they are topographically sorted
 
         //fill in the array of variables
         int i = 0;
-        for(String key : currentNet.variables.keySet()){
-            varNames[i] = key;
-            i++;
+        for(Variable v : currentNet.variables){
+            varOrder.add(v);
         }
 
         //every variable that is not an ancestor of the query variable or an evidence variable is
         //irrelevant to the query
-        for(String var: varNames){
-            factors = makeFactors(var, observed, factors);
+        for(Variable var: varOrder){
+            factors = makeFactors(var, factors);
 
-            if(!var.equals(query) && !isInEvidence(var, observed)){
+            if(!var.equals(query) && !observed.contains(var)){
                 factors = sumOut(var, factors);
             }
         }
-        double[] c = pointwiseProduct(factors);
-        c = normalize(c, observed);
+        ArrayList<Double> c = new ArrayList<>();
+//        c = normalize(, observed);
         return c;
     }
+    /*
+     * recursively loop through the relevant factors until you reach the last two in the list and then find the
+     * pointwise product of two factors as a time, eventually reaching the final factor that is the pointwise product
+     * of all the factors
+     */
+    public static Variable pointwiseProduct(Variable currentFactor, ArrayList<Variable> factors, Variable v){
+        //properties for the Variable that will be returned
+        String name = v.name;
+        //have to temporarily change states, parents, and children arrays to arraylists so we can easily add to them
+        ArrayList<String> states = new ArrayList<>();
+        Collections.addAll(states, v.states);
 
-    public double[] pointwiseProduct(double[] factors){
-        //returns double
-        double[] c = factors;
-        for(int i = 1; i < factors.length; i++){
+        ArrayList<String> parents = new ArrayList<>();
+        Collections.addAll(parents, v.parents);
+
+        ArrayList<String> children = new ArrayList<>();
+        Collections.addAll(children, v.children);
+
+        HashMap<String, ArrayList> newProbabilities = new HashMap<>();
+
+        if(factors.size() == 1){
+            Variable f1 = currentFactor;
+            Variable f2 = factors.get(0);
+
+            //update the states, parents and children to include everything from the two factors
+            for (String state : f1.states) {
+                if(!states.contains(state)){
+                    states.add(state);
+                }
+            }
+            for (String state : f2.states) {
+                if(!states.contains(state)){
+                    states.add(state);
+                }
+            }
+            //updating the children
+            for (String child : f1.children) {
+                if(!children.contains(child)){
+                    children.add(child);
+                }
+            }
+            for (String child : f2.children) {
+                if(!children.contains(child)){
+                    children.add(child);
+                }
+            }
+            //updating the parents
+            for (String p : f1.parents) {
+                if(!parents.contains(p)){
+                    parents.add(p);
+                }
+            }
+            for (String p : f2.parents) {
+                if(!parents.contains(p)){
+                    parents.add(p);
+                }
+            }
+
+            //updating the name
+            name = name + " " + f1.name + " " + f2.name + " ";
+
+            //find the index of the shared variable in the parents list of each factor
+            int index1 = 0;
+            for (int i = 0; i < f1.parents.length; i++) {
+                if(f1.parents[i].equals(v.name)){
+                    index1 = i;
+                }
+            }
+            int index2 = 0;
+            for (int j = 0; j < f2.parents.length; j++) {
+                if(f2.parents[j].equals(v.name)){
+                    index2 = j;
+                }
+            }
+
+            //get all the possible states for the shared variable
+            String[] vStates = v.states;
+            ArrayList<Double> currFactor1Probs = new ArrayList<>();
+            ArrayList<Double> currFactor2Probs = new ArrayList<>();
+
+            for (String vState : vStates) {
+                //add all the probability distributions from the current factors, where the current variable
+                //is in the current state that we are looking at
+                for (Map.Entry<String, ArrayList> item: f1.probabilities.entrySet()) {
+                    String[] stateLabels = item.getKey().split(" ");
+                    if(stateLabels[index1].equals(vState)){
+                        currFactor1Probs.addAll(item.getValue());
+                    }
+                }
+                for (Map.Entry<String, ArrayList> item: f2.probabilities.entrySet()) {
+                    String[] stateLabels = item.getKey().split(" ");
+                    if(stateLabels[index2].equals(vState)){
+                        currFactor2Probs.addAll(item.getValue());
+                    }
+                }
+
+                for (int i = 0; i < currFactor1Probs.size(); i++) {
+                    for (int j = 0; j < currFactor2Probs.size(); j++) {
+                        double newProb = currFactor1Probs.get(i) * currFactor2Probs.get(j);
+                        String newStates = vState + " " +f1.states[i] + " " + f2.states[j];
+
+                        ArrayList<Double> newProbList = new ArrayList<>();
+                        newProbList.add(newProb);
+
+                        newProbabilities.put(newStates, newProbList);
+
+                    }
+
+                }
+                currFactor1Probs.clear();
+                currFactor2Probs.clear();
+            }
         }
-        return c;
+        else{
+            Variable nextFactor = factors.remove(0);
+            pointwiseProduct(nextFactor, factors, v);
+        }
+
+        //convert states, parents, and children back to arrays to create a new Variable
+        String[] statesArray = new String[states.size()];
+        statesArray = states.toArray(statesArray);
+
+        String[] parentsArray = new String[parents.size()];
+        parentsArray = parents.toArray(parentsArray);
+
+        String[] childrenArray = new String[children.size()];
+        childrenArray = children.toArray(childrenArray);
+
+        Variable product = new Variable(name, statesArray, parentsArray, childrenArray);
+        product.probabilities = newProbabilities;
+
+        return product;
     }
 
-    public double[] normalize(double[] c, String[] e ){
-        // returns double
+    public ArrayList<Double> normalize(ArrayList<Double> c, String[] e ){
         int sumP = 0;
 
         for(double p : c){
             sumP += p;
         }
 
-        double[] normalized_c = new double[c.length];
+        ArrayList<Double> normalized_c = new ArrayList<>();
         int i = 0;
         for(double p : c){
-            normalized_c[i] = c[i] / sumP;
+            normalized_c.add(i, c.get(i)/sumP);
             i++;
         }
         return c;
 
     }
 
-    public double[] makeFactors(String var, String[] e, double[] f){
+    public ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f){
 
-        //add var to the list of factors
+        //add the probability distribution of var to the list of factors
         //return the updated list of factors
+
+        f.add(var);
+
         return f;
     }
 
-    public double[] sumOut(String v, double[] f){
+    public ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
         //marginalization
         //go through the factors and marginalize based on the evidence and what is known about the factors
         //i.e. remove any irrelevant factors
+        ArrayList<Variable> relevantFactors = new ArrayList<>();
+
+        //check what factors interact (are in the Markov blanket) of the current factor we are summing out
+        for (Variable factor : f) {
+            if(Arrays.stream(v.parents).anyMatch(factor.name::equals) || Arrays.stream(v.children).anyMatch(factor.name::equals)){
+                relevantFactors.add(factor);
+                f.remove(factor);
+            }
+        }
+
+        Variable firstFactor = relevantFactors.remove(0);
+        pointwiseProduct(firstFactor, relevantFactors,  v);
         return f;
     }
 
-    public boolean isInEvidence(String v, String[] e){
-        boolean isEvidence = false;
-        for(String s : e){
-            if(s.equals(v)){
-                isEvidence = true;
-            }
-        }
-        return isEvidence;
-    }
+
 }
