@@ -9,7 +9,7 @@ import java.util.TreeMap;
 public class BayesNet {
     String networkName;
     double[] properties;
-    ArrayList<NewVariable> variables = new ArrayList<NewVariable>();
+    ArrayList<Variable> variables = new ArrayList<Variable>();
 
     public BayesNet(String network, double[] prop, ArrayList var){
         this.networkName = network;
