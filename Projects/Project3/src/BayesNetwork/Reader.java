@@ -56,8 +56,7 @@ public class Reader {
     }
 
     //    create a tree for the probabilities
-    public static Map<String, ArrayList<String>> getProbabilities(File file, TreeMap<String, ArrayList<String>>
-            variables) throws FileNotFoundException, IndexOutOfBoundsException, NullPointerException {
+    public static Map<String, ArrayList<String>> getProbabilities(File file, TreeMap variable) throws FileNotFoundException {
         Map<String, ArrayList<String>> probabilities = new TreeMap<>();
         ArrayList<String> list = new ArrayList<String>();
         String keys = null;
@@ -65,45 +64,50 @@ public class Reader {
         Scanner bifScanner = new Scanner(file);
         while (bifScanner.hasNext()) {
             String item = bifScanner.next();
-            if (!Objects.equals(item, "(") && !Objects.equals(item, ")")) {
+            if (!Objects.equals(item, ")") && !Objects.equals(item, "(")
+                    && !Objects.equals(item, "|")) {
                 list.add(item);
             }
         }
-
-        int p = 0;
+        String child = null;
+        String parent = null;
+        ArrayList<String> values = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
-            if (Objects.equals(list.get(i), "variable")) {
-                p = i + 1;
-            }
-        }
-        String pc = null;
-        for (int j = p; j < list.size(); j++) {
-            ArrayList<String> prob = new ArrayList<String>();
-            if (variables.containsKey(list.get(j)) || Objects.equals(list.get(j), "|")) {
-                if (Objects.equals(list.get(j), "|") || !Objects.equals(list.get(j), "{")) {
-                    keys = list.get(j);
-                    if (pc == null) {
-                        pc = keys;
-                    } else {
-                        pc = pc + " " + keys;
-                        continue;
+            if (Objects.equals(list.get(i), "probability")) {
+                i = i + 1;
+                child = list.get(i);
+                if (variable.containsKey(list.get(i + 1))) {
+                    i = i + 1;
+                    while (!Objects.equals(list.get(i), "{")) {
+                        if (parent == null) {
+                            parent = list.get(i);
+                        } else {
+                            parent = parent + " " + list.get(i);
+                        }
+                        i++;
                     }
                 }
-            }
-            if (!(Objects.equals(list.get(j), "}") || Objects.equals(list.get(j), "{"))) {
-                if (!variables.containsKey(list.get(j))) {
-                    do {
-                        num = list.get(j);
-                        prob.add(num);
-                        j++;
-                    } while (!Objects.equals(list.get(j), "}"));
-                    probabilities.put(pc, prob);
-                    pc = null;
-//                    return probabilities;
+                String cp;
+                if (parent != null) {
+                    cp = child + " " + parent;
+                } else {
+                    cp = child;
+                }
+                if (Objects.equals(list.get(i), "{")) {
+                    i = i + 1;
+                    while (!Objects.equals(list.get(i), "}")) {
+                        values.add(list.get(i));
+                        i++;
+                    }
+                    probabilities.put(cp, values);
+                    cp = null;
+                    parent = null;
+                    child = null;
+                    values = new ArrayList<>();
                 }
             }
-            j++;
         }
+
         return probabilities;
     }
 }
