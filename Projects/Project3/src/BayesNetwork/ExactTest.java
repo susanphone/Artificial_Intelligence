@@ -134,12 +134,22 @@ public class ExactTest {
         }
         ArrayList<Variable> factors = new ArrayList<>();
         factors.add(johnCalls);
-        System.out.println("Pointwise Product: ");
-        Variable product = Exact.pointwiseProduct(maryCalls, factors, alarm);
-        System.out.println(product.name);
-        for (Map.Entry<String, ArrayList> item: product.probabilities.entrySet()) {
-            System.out.print(item.getKey() + " ");
-            System.out.println(Arrays.toString(item.getValue().toArray()));
+        factors.add(maryCalls);
+        System.out.println("Summing Out Alarm");
+        ArrayList<Variable> newFactors = new ArrayList<>();
+        newFactors = Exact.sumOut(alarm, factors);
+        for(Variable f: newFactors){
+            for (Map.Entry<String, ArrayList> item: f.probabilities.entrySet()) {
+                System.out.print(item.getKey() + " ");
+                System.out.println(Arrays.toString(item.getValue().toArray()));
+            }
         }
+//        System.out.println("Pointwise Product: ");
+//        Variable product = Exact.pointwiseProduct(maryCalls, factors, alarm);
+//        System.out.println(product.name);
+//        for (Map.Entry<String, ArrayList> item: product.probabilities.entrySet()) {
+//            System.out.print(item.getKey() + " ");
+//            System.out.println(Arrays.toString(item.getValue().toArray()));
+//        }
     }
 }

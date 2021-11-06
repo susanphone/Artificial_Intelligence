@@ -200,7 +200,7 @@ public class Exact {
         return f;
     }
 
-    public ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
+    public static ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
         //marginalization
         //go through the factors and marginalize based on the evidence and what is known about the factors
         //i.e. remove any irrelevant factors
@@ -210,13 +210,72 @@ public class Exact {
         for (Variable factor : f) {
             if(Arrays.stream(v.parents).anyMatch(factor.name::equals) || Arrays.stream(v.children).anyMatch(factor.name::equals)){
                 relevantFactors.add(factor);
-                f.remove(factor);
             }
         }
 
+        //remove the relevant factors that we will be combining from the list of all factors
+        for(Variable rf: relevantFactors){
+            f.remove(rf);
+        }
+
         Variable firstFactor = relevantFactors.remove(0);
-        pointwiseProduct(firstFactor, relevantFactors,  v);
+        Variable product = pointwiseProduct(firstFactor, relevantFactors,  v);
+        HashMap<String, ArrayList> tempProbs = copy(product.probabilities);
+        HashMap<String, ArrayList> newProbabilities = new HashMap<>();
+        //add the rows where all variables (except the one summing out) are in the same state
+        for (Map.Entry<String, ArrayList> item: product.probabilities.entrySet()) {
+            //loop through all other items in hashmap to see where the other variables are in the same state
+
+            //the first state in the string of states (the hashmap key) is the one for the variable we are summing out
+            //so we can remove it and only compare the states of the other variables
+            String[] state1Labels = item.getKey().split(" ");
+            ArrayList<String> state1List = new ArrayList<>();
+            Collections.addAll(state1List, state1Labels);
+            state1List.remove(0);
+
+            //remove the current item from tempProbs (copy of product.probabilities hashmap)
+            tempProbs.remove(item.getKey(), item.getValue());
+            for (Map.Entry<String, ArrayList> other: tempProbs.entrySet()) {
+
+                String[] state2Labels = other.getKey().split(" ");
+                ArrayList<String> state2List = new ArrayList<>();
+                Collections.addAll(state2List, state2Labels);
+                state2List.remove(0);
+
+                if(state1List.equals(state2List)){
+                    //add the array lists where the states of the vars are equal
+                    ArrayList newProb = add(item.getValue(), other.getValue());
+                    if(!newProbabilities.containsKey(item.getKey())){
+                        String newState = "";
+                        for(String s : state1List){
+                            newState = newState + s + " ";
+                        }
+                        newProbabilities.put(newState, newProb);
+                    }
+                }
+            }
+        }
+        product.probabilities = newProbabilities;
+        f.add(product);
         return f;
+    }
+
+    //helper method to add two array lists together
+    public static ArrayList<Double> add(ArrayList<Double> item, ArrayList<Double> other) {
+        ArrayList<Double> newProb = new ArrayList<>();
+        for (int i = 0; i < item.size(); i++) {
+            newProb.add(item.get(i) + other.get(i));
+        }
+        return newProb;
+    }
+
+    //simple helper method to make a copy of a hashmap
+    public static HashMap<String, ArrayList> copy (HashMap<String, ArrayList> original) {
+        HashMap<String, ArrayList> copy = new HashMap<>();
+        for (Map.Entry<String, ArrayList> entry: original.entrySet()) {
+            copy.put(entry.getKey(), entry.getValue());
+        }
+        return copy;
     }
 
 
