@@ -1,5 +1,6 @@
 package BayesNetwork;
 
+import javax.xml.crypto.dom.DOMCryptoContext;
 import java.util.*;
 
 //creation of the earthquake network for testing purposes
@@ -24,7 +25,7 @@ public class ExactTest {
 
         //create a hashmap for the first prob distribution
         //have to use a new hashmap per distribution because of how Java stores vars
-        HashMap<String, ArrayList> probsHashMap1 = new HashMap<>();
+        HashMap<String, ArrayList<Double>> probsHashMap1 = new HashMap<>();
         probs1.add(0.01);
         probsHashMap1.put("True", probs1);
 
@@ -39,7 +40,7 @@ public class ExactTest {
         //repeat process for all variables
         ArrayList<Double> probs3 = new ArrayList<>();
         ArrayList<Double> probs4 = new ArrayList<>();
-        HashMap<String, ArrayList> probsHashMap2 = new HashMap<>();
+        HashMap<String, ArrayList<Double>> probsHashMap2 = new HashMap<>();
         probs3.add(0.02);
         probsHashMap2.put("True", probs3);
 
@@ -55,7 +56,7 @@ public class ExactTest {
         ArrayList<Double> probs6 = new ArrayList<>();
         ArrayList<Double> probs7 = new ArrayList<>();
         ArrayList<Double> probs8 = new ArrayList<>();
-        HashMap<String, ArrayList> probsHashMap3 = new HashMap<>();
+        HashMap<String, ArrayList<Double>> probsHashMap3 = new HashMap<>();
 
         probs5.add(0.95);
         probs5.add(0.05);
@@ -80,7 +81,7 @@ public class ExactTest {
 
         ArrayList<Double> probs9 = new ArrayList<>();
         ArrayList<Double> probs10 = new ArrayList<>();
-        HashMap<String, ArrayList> probsHashMap4 = new HashMap<>();
+        HashMap<String, ArrayList<Double>> probsHashMap4 = new HashMap<>();
 
         probs9.add(0.9);
         probs9.add(0.1);
@@ -97,7 +98,7 @@ public class ExactTest {
 
         ArrayList<Double> probs11 = new ArrayList<>();
         ArrayList<Double> probs12 = new ArrayList<>();
-        HashMap<String, ArrayList> probsHashMap5 = new HashMap<>();
+        HashMap<String, ArrayList<Double>> probsHashMap5 = new HashMap<>();
 
         probs11.add(0.7);
         probs11.add(0.3);
@@ -126,12 +127,22 @@ public class ExactTest {
             System.out.println("Parents: " + Arrays.toString(v.parents));
             System.out.println("Children: " + Arrays.toString(v.children));
             System.out.println("Probability Distribution: ");
-            for (Map.Entry<String, ArrayList> item: v.probabilities.entrySet()) {
+            for (Map.Entry<String, ArrayList<Double>> item: v.probabilities.entrySet()) {
                 System.out.print(item.getKey() + " ");
                 System.out.println(Arrays.toString(item.getValue().toArray()));
             }
             System.out.println("");
         }
+        ArrayList<String> evidence = new ArrayList<>();
+        evidence.add(johnCalls.name);
+        evidence.add(maryCalls.name);
+
+        ArrayList<String> evidenceStates = new ArrayList<>();
+        evidenceStates.add("True");
+        evidenceStates.add("True");
+
+        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, burglary.name, evidence, evidenceStates );
+
 //        ArrayList<Variable> factors = new ArrayList<>();
 //        factors.add(johnCalls);
 //        factors.add(maryCalls);
@@ -139,11 +150,12 @@ public class ExactTest {
 //        ArrayList<Variable> newFactors = new ArrayList<>();
 //        newFactors = Exact.sumOut(alarm, factors);
 //        for(Variable f: newFactors){
-//            for (Map.Entry<String, ArrayList> item: f.probabilities.entrySet()) {
+//            for (Map.Entry<String, ArrayList<Double>> item: f.probabilities.entrySet()) {
 //                System.out.print(item.getKey() + " ");
 //                System.out.println(Arrays.toString(item.getValue().toArray()));
 //            }
 //        }
+//        HashMap<String, ArrayList<Double>> normalizedFactors = Exact.normalize(newFactors);
 //        System.out.println("Pointwise Product: ");
 //        Variable product = Exact.pointwiseProduct(maryCalls, factors, alarm);
 //        System.out.println(product.name);
