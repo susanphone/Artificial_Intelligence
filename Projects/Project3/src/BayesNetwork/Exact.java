@@ -2,6 +2,7 @@ package BayesNetwork;
 
 import javax.xml.crypto.dom.DOMCryptoContext;
 import java.util.*;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class Exact {
     BayesNet currentNet;
@@ -14,7 +15,7 @@ public class Exact {
         this.observations = observed;
     }
 //    Variable Elimination
-    public ArrayList<Double> variableElimination(BayesNet currentNet, String query, ArrayList<Variable> observed){
+    public ArrayList<Double> variableElimination(BayesNet currentNet, String query, ArrayList<String> evidence, ArrayList<String> evidenceStates){
     // returns double
         ArrayList<Variable> factors = new ArrayList<>();
         ArrayList<Variable> varOrder = new ArrayList<>(); //since these vars are coming from a treemap
@@ -26,11 +27,13 @@ public class Exact {
             varOrder.add(v);
         }
 
+        //make new variables based on the evidence we receive
+        ArrayList<Variable> observed = makeEvidenceFactors(evidence, evidenceStates, currentNet.variables);
+
         //every variable that is not an ancestor of the query variable or an evidence variable is
         //irrelevant to the query
         for(Variable var: varOrder){
-            factors = makeFactors(var, factors);
-
+            factors = makeFactors(var, factors, observed);
             if(!var.equals(query) && !observed.contains(var)){
                 factors = sumOut(var, factors);
             }
@@ -39,6 +42,44 @@ public class Exact {
 //        c = normalize(, observed);
         return c;
     }
+
+    public static ArrayList<Variable> makeEvidenceFactors(ArrayList<String> evidence, ArrayList<String> evidenceStates, ArrayList<Variable> variables) {
+        ArrayList<Variable> evidenceFactors = new ArrayList<>();
+
+        for (int i = 0; i < evidence.size(); i++) {
+            //get the given state
+            String[] states = new String[1];
+            states[0] = evidenceStates.get(i);
+
+            //find the parents and children for the evidence variable
+            //create the probability hashmap
+            for (Variable v: variables) {
+                if(v.name.equals(evidence.get(i))){
+                    String[] parents = v.parents;
+                    String[] children = v.children;
+
+                    //find the position of the state in the variables original state array
+                    int statePos = 0;
+                    for (int j = 0; j < v.states.length; j++) {
+                        if(v.states[j].equals(evidenceStates.get(i))){
+                            statePos = j;
+                        }
+                    }
+                    //create an empty hashmap to store the new probability distribution given the variables known states
+                    HashMap<String, ArrayList> evidenceProbs = new HashMap<>();
+
+                    for (Map.Entry<String, ArrayList> item: v.probabilities.entrySet()) {
+                        ArrayList<Object> prob = new ArrayList<>();
+                        prob.add(item.getValue().get(statePos));
+                        evidenceProbs.put(item.getKey(), prob);
+                    }
+                }
+            }
+
+        }
+        return evidenceFactors;
+    }
+
     /*
      * recursively loop through the relevant factors until you reach the last two in the list and then find the
      * pointwise product of two factors as a time, eventually reaching the final factor that is the pointwise product
@@ -173,30 +214,40 @@ public class Exact {
         return product;
     }
 
-    public ArrayList<Double> normalize(ArrayList<Double> c, String[] e ){
-        int sumP = 0;
+    public HashMap<String, ArrayList<Double>> normalize(HashMap<String, ArrayList<Double>> probabilities){
+        double sumP = 0.0;
+        HashMap<String, ArrayList<Double>> normalizedProbabilities = new HashMap<>();
 
-        for(double p : c){
-            sumP += p;
+        for (Map.Entry<String, ArrayList<Double>> item: probabilities.entrySet()) {
+            for(double p : item.getValue()){
+                sumP += p;
+            }
         }
 
-        ArrayList<Double> normalized_c = new ArrayList<>();
-        int i = 0;
-        for(double p : c){
-            normalized_c.add(i, c.get(i)/sumP);
-            i++;
+        for (Map.Entry<String, ArrayList<Double>> item: probabilities.entrySet()) {
+            ArrayList<Double> normalized_p = new ArrayList<>();
+            for(double p : item.getValue()){
+                normalized_p.add(p/sumP);
+            }
+            normalizedProbabilities.put(item.getKey(), normalized_p);
         }
-        return c;
-
+        return normalizedProbabilities;
     }
 
-    public ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f){
+    public ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f, ArrayList<Variable> e){
 
         //add the probability distribution of var to the list of factors
-        //return the updated list of factors
-
-        f.add(var);
-
+        //if the var is evidence only add what we know about the var to the factors
+        if(!e.contains(var)){
+            f.add(var);
+        }else{
+            for (Variable variable : e) {
+                //have to compare the names because the variables might not share a memory address
+                if(variable.name.equals(var.name)){
+                    f.add(variable);
+                }
+            }
+        }
         return f;
     }
 
