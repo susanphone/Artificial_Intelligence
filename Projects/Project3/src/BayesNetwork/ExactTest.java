@@ -1,6 +1,5 @@
 package BayesNetwork;
 
-import javax.xml.crypto.dom.DOMCryptoContext;
 import java.util.*;
 
 //creation of the earthquake network for testing purposes

@@ -1,9 +1,5 @@
 package BayesNetwork;
-
-import javax.lang.model.type.NullType;
-import javax.xml.crypto.dom.DOMCryptoContext;
 import java.util.*;
-import java.util.concurrent.LinkedBlockingDeque;
 
 public class Exact {
     BayesNet currentNet;
@@ -24,6 +20,7 @@ public class Exact {
         //initialize the query variable, which will be assigned appropriately later
         String[] temp = new String[1];
         Variable queryVar = new Variable(query, temp, temp, temp);
+
         //because of the format of the bif files the current list of variables are in topological order
         //so we can fill in a new arraylist in reverse to get reverse topological order
         //if we were given different files, or a different order to begin with, we could not guarantee this would
@@ -55,34 +52,85 @@ public class Exact {
         return normalizedResult;
     }
 
-    private static Variable finalpointwiseProduct(Variable queryVar, ArrayList<Variable> factors) {
+    public static ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f, ArrayList<Variable> e){
 
-        HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
-
-        for (String state : queryVar.states){
-
-            double queryProb = 0.0;
-
-            for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
-                String[] stateLabels = item.getKey().split(" ");
-                if(stateLabels[0].equals(state)) {
-                    queryProb = item.getValue().get(0);
-                }
-            }
-            for(Variable f : factors){
-                for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
-                    ArrayList<Double> newProbsList = new ArrayList<>();
-                    for(double d : item.getValue()){
-                        double newProb = queryProb * d;
-                        newProbsList.add(newProb);
-                    }
-                    newProbabilities.put(item.getKey(), newProbsList);
+        //add the probability distribution of var to the list of factors
+        //if the var is evidence only add what we know about the var to the factors
+        if(!e.contains(var)){
+            f.add(var);
+        }else{
+            for (Variable variable : e) {
+                //have to compare the names because the variables might not share a memory address
+                if(variable.name.equals(var.name)){
+                    f.add(variable);
                 }
             }
         }
-        Variable finalResult = new Variable(queryVar.name, queryVar.states, queryVar.parents, queryVar.children);
-        finalResult.probabilities = newProbabilities;
-        return finalResult;
+        return f;
+    }
+
+    public static ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
+        //marginalization
+        //go through the factors and marginalize based on the evidence and what is known about the factors
+        //i.e. remove any irrelevant factors
+        ArrayList<Variable> relevantFactors = new ArrayList<>();
+
+        //check what factors interact (are in the Markov blanket) of the current factor we are summing out
+        for (Variable factor : f) {
+            if(Arrays.stream(factor.parents).anyMatch(v.name::equals) || Arrays.stream(factor.children).anyMatch(v.name::equals)){
+                relevantFactors.add(factor);
+            }
+        }
+
+        //remove the relevant factors that we will be combining from the list of all factors
+        for(Variable rf: relevantFactors){
+            f.remove(rf);
+        }
+
+        Variable firstFactor = relevantFactors.remove(0);
+        Variable product = pointwiseProduct(firstFactor, relevantFactors,  v);
+        HashMap<String, ArrayList<Double>> tempProbs = copy(product.probabilities);
+        HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
+        //add the rows where all variables (except the one summing out) are in the same state
+        for (Map.Entry<String, ArrayList<Double>> item: product.probabilities.entrySet()) {
+            //loop through all other items in hashmap to see where the other variables are in the same state
+
+            //the first state in the string of states (the hashmap key) is the one for the variable we are summing out
+            //so we can remove it and only compare the states of the other variables
+            String[] state1Labels = item.getKey().split(" ");
+            ArrayList<String> state1List = new ArrayList<>();
+            Collections.addAll(state1List, state1Labels);
+            state1List.remove(0);
+
+            //remove the current item from tempProbs (copy of product.probabilities hashmap)
+            tempProbs.remove(item.getKey(), item.getValue());
+            for (Map.Entry<String, ArrayList<Double>> other: tempProbs.entrySet()) {
+
+                String[] state2Labels = other.getKey().split(" ");
+                ArrayList<String> state2List = new ArrayList<>();
+                Collections.addAll(state2List, state2Labels);
+                state2List.remove(0);
+
+                if(state1List.equals(state2List)){
+                    //add the array lists where the states of the vars are equal
+                    ArrayList newProb = add(item.getValue(), other.getValue());
+                    if(!newProbabilities.containsKey(item.getKey())){
+                        String newState = "";
+                        for(String s : state1List){
+                            newState = newState + s + " ";
+                        }
+                        newProbabilities.put(newState, newProb);
+                    }
+                }
+            }
+        }
+        if(!newProbabilities.isEmpty()){
+            product.probabilities = newProbabilities;
+        }
+        f.add(product);
+        //and remove the factor for the variable we summed out
+        f.remove(v);
+        return f;
     }
 
     public static ArrayList<Variable> makeEvidenceFactors(ArrayList<String> evidence, ArrayList<String> evidenceStates, ArrayList<Variable> variables) {
@@ -126,6 +174,36 @@ public class Exact {
         return evidenceFactors;
     }
 
+    private static Variable finalpointwiseProduct(Variable queryVar, ArrayList<Variable> factors) {
+
+        HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
+
+        for (String state : queryVar.states){
+
+            double queryProb = 0.0;
+
+            for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
+                String[] stateLabels = item.getKey().split(" ");
+                if(stateLabels[0].equals(state)) {
+                    queryProb = item.getValue().get(0);
+                }
+            }
+            for(Variable f : factors){
+                for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
+                    ArrayList<Double> newProbsList = new ArrayList<>();
+                    for(double d : item.getValue()){
+                        double newProb = queryProb * d;
+                        newProbsList.add(newProb);
+                    }
+                    newProbabilities.put(item.getKey(), newProbsList);
+                }
+            }
+        }
+        Variable finalResult = new Variable(queryVar.name, queryVar.states, queryVar.parents, queryVar.children);
+        finalResult.probabilities = newProbabilities;
+        return finalResult;
+    }
+
     /*
      * recursively loop through the relevant factors until you reach the last two in the list and then find the
      * pointwise product of two factors as a time, eventually reaching the final factor that is the pointwise product
@@ -156,18 +234,6 @@ public class Exact {
             for (String state : f1.states) {
                 if(!states.contains(state)){
                     states.add(state);
-                }
-            }
-            //updating the children
-            for (String child : f1.children) {
-                if(!children.contains(child)){
-                    children.add(child);
-                }
-            }
-            //updating the parents
-            for (String p : f1.parents) {
-                if(!parents.contains(p)){
-                    parents.add(p);
                 }
             }
 
@@ -203,12 +269,6 @@ public class Exact {
                         currVarProbs.addAll(item.getValue());
                     }
                 }
-//                for (Map.Entry<String, ArrayList<Double>> item: v.probabilities.entrySet()) {
-//                    String[] stateLabels = item.getKey().split(" ");
-//                    if(stateLabels[index2].equals(vState)){
-//                        currFactor2Probs.addAll(item.getValue());
-//                    }
-//                }
 
                 for (int i = 0; i < currFactor1Probs.size(); i++) {
                     for (int j = 0; j < currVarProbs.size(); j++) {
@@ -231,7 +291,7 @@ public class Exact {
             Variable f1 = currentFactor;
             Variable f2 = factors.get(0);
 
-            //update the states, parents and children to include everything from the two factors
+            //update the states
             for (String state : f1.states) {
                 if(!states.contains(state)){
                     states.add(state);
@@ -240,28 +300,6 @@ public class Exact {
             for (String state : f2.states) {
                 if(!states.contains(state)){
                     states.add(state);
-                }
-            }
-            //updating the children
-            for (String child : f1.children) {
-                if(!children.contains(child)){
-                    children.add(child);
-                }
-            }
-            for (String child : f2.children) {
-                if(!children.contains(child)){
-                    children.add(child);
-                }
-            }
-            //updating the parents
-            for (String p : f1.parents) {
-                if(!parents.contains(p)){
-                    parents.add(p);
-                }
-            }
-            for (String p : f2.parents) {
-                if(!parents.contains(p)){
-                    parents.add(p);
                 }
             }
 
@@ -360,87 +398,6 @@ public class Exact {
             normalizedProbabilities.put(item.getKey(), normalized_p);
         }
         return normalizedProbabilities;
-    }
-
-    public static ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f, ArrayList<Variable> e){
-
-        //add the probability distribution of var to the list of factors
-        //if the var is evidence only add what we know about the var to the factors
-        if(!e.contains(var)){
-            f.add(var);
-        }else{
-            for (Variable variable : e) {
-                //have to compare the names because the variables might not share a memory address
-                if(variable.name.equals(var.name)){
-                    f.add(variable);
-                }
-            }
-        }
-        return f;
-    }
-
-    public static ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
-        //marginalization
-        //go through the factors and marginalize based on the evidence and what is known about the factors
-        //i.e. remove any irrelevant factors
-        ArrayList<Variable> relevantFactors = new ArrayList<>();
-
-        //check what factors interact (are in the Markov blanket) of the current factor we are summing out
-        for (Variable factor : f) {
-            if(Arrays.stream(factor.parents).anyMatch(v.name::equals) || Arrays.stream(factor.children).anyMatch(v.name::equals)){
-                relevantFactors.add(factor);
-            }
-        }
-
-        //remove the relevant factors that we will be combining from the list of all factors
-        for(Variable rf: relevantFactors){
-            f.remove(rf);
-        }
-
-        Variable firstFactor = relevantFactors.remove(0);
-        Variable product = pointwiseProduct(firstFactor, relevantFactors,  v);
-        HashMap<String, ArrayList<Double>> tempProbs = copy(product.probabilities);
-        HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
-        //add the rows where all variables (except the one summing out) are in the same state
-        for (Map.Entry<String, ArrayList<Double>> item: product.probabilities.entrySet()) {
-            //loop through all other items in hashmap to see where the other variables are in the same state
-
-            //the first state in the string of states (the hashmap key) is the one for the variable we are summing out
-            //so we can remove it and only compare the states of the other variables
-            String[] state1Labels = item.getKey().split(" ");
-            ArrayList<String> state1List = new ArrayList<>();
-            Collections.addAll(state1List, state1Labels);
-            state1List.remove(0);
-
-            //remove the current item from tempProbs (copy of product.probabilities hashmap)
-            tempProbs.remove(item.getKey(), item.getValue());
-            for (Map.Entry<String, ArrayList<Double>> other: tempProbs.entrySet()) {
-
-                String[] state2Labels = other.getKey().split(" ");
-                ArrayList<String> state2List = new ArrayList<>();
-                Collections.addAll(state2List, state2Labels);
-                state2List.remove(0);
-
-                if(state1List.equals(state2List)){
-                    //add the array lists where the states of the vars are equal
-                    ArrayList newProb = add(item.getValue(), other.getValue());
-                    if(!newProbabilities.containsKey(item.getKey())){
-                        String newState = "";
-                        for(String s : state1List){
-                            newState = newState + s + " ";
-                        }
-                        newProbabilities.put(newState, newProb);
-                    }
-                }
-            }
-        }
-        if(!newProbabilities.isEmpty()){
-            product.probabilities = newProbabilities;
-        }
-        f.add(product);
-        //and remove the factor for the variable we summed out
-        f.remove(v);
-        return f;
     }
 
     //helper method to add two array lists together
