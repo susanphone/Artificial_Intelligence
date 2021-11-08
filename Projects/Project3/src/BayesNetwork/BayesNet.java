@@ -37,17 +37,21 @@ public class BayesNet {
 
         while(itr.hasNext()) {
             Map.Entry<String, ArrayList<String>> entry = itr.next();
-            System.out.println("Value = " + entry.getValue());
             ArrayList<String> j = entry.getValue();
             String state = null;
             for (int i = 0; i < j.size(); i++) {
                 System.out.println(j.get(i));
-                state = j.get(0);
-                while (j.get(i).contains("0.*")) {
+                if (j.get(i).startsWith("(")) {
+                    state = j.get(0);
+                    i++;
+                } else {
                     probabilities.add(j.get(i));
                     i++;
                 }
             }
+            probabilitiesMap.put(state, probabilities);
+            state = null;
+            probabilities = new ArrayList<>();
         }
         return probabilitiesMap;
     }
