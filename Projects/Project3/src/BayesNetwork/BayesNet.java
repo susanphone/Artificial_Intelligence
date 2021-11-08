@@ -1,13 +1,8 @@
 package BayesNetwork;
 
-import com.sun.jdi.Value;
-
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BayesNet {
     public String networkName;
@@ -31,18 +26,27 @@ public class BayesNet {
     public String getNetworkName() {
         return networkName;
     }
-    public HashMap setProbabilities(File file) throws FileNotFoundException {
-        HashMap<String, double[]> probabilitiesMap = new HashMap<>();
-        double [] probabilities = new double[0];
+
+    public static HashMap setProbabilities(File file) throws FileNotFoundException {
+        HashMap<String, ArrayList> probabilitiesMap = new HashMap<>();
+        ArrayList<String> probabilities = new ArrayList<>();
         TreeMap vars = Reader.getVariables(file);
         Map probs = Reader.getProbabilities(file, vars);
-        for (Object v: probs.values()) {
-            while (v) {
-                String state = v[0];
-                if (v.equals(type(double))) {
-                    probabilities = probabilities + v;
+        System.out.println(probs.values());
+        Iterator<Map.Entry<String, ArrayList<String>>> itr = probs.entrySet().iterator();
+
+        while(itr.hasNext()) {
+            Map.Entry<String, ArrayList<String>> entry = itr.next();
+            System.out.println("Value = " + entry.getValue());
+            ArrayList<String> j = entry.getValue();
+            String state = null;
+            for (int i = 0; i < j.size(); i++) {
+                System.out.println(j.get(i));
+                state = j.get(0);
+                while (j.get(i).contains("0.*")) {
+                    probabilities.add(j.get(i));
+                    i++;
                 }
-                probabilitiesMap.put(state, probabilities);
             }
         }
         return probabilitiesMap;
