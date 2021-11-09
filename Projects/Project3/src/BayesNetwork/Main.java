@@ -24,8 +24,8 @@ public class Main {
         p = BayesNet.setProbabilities(dat, probs);
         System.out.println(p);
 
-        Map<String, ArrayList<String>> probs = Reader.getProbabilities(file, dat);
-        System.out.println(probs);
+        Map<String, ArrayList<String>> prob = Reader.getProbabilities(data);
+        System.out.println(prob);
 
         //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();

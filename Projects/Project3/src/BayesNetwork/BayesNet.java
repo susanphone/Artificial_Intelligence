@@ -3,9 +3,9 @@ package BayesNetwork;
 import java.util.*;
 
 public class BayesNet {
-    private static ArrayList<Variable> variables;
     public String networkName;
     public double[] properties;
+    public ArrayList<Variable> variables;
 //    public ArrayList<Variable> variables = new ArrayList<Variable>();
 
     public BayesNet(String network, double[] prop, ArrayList var){
