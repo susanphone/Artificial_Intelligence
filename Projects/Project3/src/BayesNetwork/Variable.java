@@ -1,13 +1,18 @@
 package BayesNetwork;
 
 import java.util.HashMap;
-
+import java.util.ArrayList;
 public class Variable {
-    public String states;
-    public HashMap probabilities;
+    public String name;
+    public String[] states;
+    public String[] parents;
+    public String[] children;
+    public HashMap<String, ArrayList<Double>> probabilities = new HashMap<>();
 
-    public Variable(String s, HashMap prob){
+    public Variable(String name, String[] s, String[] p, String[]c){
+        this.name = name;
         this.states = s;
-        this.probabilities = prob;
+        this.parents = p;
+        this.children = c;
     }
 }

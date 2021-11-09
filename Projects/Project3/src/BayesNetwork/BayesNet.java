@@ -1,25 +1,26 @@
 package BayesNetwork;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.*;
 
 public class BayesNet {
     public String networkName;
     public double[] properties;
-    public ArrayList<Variable> variables;
-//    public ArrayList<Variable> variables = new ArrayList<Variable>();
+    public ArrayList<Variable> variables = new ArrayList<Variable>();
 
-    public BayesNet(String network, Map prop, TreeMap var){
+    public BayesNet(String network, double[] prop, ArrayList<Variable> var){
         this.networkName = network;
         this.properties = prop;
         this.variables = var;
     }
 
-    public void setProperties(Map properties) throws FileNotFoundException {
-        File file = new File("alarm.bif");
-        variables = Reader.getVariables(file);
-        Reader.getProbabilities(file, variables);
-    }
-}
+//    public void setProperties(Map properties) throws FileNotFoundException {
+//        File file = new File("alarm.bif");
+//        variables = Reader.getVariables(file);
+//        Reader.getProbabilities(file, variables);
+//    }
+
     public double[] getProperties() {
         return properties;
     }
