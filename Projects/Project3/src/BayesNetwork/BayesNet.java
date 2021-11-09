@@ -50,6 +50,7 @@ public class BayesNet {
                         probabilities.add(j.get(i));
                         i++;
                     }
+                }
                     problemMap.put(state, probabilities);
                     state = null;
                     probabilities = new ArrayList<>();
@@ -59,7 +60,7 @@ public class BayesNet {
                 problemMap = new HashMap<>();
 
             }
-        }
+
             return probabilitiesMap;
         }
     }
