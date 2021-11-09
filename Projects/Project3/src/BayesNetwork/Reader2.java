@@ -160,7 +160,7 @@ public class Reader2 {
                     pc.toString();
                     System.out.println(pc);
                     i++;
-                } else {
+                }
                     String state1 = null;
                     String state2 = null;
                     String state3 = null;
@@ -169,21 +169,21 @@ public class Reader2 {
                         state1 = (String) list.get(i);
                         states.add(state1);
                         i = i + 1;
-                        if (variable.containsValue(list.get(i))) {
-                            state2 = (String) list.get(i);
-                            states.add(state2);
-                            i = i + 1;
-                            if (variable.containsValue(list.get(i))) {
-                                state3 = (String) list.get(i);
-                                states.add(state3);
-                                i = i + 1;
-                                if (variable.containsValue(list.get(i))) {
-                                    state4 = (String) list.get(i);
-                                    states.add(state4);
-                                }
-                            }
-                        }
-                    } else {
+                    }
+                    if (variable.containsValue(list.get(i))) {
+                        state2 = (String) list.get(i);
+                        states.add(state2);
+                        i = i + 1;
+                    }
+                    if (variable.containsValue(list.get(i))) {
+                        state3 = (String) list.get(i);
+                        states.add(state3);
+                        i = i + 1;
+                    }
+                    if (variable.containsValue(list.get(i))) {
+                        state4 = (String) list.get(i);
+                        states.add(state4);
+                    } if (Objects.equals(list.get(i), "\\d")) {
                         double p1 = 0.0;
                         double p2 = 0.0;
                         double p3 = 0.0;
@@ -192,35 +192,33 @@ public class Reader2 {
                             p1 = (Double) list.get(i);
                             numbers.add(p1);
                             i = i + 1;
-                            if (!Objects.equals(list.get(i), "}")) {
-                                p2 = (Double) list.get(i);
-                                numbers.add(p2);
-                                i = i + 1;
-                                if (!Objects.equals(list.get(i), "}")) {
-                                    p3 = (Double) list.get(i);
-                                    numbers.add(p3);
-                                    i = i + 1;
-                                    if (!Objects.equals(list.get(i), "}")) {
-                                        p4 = (Double) list.get(i);
-                                        numbers.add(p4);
-                                    }
-                                }
-                            }
                         }
+                        if (!Objects.equals(list.get(i), "}")) {
+                            p2 = (Double) list.get(i);
+                            numbers.add(p2);
+                            i = i + 1;
+                        }
+                        if (!Objects.equals(list.get(i), "}")) {
+                            p3 = (Double) list.get(i);
+                            numbers.add(p3);
+                            i = i + 1;
+                        }
+                        if (!Objects.equals(list.get(i), "}")) {
+                            p4 = (Double) list.get(i);
+                            numbers.add(p4);
+                        }
+                        System.out.println(states);
+                        System.out.println(numbers);
+                        problem.put(states, numbers);
+                        states = new ArrayList<>();
+                        numbers = new ArrayList<>();
+
                     }
-                    problem.put(states, numbers);
-//                        System.out.println(problem);
-                    states = new ArrayList<>();
-                    numbers = new ArrayList<>();
-
-                }
-
+                probabilities.put(pc.toString(), problem);
+                pc = new ArrayList();
+                problem = new HashMap<>();
             }
-            probabilities.put(pc.toString(), problem);
-            pc = new ArrayList();
-            problem = new HashMap<>();
-//                System.out.println(probabilities);
         }
-        return probabilities;
+            return probabilities;
+        }
     }
-}
