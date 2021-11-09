@@ -50,51 +50,6 @@ public class Reader {
     }
 
     //    create a tree for the probabilities
-    public static Map<String, ArrayList<String>> getProbabilities(File file, TreeMap<String, ArrayList<String>>
-            variables) throws FileNotFoundException, IndexOutOfBoundsException, NullPointerException {
-        Map<String, ArrayList<String>> probabilities = new TreeMap<>();
-        ArrayList<String> list = new ArrayList<String>();
-        String keys = null;
-        String num = null;
-        Scanner bifScanner = new Scanner(file);
-        while (bifScanner.hasNext()) {
-            String item = bifScanner.next();
-            if (!Objects.equals(item, "(") && !Objects.equals(item, ")")) {
-                list.add(item);
-            }
-        }
-
-        int p = 0;
-        for (int i = 0; i < list.size(); i++) {
-            if (Objects.equals(list.get(i), "variable")) {
-                p = i + 1;
-            }
-        }
-        String pc = null;
-        for (int j = p; j < list.size(); j++) {
-            ArrayList<String> prob = new ArrayList<String>();
-            if (variables.containsKey(list.get(j)) || Objects.equals(list.get(j), "|")) {
-                if (Objects.equals(list.get(j), "|") || !Objects.equals(list.get(j), "{")) {
-                    keys = list.get(j);
-                    if (pc == null) {
-                        pc = keys;
-                    } else {
-                        pc = pc + " " + keys;
-                        continue;
-                    }
-                }
-            }
-            if (!(Objects.equals(list.get(j), "}") || Objects.equals(list.get(j), "{"))) {
-                if (!variables.containsKey(list.get(j))) {
-                    do {
-                        num = list.get(j);
-                        prob.add(num);
-                        j++;
-                    } while (!Objects.equals(list.get(j), "}"));
-                    probabilities.put(pc, prob);
-                    pc = null;
-//                    return probabilities;
-
     public static Map<String, ArrayList<String>> getProbabilities(ArrayList list){
         Map<String, ArrayList<String>> probabilities = new TreeMap<>();
         TreeMap variable = getVariables(list);
@@ -136,8 +91,8 @@ public class Reader {
                     values = new ArrayList<>();
                 }
             }
-            j++;
         }
+
         return probabilities;
     }
 }
