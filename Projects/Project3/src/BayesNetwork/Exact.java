@@ -114,6 +114,8 @@ public class Exact {
             tempProbs.remove(item.getKey(), item.getValue());
             for (Map.Entry<String, ArrayList<Double>> other: tempProbs.entrySet()) {
 
+                //get the states of the other variable in the list
+                //and remove the first state which is the variable we are summing out
                 String[] state2Labels = other.getKey().split(" ");
                 ArrayList<String> state2List = new ArrayList<>();
                 Collections.addAll(state2List, state2Labels);
@@ -132,16 +134,22 @@ public class Exact {
                 }
             }
         }
+        //if nothing changed then return the original probabilities
         if(!newProbabilities.isEmpty()){
             product.probabilities = newProbabilities;
         }
+        //add the new factor to the list
         f.add(product);
+
         //and remove the factor for the variable we summed out
         f.remove(v);
+
+        //return the new list of factors
         return f;
     }
 
     public static ArrayList<Variable> makeEvidenceFactors(ArrayList<String> evidence, ArrayList<String> evidenceStates, ArrayList<Variable> variables) {
+        //update the evidence variables to only include information for the appropriate states
         ArrayList<Variable> evidenceFactors = new ArrayList<>();
 
         for (int i = 0; i < evidence.size(); i++) {
@@ -163,14 +171,17 @@ public class Exact {
                             statePos = j;
                         }
                     }
+
                     //create an empty hashmap to store the new probability distribution given the variables known states
                     HashMap<String, ArrayList<Double>> evidenceProbs = new HashMap<>();
 
+                    //add the appropriate probability distribution given the state
                     for (Map.Entry<String, ArrayList<Double>> item: v.probabilities.entrySet()) {
                         ArrayList<Double> prob = new ArrayList<>();
                         prob.add(item.getValue().get(statePos));
                         evidenceProbs.put(item.getKey(), prob);
                     }
+                    //create the new variable to add to factors
                     Variable currVar = v;
                     currVar.probabilities = evidenceProbs;
                     currVar.states = states;
@@ -183,19 +194,20 @@ public class Exact {
     }
 
     private static Variable finalpointwiseProduct(Variable queryVar, ArrayList<Variable> factors) {
-
+        //calculate the final pointwise product between the resulting matrix and the query variable
         HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
 
+        //loop through the states of the query var
         for (String state : queryVar.states){
-
+            //determine resulting probability for the query variable given the evidence
             double queryProb = 0.0;
-
             for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
                 String[] stateLabels = item.getKey().split(" ");
                 if(stateLabels[0].equals(state)) {
                     queryProb = item.getValue().get(0);
                 }
             }
+            //multiply by the resulting matrix
             for(Variable f : factors){
                 for (Map.Entry<String, ArrayList<Double>> item: queryVar.probabilities.entrySet()) {
                     ArrayList<Double> newProbsList = new ArrayList<>();
@@ -207,6 +219,7 @@ public class Exact {
                 }
             }
         }
+        //return the final probability distribution
         Variable finalResult = new Variable(queryVar.name, queryVar.states, queryVar.parents, queryVar.children);
         finalResult.probabilities = newProbabilities;
         return finalResult;
@@ -214,22 +227,18 @@ public class Exact {
 
     /*
      * recursively loop through the relevant factors until you reach the last two in the list and then find the
-     * pointwise product of two factors as a time, eventually reaching the final factor that is the pointwise product
+     * pointwise product of two factors at a time, eventually reaching the final factor that is the pointwise product
      * of all the factors
      */
     public static Variable pointwiseProduct(Variable currentFactor, ArrayList<Variable> factors, Variable v){
-        //properties for the Variable that will be returned
+        //properties for the variable that will be returned
         String name = v.name;
-        //have to temporarily change states, parents, and children arrays to arraylists so we can easily add to them
+
+        //change states, parents, and children arrays to arraylists so we can easily add to them
         ArrayList<String> states = new ArrayList<>();
         Collections.addAll(states, v.states);
 
-        ArrayList<String> parents = new ArrayList<>();
-        Collections.addAll(parents, v.parents);
-
-        ArrayList<String> children = new ArrayList<>();
-        Collections.addAll(children, v.children);
-
+        //create a hashmap to store the new probability distribution for the new factor
         HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
 
         //if there is only one factor and the variable itself to sum out,
@@ -278,6 +287,7 @@ public class Exact {
                     }
                 }
 
+                //go through and multiply corresponding probabilities
                 for (int i = 0; i < currFactor1Probs.size(); i++) {
                     for (int j = 0; j < currVarProbs.size(); j++) {
                         double newProb = currFactor1Probs.get(i) * currVarProbs.get(j);
@@ -295,11 +305,12 @@ public class Exact {
                 currVarProbs.clear();
             }
         }
+        //if we have only one factor left in the list, then take the pointwise product of the last two factors
         else if(factors.size() == 1){
             Variable f1 = currentFactor;
             Variable f2 = factors.get(0);
 
-            //update the states
+            //update the states to include all possible states
             for (String state : f1.states) {
                 if(!states.contains(state)){
                     states.add(state);
@@ -330,6 +341,7 @@ public class Exact {
 
             //get all the possible states for the shared variable
             String[] vStates = v.states;
+            //create probability lists for each factor
             ArrayList<Double> currFactor1Probs = new ArrayList<>();
             ArrayList<Double> currFactor2Probs = new ArrayList<>();
 
@@ -349,6 +361,7 @@ public class Exact {
                     }
                 }
 
+                //multiply corresponding probabilities
                 for (int i = 0; i < currFactor1Probs.size(); i++) {
                     for (int j = 0; j < currFactor2Probs.size(); j++) {
                         double newProb = currFactor1Probs.get(i) * currFactor2Probs.get(j);
@@ -366,38 +379,35 @@ public class Exact {
                 currFactor2Probs.clear();
             }
         }
+        //otherwise recursively call pointwise product on the list
         else{
             Variable nextFactor = factors.remove(0);
             pointwiseProduct(nextFactor, factors, v);
         }
 
-        //convert states, parents, and children back to arrays to create a new Variable
+        //convert states back to array to create a new Variable
         String[] statesArray = new String[states.size()];
         statesArray = states.toArray(statesArray);
 
-        String[] parentsArray = new String[parents.size()];
-        parentsArray = parents.toArray(parentsArray);
-
-        String[] childrenArray = new String[children.size()];
-        childrenArray = children.toArray(childrenArray);
-
-        Variable product = new Variable(name, statesArray, parentsArray, childrenArray);
+        Variable product = new Variable(name, statesArray, v.parents, v.children);
         product.probabilities = newProbabilities;
 
         return product;
     }
 
     public static HashMap<String, ArrayList<Double>> normalize(Variable factor){
+        //normalize the probability distribution for the given variable
+
         HashMap<String, ArrayList<Double>> normalizedProbabilities = new HashMap<>();
-
         double sumP = 0.0;
-
+        //sum all the probabilities in the distribution
         for (Map.Entry<String, ArrayList<Double>> item: factor.probabilities.entrySet()) {
             for(double p : item.getValue()){
                 sumP += p;
             }
         }
 
+        //divide each probability in the distribution by the sum to get everything to sum to 1
         for (Map.Entry<String, ArrayList<Double>> item: factor.probabilities.entrySet()) {
             ArrayList<Double> normalized_p = new ArrayList<>();
             for(double p : item.getValue()){
