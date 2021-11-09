@@ -10,33 +10,27 @@ public class Reader {
     public static ArrayList<String> cleanUpFile(File file) throws FileNotFoundException {
         Scanner bifScanner = new Scanner(file);
         ArrayList<String> list = new ArrayList<String>();
-        String line;
-        while (bifScanner.hasNextLine()) {
-            line = bifScanner.nextLine();
-            list.add(line);
+        while (bifScanner.hasNext()) {
+            String item = bifScanner.next();
+            if (!Objects.equals(item, ")") && !Objects.equals(item, "(")
+                    && !Objects.equals(item, "|") && !Objects.equals(item, "]")
+                    && !Objects.equals(item, "[")) {
+                list.add(item);
+            }
         }
-
         return list;
     }
 
     //    create a tree for the variables
-    public static TreeMap<String, ArrayList<String>> getVariables(File file) throws FileNotFoundException {
+    public static TreeMap<String, ArrayList<String>> getVariables(ArrayList list) {
         TreeMap<String, ArrayList<String>> variables = new TreeMap<>();
-        Scanner bifScanner = new Scanner(file);
-        ArrayList<String> list = new ArrayList<String>();
-        while (bifScanner.hasNext()) {
-            String bif = bifScanner.next();
-            if (!Objects.equals(bif, "]") && !Objects.equals(bif, "[")) {
-                list.add(bif);
-            }
-        }
         String k = null;
         String v;
         ArrayList keys = new ArrayList<>();
         for (int i = 0; i < list.size(); i++) {
             if (Objects.equals(list.get(i), "variable")) {
                 if (!Objects.equals(list.get(i + 1), "")) {
-                    k = list.get(i + 1);
+                    k = (String) list.get(i + 1);
                     keys.add(k);
                 }
             }
@@ -44,7 +38,7 @@ public class Reader {
                 ArrayList<String> vs = new ArrayList<String>();
                 i = i + 3;
                 do {
-                    v = list.get(i);
+                    v = (String) list.get(i);
                     vs.add(v);
                     i++;
                 } while (!Objects.equals(list.get(i), "};"));
@@ -56,31 +50,22 @@ public class Reader {
     }
 
     //    create a tree for the probabilities
-    public static Map<String, ArrayList<String>> getProbabilities(File file, TreeMap variable) throws FileNotFoundException {
+    public static Map<String, ArrayList<String>> getProbabilities(ArrayList list){
         Map<String, ArrayList<String>> probabilities = new TreeMap<>();
-        ArrayList<String> list = new ArrayList<String>();
-        String keys = null;
-        String num = null;
-        Scanner bifScanner = new Scanner(file);
-        while (bifScanner.hasNext()) {
-            String item = bifScanner.next();
-            if (!Objects.equals(item, ")") && !Objects.equals(item, "(")
-                    && !Objects.equals(item, "|")) {
-                list.add(item);
-            }
-        }
+        TreeMap variable = getVariables(list);
+
         String child = null;
         String parent = null;
         ArrayList<String> values = new ArrayList<String>();
         for (int i = 0; i < list.size(); i++) {
             if (Objects.equals(list.get(i), "probability")) {
                 i = i + 1;
-                child = list.get(i);
+                child = (String) list.get(i);
                 if (variable.containsKey(list.get(i + 1))) {
                     i = i + 1;
                     while (!Objects.equals(list.get(i), "{")) {
                         if (parent == null) {
-                            parent = list.get(i);
+                            parent = (String) list.get(i);
                         } else {
                             parent = parent + " " + list.get(i);
                         }
@@ -96,7 +81,7 @@ public class Reader {
                 if (Objects.equals(list.get(i), "{")) {
                     i = i + 1;
                     while (!Objects.equals(list.get(i), "}")) {
-                        values.add(list.get(i));
+                        values.add((String) list.get(i));
                         i++;
                     }
                     probabilities.put(cp, values);
