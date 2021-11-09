@@ -32,6 +32,17 @@ public class Main {
                 System.out.println(o);
             }
         }
+        TreeMap<String, ArrayList<String>> dat = Reader.getVariables(data);
+        System.out.println(dat);
+        Map<String, ArrayList<String>> probs = Reader.getProbabilities(data);
+        System.out.println(probs.values());
+        Hashtable<String, Hashtable> p = new Hashtable<>();
+        p = BayesNet.setProbabilities(dat, probs);
+        System.out.println(p);
+
+        Map<String, ArrayList<String>> prob = Reader.getProbabilities(data);
+        System.out.println(prob);
+
         //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();
 

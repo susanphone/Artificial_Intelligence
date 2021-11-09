@@ -1,11 +1,13 @@
 package BayesNetwork;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Approximate {
     String name;
     double[] prop;
-    HashMap prob;
+    ArrayList prob;
     BayesNet currentNet = new BayesNet(null, null, null);
     String query;
     String[] observations;
