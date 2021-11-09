@@ -39,6 +39,7 @@ public class Exact {
         for(Variable var: varOrder){
             if(var.name.equals(query)){
                 queryVar = var;
+                break;
             }else{
                 factors = makeFactors(var, factors, observed);
                 if(!var.name.equals(query) && !observed.contains(var)){
@@ -49,7 +50,16 @@ public class Exact {
 
         }
         //calculate the final pointwise product of the query variable and the final matrix
-        Variable result = finalpointwiseProduct(queryVar, factors);
+        //if there is only one factor in the factor list, we use the finalPointwiseProduct method
+        //otherwise we use the recursive pointwise product on all the factors in the list
+        Variable result = new Variable(queryVar.name, temp, temp, temp);
+        if(factors.size() > 1){
+            Variable currFactor = factors.get(0);
+            factors.remove(0);
+            result = pointwiseProduct(currFactor, factors, queryVar);
+        }else{
+            result = finalpointwiseProduct(queryVar, factors);
+        }
 
         //normalize the resulting variable's probability distribution
         HashMap<String, ArrayList<Double>>  normalizedResult = normalize(result);
