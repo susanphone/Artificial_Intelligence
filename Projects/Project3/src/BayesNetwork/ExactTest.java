@@ -1,13 +1,16 @@
 package BayesNetwork;
 
-import javax.xml.crypto.dom.DOMCryptoContext;
 import java.util.*;
 
 //creation of the earthquake network for testing purposes
 //reference the earthquake.bif file
 public class ExactTest {
 
-    public static void main(String[] args) {
+    public void Exact(){
+
+    }
+
+    public static BayesNet returnEarthquakeNet() {
 
         //create the properties array for the BayesNet
         //properties are not really needed
@@ -121,47 +124,7 @@ public class ExactTest {
 
         //create a BayesNet object out of the variables
         BayesNet earthquake = new BayesNet("earthquake", properties, variables);
-        System.out.println("Properties: " + Arrays.toString(properties));
-        for (Variable v : variables) {
-            System.out.println(v.name);
-            System.out.println("Parents: " + Arrays.toString(v.parents));
-            System.out.println("Children: " + Arrays.toString(v.children));
-            System.out.println("Probability Distribution: ");
-            for (Map.Entry<String, ArrayList<Double>> item: v.probabilities.entrySet()) {
-                System.out.print(item.getKey() + " ");
-                System.out.println(Arrays.toString(item.getValue().toArray()));
-            }
-            System.out.println("");
-        }
-        ArrayList<String> evidence = new ArrayList<>();
-        evidence.add(johnCalls.name);
-        evidence.add(maryCalls.name);
 
-        ArrayList<String> evidenceStates = new ArrayList<>();
-        evidenceStates.add("True");
-        evidenceStates.add("True");
-
-        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, burglary.name, evidence, evidenceStates );
-
-//        ArrayList<Variable> factors = new ArrayList<>();
-//        factors.add(johnCalls);
-//        factors.add(maryCalls);
-//        System.out.println("Summing Out Alarm");
-//        ArrayList<Variable> newFactors = new ArrayList<>();
-//        newFactors = Exact.sumOut(alarm, factors);
-//        for(Variable f: newFactors){
-//            for (Map.Entry<String, ArrayList<Double>> item: f.probabilities.entrySet()) {
-//                System.out.print(item.getKey() + " ");
-//                System.out.println(Arrays.toString(item.getValue().toArray()));
-//            }
-//        }
-//        HashMap<String, ArrayList<Double>> normalizedFactors = Exact.normalize(newFactors);
-//        System.out.println("Pointwise Product: ");
-//        Variable product = Exact.pointwiseProduct(maryCalls, factors, alarm);
-//        System.out.println(product.name);
-//        for (Map.Entry<String, ArrayList> item: product.probabilities.entrySet()) {
-//            System.out.print(item.getKey() + " ");
-//            System.out.println(Arrays.toString(item.getValue().toArray()));
-//        }
+    return earthquake;
     }
 }

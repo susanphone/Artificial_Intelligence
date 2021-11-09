@@ -1,14 +1,12 @@
 package BayesNetwork;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.util.Map;
-import java.util.TreeMap;
+import java.util.*;
 
 public class BayesNet {
-    String networkName;
-    Map properties;
-    TreeMap variables = new TreeMap();
+    public String networkName;
+    public double[] properties;
+    public ArrayList<Variable> variables;
+//    public ArrayList<Variable> variables = new ArrayList<Variable>();
 
     public BayesNet(String network, Map prop, TreeMap var){
         this.networkName = network;
@@ -22,3 +20,53 @@ public class BayesNet {
         Reader.getProbabilities(file, variables);
     }
 }
+    public double[] getProperties() {
+        return properties;
+    }
+
+    public ArrayList<Variable> getVariables() {
+        return variables;
+    }
+
+    public String getNetworkName() {
+        return networkName;
+    }
+
+    public static Hashtable setProbabilities(TreeMap vars, Map probs) {
+        HashMap<String, ArrayList> problemMap = new HashMap<>();
+        Hashtable<String, HashMap<String, ArrayList>> probabilitiesMap = new Hashtable<>();
+        ArrayList<String> probabilities = new ArrayList<>();
+        System.out.println(probs.values());
+        Iterator<Map.Entry<String, ArrayList<String>>> itr = probs.entrySet().iterator();
+        Set k = probs.keySet();
+        while (itr.hasNext()) {
+            Object key = null;
+            for (Object s: k) {
+                key = s;
+                System.out.println(key);
+                Map.Entry<String, ArrayList<String>> entry = itr.next();
+                ArrayList<String> j = entry.getValue();
+                String state = null;
+                for (int i = 0; i < j.size(); i++) {
+                    System.out.println(j.get(i));
+                    if (j.get(i).startsWith("(")) {
+                        state = j.get(i);
+                        i++;
+                    } else {
+                        probabilities.add(j.get(i));
+                        i++;
+                    }
+                }
+                    problemMap.put(state, probabilities);
+                    state = null;
+                    probabilities = new ArrayList<>();
+                    System.out.println(problemMap);
+                }
+                probabilitiesMap.put((String) key, problemMap);
+                problemMap = new HashMap<>();
+
+            }
+
+            return probabilitiesMap;
+        }
+    }

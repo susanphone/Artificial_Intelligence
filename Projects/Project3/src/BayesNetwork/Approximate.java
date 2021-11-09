@@ -1,8 +1,6 @@
 package BayesNetwork;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Random;
+import java.lang.reflect.Array;
 
 public class Approximate {
     
@@ -80,7 +78,18 @@ public class Approximate {
             }
             System.out.println();
         }
+    String name;
+    double[] prop;
+    ArrayList prob;
+    BayesNet currentNet = new BayesNet(null, null, null);
+    String query;
+    String[] observations;
 
+
+    public Approximate(BayesNet currentNet, String query, String[] observed){
+        this.currentNet = new BayesNet(name, prop, prob);
+        this.query = query;
+        this.observations = observed;
     }
     
     //Returns the probabilities of each state of a variable
