@@ -24,19 +24,10 @@ public class Main {
         Map<String, ArrayList<String>> probs = Reader.getProbabilities(file, dat);
         System.out.println(probs);
 
+        //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();
 
-        for (Variable v : earthquake.variables) {
-            System.out.println(v.name);
-            System.out.println("Parents: " + Arrays.toString(v.parents));
-            System.out.println("Children: " + Arrays.toString(v.children));
-            System.out.println("Probability Distribution: ");
-            for (Map.Entry<String, ArrayList<Double>> item: v.probabilities.entrySet()) {
-                System.out.print(item.getKey() + " ");
-                System.out.println(Arrays.toString(item.getValue().toArray()));
-            }
-            System.out.println("");
-        }
+        //given the evidence that John and Mary both called
         ArrayList<String> evidence = new ArrayList<>();
         evidence.add("JohnCalls");
         evidence.add("MaryCalls");
@@ -45,8 +36,14 @@ public class Main {
         evidenceStates.add("True");
         evidenceStates.add("True");
 
-        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "burglary", evidence, evidenceStates );
-
+        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Burglary", evidence, evidenceStates );
+        for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){
+            System.out.print(item.getKey() + " ");
+            for (double d : item.getValue()) {
+                System.out.print(d);
+            }
+            System.out.println("");
+        }
     }
 
 }

@@ -4,7 +4,7 @@ import java.util.*;
 public class Exact {
     BayesNet currentNet;
     Variable query;
-    ArrayList<Variable> observations;
+    ArrayList<Variable> observations; //evidence
 
     public Exact(BayesNet currNet, Variable q, ArrayList<Variable> observed){
         this.currentNet = currNet;
@@ -14,6 +14,7 @@ public class Exact {
 
     public static HashMap<String, ArrayList<Double>> variableElimination(BayesNet currentNet, String query, ArrayList<String> evidence, ArrayList<String> evidenceStates){
 
+        //create a list to store the factors & to order the variables
         ArrayList<Variable> factors = new ArrayList<>();
         ArrayList<Variable> varOrder = new ArrayList<>();
 
@@ -30,10 +31,11 @@ public class Exact {
         }
 
         //make factors based on the evidence variables we receive, which will later be added to the factors list
+        //this allows us to replace the previous variable with new attributes based on what state we know it is in
         ArrayList<Variable> observed = makeEvidenceFactors(evidence, evidenceStates, currentNet.variables);
 
-        //every variable that is not an ancestor of the query variable or an evidence variable is
-        //irrelevant to the query
+        //evaluate every variable, and if it is a hidden variable we sum it out
+        //if it is not the query variable then add to the list of factors
         for(Variable var: varOrder){
             if(var.name.equals(query)){
                 queryVar = var;
@@ -46,14 +48,16 @@ public class Exact {
 
 
         }
+        //calculate the final pointwise product of the query variable and the final matrix
         Variable result = finalpointwiseProduct(queryVar, factors);
-        HashMap<String, ArrayList<Double>>  normalizedResult = new HashMap<>();
-        normalizedResult = normalize(result);
+
+        //normalize the resulting variable's probability distribution
+        HashMap<String, ArrayList<Double>>  normalizedResult = normalize(result);
+
         return normalizedResult;
     }
 
     public static ArrayList<Variable> makeFactors(Variable var, ArrayList<Variable> f, ArrayList<Variable> e){
-
         //add the probability distribution of var to the list of factors
         //if the var is evidence only add what we know about the var to the factors
         if(!e.contains(var)){
@@ -72,7 +76,8 @@ public class Exact {
     public static ArrayList<Variable> sumOut(Variable v, ArrayList<Variable> f){
         //marginalization
         //go through the factors and marginalize based on the evidence and what is known about the factors
-        //i.e. remove any irrelevant factors
+
+        //start by creating a list of factors that are relevant to the variable we are summing out
         ArrayList<Variable> relevantFactors = new ArrayList<>();
 
         //check what factors interact (are in the Markov blanket) of the current factor we are summing out
@@ -87,10 +92,13 @@ public class Exact {
             f.remove(rf);
         }
 
+        //calculate the pointwise product of all the relevant factors
         Variable firstFactor = relevantFactors.remove(0);
         Variable product = pointwiseProduct(firstFactor, relevantFactors,  v);
+        
         HashMap<String, ArrayList<Double>> tempProbs = copy(product.probabilities);
         HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
+
         //add the rows where all variables (except the one summing out) are in the same state
         for (Map.Entry<String, ArrayList<Double>> item: product.probabilities.entrySet()) {
             //loop through all other items in hashmap to see where the other variables are in the same state
