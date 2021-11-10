@@ -11,12 +11,6 @@ public class BayesNet {
         this.variables = var;
     }
 
-//    public void setProperties(Map properties) throws FileNotFoundException {
-//        File file = new File("alarm.bif");
-//        variables = Reader.getVariables(file);
-//        Reader.getProbabilities(file, variables);
-//    }
-
     public ArrayList<Variable> getVariables() {
         return variables;
     }

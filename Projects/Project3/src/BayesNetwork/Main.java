@@ -22,8 +22,9 @@ public class Main {
         // get a treemap of variables, keyed by name
         var variables = reader.getVariables();
 
-        BayesNet net = new BayesNet("alarm", new ArrayList<>(variables.values()));
-
+        BayesNet alarm = new BayesNet("alarm", new ArrayList<Variable>(variables.values()));
+//        Exact test = new Exact(alarm, "alarm", variables.keySet(), variables.values());
+        Approximate test2 = new Approximate();
         //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();
 
