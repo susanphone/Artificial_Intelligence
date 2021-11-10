@@ -12,10 +12,6 @@ public class ExactTest {
 
     public static BayesNet returnEarthquakeNet() {
 
-        //create the properties array for the BayesNet
-        //properties are not really needed
-        double[] properties = new double[] {5.0, 4.0, 10.0, 1.60, 2.0, 2.0};
-
         //create an empty Array to store all the variable objects
         ArrayList<Variable> variables = new ArrayList<>();
 
@@ -123,7 +119,7 @@ public class ExactTest {
         variables.add(maryCalls);
 
         //create a BayesNet object out of the variables
-        BayesNet earthquake = new BayesNet("earthquake", properties, variables);
+        BayesNet earthquake = new BayesNet("earthquake", variables);
 
     return earthquake;
     }

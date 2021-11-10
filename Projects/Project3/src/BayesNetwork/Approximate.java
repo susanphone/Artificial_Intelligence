@@ -80,9 +80,8 @@ public class Approximate {
             System.out.println();
         }
         String name;
-        double[] prop;
         ArrayList prob;
-        BayesNet currentNet = new BayesNet(null, null, null);
+        BayesNet currentNet = new BayesNet(null, null);
         String query;
         String[] observations;
 

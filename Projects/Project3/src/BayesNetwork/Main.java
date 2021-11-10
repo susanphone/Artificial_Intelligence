@@ -12,36 +12,17 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File("alarm.bif");
         ArrayList data;
-        data = Reader.cleanUpFile(file);
 
+        // Open a reader
+        Reader reader =  new Reader(file);
 
-//        System.out.println(data);
-////        String d  = Arrays.toString(data);
-////        String[] str = d.split(" ");
-////        System.out.println(Arrays.toString(str));
-//        TreeMap<String, ArrayList<String>> dat = Reader.getVariables(file);
-//        System.out.println(dat);
-//        Map<String, ArrayList<String>> probs = Reader.getProbabilities(file, dat);
-//        System.out.println(probs);
+        // Load the file, and remove some unwanted cruft
+        reader.loadFile();
 
-//        HashMap<String, ArrayList> testMap = BayesNet.setProbabilities(file);
-//        for (Map.Entry<String, ArrayList> item: testMap.entrySet()){
-//            System.out.println("key");
-//            System.out.println(item.getKey());
-//            for(Object o: item.getValue()){
-//                System.out.println(o);
-//            }
-//        }
-//        TreeMap<String, ArrayList<String>> dat = Reader.getVariables(data);
-//        System.out.println(dat);
-//        Map<String, ArrayList<String>> probs = Reader.getProbabilities(data);
-//        System.out.println(probs.values());
-//        Hashtable<String, Hashtable> p = new Hashtable<>();
-//        p = BayesNet.setProbabilities(dat, probs);
-//        System.out.println(p);
-//
-//        Map<String, ArrayList<String>> prob = Reader.getProbabilities(data);
-//        System.out.println(prob);
+        // get a treemap of variables, keyed by name
+        var variables = reader.getVariables();
+
+        BayesNet net = new BayesNet("alarm", new ArrayList<>(variables.values()));
 
         //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();
