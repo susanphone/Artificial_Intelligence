@@ -26,13 +26,29 @@ public class Exact {
         //so we can fill in a new arraylist in reverse to get reverse topological order
         //if we were given different files, or a different order to begin with, we could not guarantee this would
         //produce a list in reverse topological order, so it would become more computationally expensive
+
+        //printing for video
+        System.out.println("Reverse Topologically Sorted Variable list: ");
         for (int i = currentNet.variables.size() - 1; i >= 0 ; i--) {
             varOrder.add(currentNet.variables.get(i));
+            System.out.print(currentNet.variables.get(i).name + " ");
         }
-
+        System.out.println();
+        System.out.println();
         //make factors based on the evidence variables we receive, which will later be added to the factors list
         //this allows us to replace the previous variable with new attributes based on what state we know it is in
         ArrayList<Variable> observed = makeEvidenceFactors(evidence, evidenceStates, currentNet.variables);
+
+        //printing for evidence
+        System.out.println("Evidence factors and current state:");
+        for(Variable v : observed){
+            System.out.print(v.name);
+            for (String s : v.states){
+                System.out.print(" " + s);
+            }
+            System.out.println();
+        }
+        System.out.println();
 
         //evaluate every variable, and if it is a hidden variable we sum it out
         //if it is not the query variable then add to the list of factors
