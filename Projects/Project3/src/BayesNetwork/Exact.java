@@ -54,8 +54,7 @@ public class Exact {
         //otherwise we use the recursive pointwise product on all the factors in the list
         Variable result = new Variable(queryVar.name, temp, temp, temp);
         if(factors.size() > 1){
-            Variable currFactor = factors.get(0);
-            factors.remove(0);
+            Variable currFactor = factors.remove(0);
             result = pointwiseProduct(currFactor, factors, queryVar);
         }else{
             result = finalpointwiseProduct(queryVar, factors);

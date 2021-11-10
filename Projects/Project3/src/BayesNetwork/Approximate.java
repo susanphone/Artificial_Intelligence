@@ -79,11 +79,6 @@ public class Approximate {
             }
             System.out.println();
         }
-        String name;
-        ArrayList prob;
-        BayesNet currentNet = new BayesNet(null, null);
-        String query;
-        String[] observations;
 
     }
     
@@ -91,7 +86,7 @@ public class Approximate {
     static public double[] probability(BayesNet bn, Variable var, String[] bn_state){
         //Used to calculate numerator of probability equation for each variable state
         Double[] numerators = new Double[var.states.length];
-        
+
         //Calculates the numerator of the probability equation for each variable state
         for(int i = 0; i < numerators.length; i++){
             //Stores values of numerator to later be multiplied together
@@ -109,6 +104,7 @@ public class Approximate {
             
             //If there are parents of the current variable
             else{
+                
                 //Gets state of each parent, adds it to string
                 String parent_states = "";
                 for(int j = 0; j < var_parents.length; j++){
@@ -125,6 +121,7 @@ public class Approximate {
                 }
                 
                 multiplicants.add(var.probabilities.get(parent_states).get(i));
+                //System.out.println("  " + var.probabilities.get(parent_states).get(i));
             }
             
             //Children
@@ -137,7 +134,15 @@ public class Approximate {
                 String child_parent_states = "";
                 for(int j = 0; j < child_parents.length; j++){
                     for(int k = 0; k < bn.variables.size(); k++){
-                        if(bn.variables.get(k).name.equals(child_parents[j].name)){
+                        if(bn.variables.get(k).name.equals(var.name) && bn.variables.get(k).name.equals(child_parents[j].name)){
+                            if(child_parent_states.equals("")){
+                                child_parent_states = child_parent_states.concat(var.states[i]);
+                            }
+                            else{
+                                child_parent_states = child_parent_states.concat(" " + var.states[i]);
+                            }
+                        }
+                        else if(bn.variables.get(k).name.equals(child_parents[j].name)){
                             if(child_parent_states.equals("")){
                                 child_parent_states = child_parent_states.concat(bn_state[k]);
                             }
@@ -147,22 +152,28 @@ public class Approximate {
                         }
                     }
                 }
-                
-                int current_child_state_index = 0;
+
+                int current_child_index = 0;
                 for(int j = 0; j < bn.variables.size(); j++){
                     if(bn.variables.get(j).name.equals(current_child.name)){
+                        current_child_index = j;
+                    }
+                }
+                
+                int current_child_state_index = 0;
+                for(int j = 0; j < current_child.states.length; j++){
+                    if(current_child.states[j].equals(bn_state[current_child_index])){
                         current_child_state_index = j;
                     }
                 }
+                /*
+                System.out.println(current_child.name);
+                System.out.println(current_child.states[current_child_state_index]);
+                System.out.println(child_parent_states);
+                System.out.println(current_child.probabilities.get(child_parent_states));
+                System.out.println(current_child.probabilities.get(child_parent_states).get(current_child_state_index));*/
                 
-                int other_childP_state_index = 0;
-                for(int j = 0; j < current_child.states.length; j++){
-                    if(current_child.states[j].equals(bn_state[current_child_state_index])){
-                        other_childP_state_index = j;
-                    }
-                }
-
-                multiplicants.add(current_child.probabilities.get(child_parent_states).get(other_childP_state_index));
+                multiplicants.add(current_child.probabilities.get(child_parent_states).get(current_child_state_index)); 
             }
             
             double product = 1;
@@ -178,7 +189,7 @@ public class Approximate {
         for(double num : numerators){
             sum += num;
         }
-       
+        
         for(int i = 0; i < probabilities.length; i++){
             probabilities[i] = numerators[i]/sum;
         }

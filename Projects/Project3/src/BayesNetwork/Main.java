@@ -34,8 +34,8 @@ public class Main {
         evidence.add("MaryCalls");
 
         ArrayList<String> evidenceStates = new ArrayList<>();
-        evidenceStates.add("False");
-        evidenceStates.add("False");
+        evidenceStates.add("True");
+        evidenceStates.add("True");
 
         HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Alarm", evidence, evidenceStates );
         for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){
