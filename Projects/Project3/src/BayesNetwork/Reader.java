@@ -44,13 +44,13 @@ public class Reader {
         for (int i = 0; i < rawDataset.size(); i++) {
             // Add variables
             if (rawDataset.get(i).equals(varKey)) {
-                var name = rawDataset.get(i+1);
+                var name = rawDataset.get(i + 1);
                 ArrayList<String> domains = new ArrayList<>();
 
                 // Jog forward to the start of the domains
                 i += 7;
                 String curWord = rawDataset.get(i);
-                while(!curWord.equals("};")) {
+                while (!curWord.equals("};")) {
                     curWord = curWord.replace(",", "");
                     domains.add(curWord);
 
@@ -89,6 +89,7 @@ public class Reader {
                     parent.addChild(child);
                 }
 
+
                 // Adds parent relationships to child
                 var childVariable = variables.get(child);
                 childVariable.addParents(parents);
@@ -97,47 +98,23 @@ public class Reader {
 
                 i += 1;
                 var curWord = rawDataset.get(i);
-                StringBuilder domainBuilder = new StringBuilder(curWord);
                 while (!curWord.equals("}")) {
-                    if (curWord.equals("table")) {
-                        for (String state : childVariable.states) {
-                            if (curWord.endsWith(",")) {
-                                i++;
-                                while (true) {
-                                    var word = rawDataset.get(i);
-                                    domainBuilder.append(word);
-                                    if (word.endsWith(",")) {
-                                        word.replace(",", "");
-                                    }
-                                    if (word.endsWith(")")) {
-                                        word.replace(")", "");
-                                        break;
-                                    }
-                                    i++;
-                                }
+                    StringBuilder domainBuilder = new StringBuilder(curWord);
+                    if (curWord.endsWith(",")) {
+                        i++;
+                        while(true) {
+                            var word = rawDataset.get(i);
+                            domainBuilder.append(word);
+                            if (word.endsWith(")")) {
+                                break;
                             }
-                        }
-
-                    }
-                    if (!curWord.equals("table")) {
-                        if (curWord.endsWith(",")) {
                             i++;
-                            while (true) {
-                                var word = rawDataset.get(i);
-                                domainBuilder.append(word);
-                                if (word.endsWith(")")) {
-                                    word.replace(")", "");
-                                    break;
-                                }
-                                i++;
-                            }
                         }
                     }
-
 
                     var probabilities = new ArrayList<Double>();
 
-                    while (true) {
+                    while(true) {
                         i++;
                         var prob = rawDataset.get(i);
                         var endOfLine = false;
@@ -155,13 +132,19 @@ public class Reader {
                             break;
                         }
                     }
+                    if (domainBuilder.toString().equals("table")) {
+                        domainBuilder = new StringBuilder();
+                        for (String v: childVariable.states) {
+                            domainBuilder.append(v + " ");
+                        }
+                    }
                     childVariable.probabilities.put(domainBuilder.toString(), probabilities);
 
                     i++;
                     curWord = rawDataset.get(i);
                 }
-                }
             }
+        }
         return variables;
     }
 }
