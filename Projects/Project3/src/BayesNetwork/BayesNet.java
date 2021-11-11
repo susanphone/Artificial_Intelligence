@@ -19,4 +19,5 @@ public class BayesNet {
         return networkName;
     }
 
+
     }
