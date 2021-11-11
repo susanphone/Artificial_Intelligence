@@ -41,13 +41,15 @@ public class Main {
 
         //for the gibbs sampling change the name of the variable to query in the e[] array
         String[] e = new String[1];
-        e[0] = "Alarm";
+        e[0] = "Earthquake";
 
         //replace 'earthquake' with the name of the BayesNet object
         Approximate.gibbs(earthquake, 100000, evidence, evidenceStates, e);
 
+        System.out.println("Running variable elimination: ");
+        System.out.println();
         //replace 'earthquake' with the name of the BayesNet object and "Alarm" with the name of the query variable
-        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Alarm", evidence, evidenceStates );
+        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Earthquake", evidence, evidenceStates );
         //this will print out the distribution of the query variable for the variable elimination algorithm
         System.out.println("The resulting distribution from variable elimination for query variable " + e[0] + ":");
         for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){

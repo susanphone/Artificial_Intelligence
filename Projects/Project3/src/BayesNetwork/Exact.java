@@ -35,6 +35,7 @@ public class Exact {
         }
         System.out.println();
         System.out.println();
+
         //make factors based on the evidence variables we receive, which will later be added to the factors list
         //this allows us to replace the previous variable with new attributes based on what state we know it is in
         ArrayList<Variable> observed = makeEvidenceFactors(evidence, evidenceStates, currentNet.variables);
@@ -55,10 +56,17 @@ public class Exact {
         for(Variable var: varOrder){
             if(var.name.equals(query)){
                 queryVar = var;
-                break;
+                //break;
             }else{
                 factors = makeFactors(var, factors, observed);
                 if(!var.name.equals(query) && !observed.contains(var)){
+                    //printing for video purposes
+                    System.out.println("List of factors before marginalizing " + var.name + ":");
+                    for(Variable v : factors){
+                        System.out.println(v.name);
+                    }
+                    System.out.println();
+
                     factors = sumOut(var, factors);
                 }
             }
@@ -73,8 +81,31 @@ public class Exact {
             Variable currFactor = factors.remove(0);
             result = pointwiseProduct(currFactor, factors, queryVar);
         }else{
+            //print statements for testing
+            System.out.println("Query variable and matrix in the final pointwise product: ");
+            System.out.println("Query Var: " + queryVar.name);
+            System.out.println("Resulting Matrix: " + factors.get(0).name);
+            for (Map.Entry<String, ArrayList<Double>> item: factors.get(0).probabilities.entrySet()) {
+                for(double d : item.getValue()){
+                    System.out.print(d + " ");
+                }
+                System.out.println();
+            }
+            System.out.println();
             result = finalpointwiseProduct(queryVar, factors);
         }
+
+        //printing for video
+        System.out.println("Distribution before normalization: ");
+        for (Map.Entry<String, ArrayList<Double>> item: result.probabilities.entrySet()) {
+            String[] stateLabels = item.getKey().split(" ");
+            System.out.print(stateLabels[0] + " ");
+            for (double d : item.getValue()) {
+                System.out.print(d);
+            }
+            System.out.println("");
+        }
+        System.out.println();
 
         //normalize the resulting variable's probability distribution
         HashMap<String, ArrayList<Double>>  normalizedResult = normalize(result);
@@ -117,10 +148,31 @@ public class Exact {
             f.remove(rf);
         }
 
+        //print statements for video
+        System.out.println("Current factors for the pointwise product needed to marginalize " + v.name + ":");
+        for(Variable factor : relevantFactors){
+            System.out.println(factor.name);
+        }
+        System.out.println(v.name);
+        System.out.println();
+
         //calculate the pointwise product of all the relevant factors
         Variable firstFactor = relevantFactors.remove(0);
         Variable product = pointwiseProduct(firstFactor, relevantFactors,  v);
-        
+
+        //print statements for video
+        System.out.println("Resulting pointwise product: ");
+        System.out.println(product.name);
+        for (Map.Entry<String, ArrayList<Double>> item: product.probabilities.entrySet()) {
+            System.out.print(item.getKey() + " ");
+            for(double d : item.getValue()){
+                System.out.print(d + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+        System.out.println();
+
         HashMap<String, ArrayList<Double>> tempProbs = copy(product.probabilities);
         HashMap<String, ArrayList<Double>> newProbabilities = new HashMap<>();
 
@@ -163,6 +215,17 @@ public class Exact {
         if(!newProbabilities.isEmpty()){
             product.probabilities = newProbabilities;
         }
+        //print statements for video
+        System.out.println("The resulting distribution after summing out " + v.name);
+        for (Map.Entry<String, ArrayList<Double>> p: product.probabilities.entrySet()) {
+            System.out.print(p.getKey() + " ");
+            for(double d : p.getValue()){
+                System.out.print(d + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+
         //add the new factor to the list
         f.add(product);
 
