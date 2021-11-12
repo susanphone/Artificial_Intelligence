@@ -4,12 +4,9 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.*;
 
-
 public class Reader {
 
     private ArrayList<String> disallowedItems = new ArrayList<>(Arrays.asList("|", "]", "[", ","));
-
-
     private File file;
 
     private ArrayList<String> rawDataset;
@@ -21,15 +18,15 @@ public class Reader {
         this.variables = new TreeMap<>();
     }
 
-    //    cleans up file and strips away any unnecessary characters
+    // Reads in and parses the file
     public void loadFile() throws FileNotFoundException {
         Scanner bifScanner = new Scanner(file);
 
         // For each "word"
         while (bifScanner.hasNext()) {
-            String item = bifScanner.next();
-            if (!disallowedItems.contains(item)) {
-                rawDataset.add(item);
+            String word = bifScanner.next();
+            if (!disallowedItems.contains(word)) {
+                rawDataset.add(word);
             }
         }
     }
@@ -38,33 +35,35 @@ public class Reader {
     private String probKey = "probability";
 
 
-    public TreeMap<String, Variable> getVariables() {
+    public ArrayList<Variable> getVariables() {
         TreeMap<String, Variable> variables = new TreeMap<>();
 
         for (int i = 0; i < rawDataset.size(); i++) {
-            // Add variables
+            // Adds variables
             if (rawDataset.get(i).equals(varKey)) {
                 var name = rawDataset.get(i + 1);
-                ArrayList<String> domains = new ArrayList<>();
+                ArrayList<String> states = new ArrayList<>();
 
-                // Jog forward to the start of the domains
+                // moves forward to the start of the states
                 i += 7;
                 String curWord = rawDataset.get(i);
+                // while more states, remove commas and add to arraylist
                 while (!curWord.equals("};")) {
                     curWord = curWord.replace(",", "");
-                    domains.add(curWord);
-
+                    states.add(curWord);
                     i++;
                     curWord = rawDataset.get(i);
                 }
 
-                String[] domainArray = new String[domains.size()];
-                domainArray = domains.toArray(domainArray);
+                String[] statesArray = new String[states.size()];
+                // changes arraylist to string array
+                statesArray = states.toArray(statesArray);
 
-                variables.put(name, new Variable(name, domainArray, new String[0], new String[0]));
+                // adds known contents to the variable
+                variables.put(name, new Variable(name, statesArray, new String[0], new String[0]));
             }
 
-            // adding in the probability and parent-child relationships
+            // adds in the probability and parent-child relationships
             if (rawDataset.get(i).equals(probKey)) {
                 i += 2;
                 var child = rawDataset.get(i);
@@ -95,16 +94,15 @@ public class Reader {
                 childVariable.addParents(parents);
 
                 // Adds probability to child
-
                 i += 1;
                 var curWord = rawDataset.get(i);
                 while (!curWord.equals("}")) {
-                    StringBuilder domainBuilder = new StringBuilder(curWord);
+                    StringBuilder statesBuilder = new StringBuilder(curWord);
                     if (curWord.endsWith(",")) {
                         i++;
                         while(true) {
                             var word = rawDataset.get(i);
-                            domainBuilder.append(word);
+                            statesBuilder.append(word);
                             if (word.endsWith(")")) {
                                 break;
                             }
@@ -114,6 +112,7 @@ public class Reader {
 
                     var probabilities = new ArrayList<Double>();
 
+                    // while data contains more probabilities
                     while(true) {
                         i++;
                         var prob = rawDataset.get(i);
@@ -122,7 +121,7 @@ public class Reader {
                             endOfLine = true;
                         }
 
-
+                        // removes commas and semi-colons and parses doubles
                         if (prob.contains(",")) {
                             prob = prob.replace(",", "");
                             prob = prob.replace(";", "");
@@ -132,19 +131,28 @@ public class Reader {
                             break;
                         }
                     }
-                    if (domainBuilder.toString().equals("table")) {
-                        domainBuilder = new StringBuilder();
+
+                    // when the variable has no parents, get states of the variable
+                    if (statesBuilder.toString().equals("table")) {
+                        statesBuilder = new StringBuilder();
                         for (String v: childVariable.states) {
-                            domainBuilder.append(v + " ");
+                            statesBuilder.append(v + " ");
                         }
                     }
-                    childVariable.probabilities.put(domainBuilder.toString(), probabilities);
+                    // adds states and probabilities to variable
+                    childVariable.probabilities.put(statesBuilder.toString(), probabilities);
 
                     i++;
                     curWord = rawDataset.get(i);
                 }
             }
         }
-        return variables;
+
+        // change TreeMap to ArrayList
+        ArrayList <Variable> variablesList = new ArrayList<>();
+        // add variables to array list
+        variablesList.addAll(variables.values());
+        // returns arraylist of variables
+        return variablesList;
     }
 }

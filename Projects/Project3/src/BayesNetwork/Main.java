@@ -1,10 +1,8 @@
 package BayesNetwork;
 
-import org.w3c.dom.NodeList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.sql.Array;
 import java.util.*;
 
 public class Main {
@@ -13,50 +11,21 @@ public class Main {
         File file = new File("alarm.bif");
         ArrayList data;
 
-        // Open a reader
+        // Opens a reader
         Reader reader =  new Reader(file);
 
-        // Load the file, and remove some unwanted cruft
+        // Loads the file, and removes some unwanted characters
         reader.loadFile();
-        ArrayList list = new ArrayList<>();
-        ArrayList states = new ArrayList();
-        // get a treemap of variables, keyed by name
-        var variables = reader.getVariables();
-        for (String l: variables.keySet()){
-            list.add(l);
-        }
-        for (Variable m: variables.values()){
-            states.add(m);
-        }
-        String[] a = new String[1];
 
-        BayesNet alarm = new BayesNet("alarm", new ArrayList<Variable>(variables.values()));
-<<<<<<< HEAD
-//        Exact test = new Exact(alarm, "alarm", list, states);
-        Approximate test2 = new Approximate();
-//        Approximate.gibbs(alarm, variables.size(), list, states, a);
-        //below is test code for variable elimination on the earthquake network
-//        BayesNet earthquake = ExactTest.returnEarthquakeNet();
-//
-//        //given the evidence that John and Mary both called
-//        ArrayList<String> evidence = new ArrayList<>();
-//        evidence.add("JohnCalls");
-//        evidence.add("MaryCalls");
-//
-//        ArrayList<String> evidenceStates = new ArrayList<>();
-//        evidenceStates.add("True");
-//        evidenceStates.add("True");
-//
-//        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Alarm", evidence, evidenceStates );
-//        for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){
-//            System.out.print(item.getKey() + " ");
-//            for (double d : item.getValue()) {
-//                System.out.print(d);
-//            }
-//            System.out.println("");
-//        }
-=======
-//        Exact test = new Exact(alarm, "alarm", variables.keySet(), variables.values());
+        // get an arraylist of variables
+        var variables = reader.getVariables();
+        BayesNet alarm = new BayesNet("alarm", (ArrayList<Variable>) variables);
+
+        // prints out the contents of each variable in the network
+        System.out.println(alarm.getNetworkName());
+        alarm.getVariables().forEach((Variable v) -> {
+            System.out.println(v);
+        });
 
         //below is test code for variable elimination on the earthquake network
         BayesNet earthquake = ExactTest.returnEarthquakeNet();
@@ -76,6 +45,10 @@ public class Main {
         String[] e = new String[1];
         e[0] = "Earthquake";
 
+
+
+
+
         //replace 'earthquake' with the name of the BayesNet object
         Approximate.gibbs(earthquake, 100000, evidence, evidenceStates, e);
 
@@ -93,7 +66,6 @@ public class Main {
             }
             System.out.println("");
         }
->>>>>>> aadb55ec2b71b1d98af58b3d3a6815bf72ca1048
     }
 
 }
