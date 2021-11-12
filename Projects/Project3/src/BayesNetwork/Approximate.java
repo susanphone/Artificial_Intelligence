@@ -14,9 +14,9 @@ public class Approximate {
         int evidence_index = 0; //Used to loop through evidence and evidenceStates ArrayList
         for (int i = 0; i < bn_state.length; i++) {
             Variable currentvar = bn.variables.get(i); //Gets the current variable
-
+            
             //Checks to see if current variable is in the evidence list; If so, then it is added
-            if (currentvar.name.equals(evidence.get(evidence_index))) {
+            if (evidence_index < evidence.size() && currentvar.name.equals(evidence.get(evidence_index))){
                 bn_state[i] = evidenceStates.get(evidence_index);
                 evidence_index++;
                 evidence_indexes.add(i);
@@ -123,17 +123,19 @@ public class Approximate {
 
             //If there are parents of the current variable
             else {
-
                 //Gets state of each parent, adds it to string
                 String parent_states = "(";
                 for (int j = 0; j < var_parents.length; j++) {
                     for (int k = 0; k < bn.variables.size(); k++) {
+                        
                         if (bn.variables.get(k).name.equals(var_parents[j].name)) {
+                            
                             if (parent_states.equals("(")) {
                                 parent_states = parent_states.concat(bn_state[k]);
                             } else {
                                 parent_states = parent_states.concat("," + bn_state[k]);
                             }
+                            
                         }
                     }
                 }
@@ -150,7 +152,7 @@ public class Approximate {
             Variable[] var_children = HelperFunctions.getChildren(bn, var);
 
             //For each child, the multiplicant is calculated in the same fashion as the above variable
-            if (var_children != null) {
+            if (!(var_children == null)  && var.parents.length > 0 && !var.name.equals(var.parents[0])) {
                 for (Variable current_child : var_children) {
                     Variable[] child_parents = HelperFunctions.getParents(bn, current_child);
 
