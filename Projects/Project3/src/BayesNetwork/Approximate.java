@@ -20,9 +20,7 @@ public class Approximate {
                 bn_state[i] = evidenceStates.get(evidence_index);
                 evidence_index++;
                 evidence_indexes.add(i);
-            }
-
-            //Randomizes a variable's state if it's not in the evidence
+            } //Randomizes a variable's state if it's not in the evidence
             else {
                 bn_state[i] = currentvar.states[rand.nextInt(currentvar.states.length)];
             }
@@ -63,7 +61,7 @@ public class Approximate {
 
             //Gets the states of the current query variabled
             String[] states = bn.variables.get(querie_position).states;
-            
+
             //Counts the occurances of each of the states of the query variables
             int[] counts = new int[states.length];
             for (String[] current_state : state_storage) {
@@ -76,10 +74,10 @@ public class Approximate {
                 }
 
             }
-            
+
             //Prints out the query name
             System.out.println(queries[i]);
-            
+
             //Prints out each state of the query alongside their probabilities
             for (int j = 0; j < counts.length; j++) {
                 System.out.println(states[j] + ": " + (((double) counts[j]) / ((double) sample_size)));
@@ -88,118 +86,134 @@ public class Approximate {
         }
 
     }
-    
+
     //Returns the probabilities of each state of a variable
-    static public double[] probability(BayesNet bn, Variable var, String[] bn_state){
+    static public double[] probability(BayesNet bn, Variable var, String[] bn_state) {
         //Used to calculate numerator of probability equation for each variable state
         Double[] numerators = new Double[var.states.length];
 
         //Calculates the numerator of the probability equation for each variable state
-        for(int i = 0; i < numerators.length; i++){
+        for (int i = 0; i < numerators.length; i++) {
             //Stores values of numerator to later be multiplied together
             ArrayList<Double> multiplicants = new ArrayList<Double>();
-            
+
             //Self
             Variable[] var_parents;
             var_parents = HelperFunctions.getParents(bn, var);
-            
+
             //If there's no parents of the current variable
-            if(var_parents == null){
-                double temp = var.probabilities.get(var.states[i]).get(0);
-                multiplicants.add(temp);
-            }
-            
-            //If there are parents of the current variable
-            else{
+            if (var_parents == null) {
+                String key = "";
+                for(String state : var.states){
+                    key = key.concat(state + " ");
+                }
                 
+                ArrayList<Double> probs = var.probabilities.get(key);
+                
+                double[] new_probs = new double[probs.size() + 1];
+                
+                for(int j = 0; j < probs.size(); j++){
+                    new_probs[j] = probs.get(j);
+                }
+                
+                double temp = new_probs[i];
+                
+                multiplicants.add(temp);
+            } 
+
+            //If there are parents of the current variable
+            else {
+
                 //Gets state of each parent, adds it to string
                 String parent_states = "(";
-                for(int j = 0; j < var_parents.length; j++){
-                    for(int k = 0; k < bn.variables.size(); k++){
-                        if(bn.variables.get(k).name.equals(var_parents[j].name)){
-                            if(parent_states.equals("(")){
+                for (int j = 0; j < var_parents.length; j++) {
+                    for (int k = 0; k < bn.variables.size(); k++) {
+                        if (bn.variables.get(k).name.equals(var_parents[j].name)) {
+                            if (parent_states.equals("(")) {
                                 parent_states = parent_states.concat(bn_state[k]);
-                            }
-                            else{
+                            } else {
                                 parent_states = parent_states.concat("," + bn_state[k]);
                             }
                         }
                     }
                 }
                 parent_states = parent_states.concat(")");
+
+                //System.out.println(parent_states);
+                //System.out.println(var.probabilities);
+                //System.out.println(var.probabilities.get(parent_states));
                 multiplicants.add(var.probabilities.get(parent_states).get(i));
-//                System.out.println("  " + var.probabilities.get(parent_states).get(i));
+
             }
-            
+
             //Children
             Variable[] var_children = HelperFunctions.getChildren(bn, var);
-                
-            //For each child, the multiplicant is calculated in the same fashion as the above variable
-            for(Variable current_child : var_children){
-                Variable[] child_parents = HelperFunctions.getParents(bn, current_child);
-                
-                String child_parent_states = "(";
-                for(int j = 0; j < child_parents.length; j++){
-                    for(int k = 0; k < bn.variables.size(); k++){
-                        if(bn.variables.get(k).name.equals(var.name) && bn.variables.get(k).name.equals(child_parents[j].name)){
-                            if(child_parent_states.equals("(")){
-                                child_parent_states = child_parent_states.concat(var.states[i]);
-                            }
-                            else{
-                                child_parent_states = child_parent_states.concat("," + var.states[i]);
-                            }
-                        }
-                        else if(bn.variables.get(k).name.equals(child_parents[j].name)){
-                            if(child_parent_states.equals("(")){
-                                child_parent_states = child_parent_states.concat(bn_state[k]);
-                            }
-                            else{
-                                child_parent_states = child_parent_states.concat("," + bn_state[k]);
-                            }
-                        }
-                    }
-                }
-                child_parent_states = child_parent_states.concat(")");
-                int current_child_index = 0;
-                for(int j = 0; j < bn.variables.size(); j++){
-                    if(bn.variables.get(j).name.equals(current_child.name)){
-                        current_child_index = j;
-                    }
-                }
-                
-                int current_child_state_index = 0;
-                for(int j = 0; j < current_child.states.length; j++){
-                    if(current_child.states[j].equals(bn_state[current_child_index])){
-                        current_child_state_index = j;
-                    }
-                }
 
-                System.out.println(current_child.name);
-                System.out.println(current_child.states[current_child_state_index]);
-                System.out.println(child_parent_states);
-                System.out.println(current_child.probabilities.get(child_parent_states));
-                System.out.println(current_child.probabilities.get(child_parent_states).get(current_child_state_index));
+            //For each child, the multiplicant is calculated in the same fashion as the above variable
+            if (var_children != null) {
+                for (Variable current_child : var_children) {
+                    Variable[] child_parents = HelperFunctions.getParents(bn, current_child);
+
+                    String child_parent_states = "(";
+                    for (int j = 0; j < child_parents.length; j++) {
+                        for (int k = 0; k < bn.variables.size(); k++) {
+                            if (bn.variables.get(k).name.equals(var.name) && bn.variables.get(k).name.equals(child_parents[j].name)) {
+                                if (child_parent_states.equals("(")) {
+                                    child_parent_states = child_parent_states.concat(var.states[i]);
+                                } else {
+                                    child_parent_states = child_parent_states.concat("," + var.states[i]);
+                                }
+                            } else if (bn.variables.get(k).name.equals(child_parents[j].name)) {
+                                if (child_parent_states.equals("(")) {
+                                    child_parent_states = child_parent_states.concat(bn_state[k]);
+                                } else {
+                                    child_parent_states = child_parent_states.concat("," + bn_state[k]);
+                                }
+                            }
+                        }
+                    }
+                    child_parent_states = child_parent_states.concat(")");
+
+                    int current_child_index = 0;
+                    for (int j = 0; j < bn.variables.size(); j++) {
+                        if (bn.variables.get(j).name.equals(current_child.name)) {
+                            current_child_index = j;
+                        }
+                    }
+
+                    int current_child_state_index = 0;
+                    for (int j = 0; j < current_child.states.length; j++) {
+                        if (current_child.states[j].equals(bn_state[current_child_index])) {
+                            current_child_state_index = j;
+                        }
+                    }
+
+                    //System.out.println(child_parent_states);
+                    //System.out.println(var.probabilities);
+                    //System.out.println(var.probabilities.get(child_parent_states));
+                    multiplicants.add(current_child.probabilities.get(child_parent_states).get(current_child_state_index));
+                }
                 
-                multiplicants.add(current_child.probabilities.get(child_parent_states).get(current_child_state_index)); 
             }
             //Calculates the numerator
             double product = 1;
-            for(double num : multiplicants){
+            for (double num : multiplicants) {
                 product *= num;
             }
             numerators[i] = product;
         }
-        
+
         //Calculates the probabilities for the given variable states
         double[] probabilities = new double[var.states.length];
         double sum = 0;
-        for(double num : numerators){
+        
+        for (double num : numerators) {
             sum += num;
         }
-        for(int i = 0; i < probabilities.length; i++){
-            probabilities[i] = numerators[i]/sum;
+        for (int i = 0; i < probabilities.length; i++) {
+            probabilities[i] = numerators[i] / sum;
         }
-        
+
         return probabilities;
     }
 }
