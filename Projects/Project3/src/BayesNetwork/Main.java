@@ -3,36 +3,99 @@ package BayesNetwork;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File("alarm.bif");
+        File file2 = new File("child.bif");
         ArrayList data;
 
         // Opens a reader
         Reader reader =  new Reader(file);
+        Reader reader2 = new Reader(file2);
 
         // Loads the file, and removes some unwanted characters
         reader.loadFile();
+        reader2.loadFile();
 
         // get an arraylist of variables
         var variables = reader.getVariables();
-//        System.out.println(variables);
+        var variables2 = reader2.getVariables();
+
+//        Alarm Network
         BayesNet alarm = new BayesNet("alarm", (ArrayList<Variable>) variables);
-        ArrayList<String> evid = new ArrayList<>();
-        evid.add("HRBP");
-        evid.add("CO");
-        evid.add("BP");
+        ArrayList<String> evid1 = new ArrayList<>();
+        evid1.add("HRBP");
+        evid1.add("CO");
+        evid1.add("BP");
 
-        ArrayList<String> evidStates = new ArrayList<>();
-        evidStates.add("HIGH");
-        evidStates.add("LOW");
-        evidStates.add("HIGH");
+        ArrayList<String> evidStates1 = new ArrayList<>();
+        evidStates1.add("HIGH");
+        evidStates1.add("LOW");
+        evidStates1.add("HIGH");
 
-        String [] queries = {"HYPOVOLEMIA", "LVFAILURE", "ERRLOWOUTPUT"};
-        Approximate.gibbs(alarm, 10000, evid, evidStates, queries);
+        String [] queries1 = {"HYPOVOLEMIA", "LVFAILURE", "ERRLOWOUTPUT"};
+        Approximate.gibbs(alarm, 10000, evid1, evidStates1, queries1);
+
+        ArrayList<String> modEvid1 = new ArrayList<>();
+        modEvid1.add("HRBP");
+        modEvid1.add("CO");
+        modEvid1.add("BP");
+        modEvid1.add("HRSAT");
+        modEvid1.add("HREKG");
+        modEvid1.add("HISTORY");
+
+        ArrayList<String> modEvidStates1 = new ArrayList<>();
+        modEvidStates1.add("HIGH");
+        modEvidStates1.add("LOW");
+        modEvidStates1.add("HIGH");
+        modEvidStates1.add("LOW");
+        modEvidStates1.add("LOW");
+        modEvidStates1.add("TRUE");
+
+        Approximate.gibbs(alarm, 10000, modEvid1, modEvidStates1, queries1);
+
+
+//        Child Network
+        BayesNet child = new BayesNet("Child", variables2);
+        ArrayList<String> evidC = new ArrayList<>();
+        evidC.add("LowerBodyO2");
+        evidC.add("RUQO2");
+        evidC.add("CO2Report");
+        evidC.add("XrayReport");
+
+        ArrayList<String> evidStateC = new ArrayList<>();
+        evidStateC.add("<5");
+        evidStateC.add(">=12");
+        evidStateC.add(">=7.5");
+        evidStateC.add("Asy/Patchy");
+
+
+        ArrayList<String> modEvidStateC = new ArrayList<>();
+        modEvidStateC.add("<5;");
+        modEvidStateC.add(">=12");
+        modEvidStateC.add(">=7.5");
+        modEvidStateC.add("Asy/Patchy");
+        modEvidStateC.add("Yes");
+        modEvidStateC.add("Yes");
+        modEvidStateC.add("11-30 Days");
+
+        ArrayList<String> modEvidC = new ArrayList<>();
+        modEvidC.add("LowerBodyO2");
+        modEvidC.add("RUQO2");
+        modEvidC.add("CO2Report");
+        modEvidC.add("XrayReport");
+        modEvidC.add("GruntingReport");
+        modEvidC.add("LVHReport");
+        modEvidC.add("Age");
+
+        String queries2[] = {"Disease"};
+        Approximate.gibbs(child, 10000, evidC, evidStateC, queries2);
+        Approximate.gibbs(child, 10000, modEvidC, modEvidStateC, queries2);
+
 
 //        // prints out the contents of each variable in the network
 //        System.out.println(alarm.getNetworkName());

@@ -129,7 +129,6 @@ public class Reader {
                             prob = prob.replace(",", "");
                             probabilities.add(Double.parseDouble(prob));
                         }
-                        System.out.println(prob);
 
                     }
 
