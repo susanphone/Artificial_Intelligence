@@ -113,22 +113,22 @@ public class Approximate {
             else{
                 
                 //Gets state of each parent, adds it to string
-                String parent_states = "";
+                String parent_states = "(";
                 for(int j = 0; j < var_parents.length; j++){
                     for(int k = 0; k < bn.variables.size(); k++){
                         if(bn.variables.get(k).name.equals(var_parents[j].name)){
-                            if(parent_states.equals("")){
+                            if(parent_states.equals("(")){
                                 parent_states = parent_states.concat(bn_state[k]);
                             }
                             else{
-                                parent_states = parent_states.concat(" " + bn_state[k]);
+                                parent_states = parent_states.concat("," + bn_state[k]);
                             }
                         }
                     }
                 }
-                
+                parent_states = parent_states.concat(")");
                 multiplicants.add(var.probabilities.get(parent_states).get(i));
-                //System.out.println("  " + var.probabilities.get(parent_states).get(i));
+//                System.out.println("  " + var.probabilities.get(parent_states).get(i));
             }
             
             //Children
@@ -138,28 +138,28 @@ public class Approximate {
             for(Variable current_child : var_children){
                 Variable[] child_parents = HelperFunctions.getParents(bn, current_child);
                 
-                String child_parent_states = "";
+                String child_parent_states = "(";
                 for(int j = 0; j < child_parents.length; j++){
                     for(int k = 0; k < bn.variables.size(); k++){
                         if(bn.variables.get(k).name.equals(var.name) && bn.variables.get(k).name.equals(child_parents[j].name)){
-                            if(child_parent_states.equals("")){
+                            if(child_parent_states.equals("(")){
                                 child_parent_states = child_parent_states.concat(var.states[i]);
                             }
                             else{
-                                child_parent_states = child_parent_states.concat(" " + var.states[i]);
+                                child_parent_states = child_parent_states.concat("," + var.states[i]);
                             }
                         }
                         else if(bn.variables.get(k).name.equals(child_parents[j].name)){
-                            if(child_parent_states.equals("")){
+                            if(child_parent_states.equals("(")){
                                 child_parent_states = child_parent_states.concat(bn_state[k]);
                             }
                             else{
-                                child_parent_states = child_parent_states.concat(" " + bn_state[k]);
+                                child_parent_states = child_parent_states.concat("," + bn_state[k]);
                             }
                         }
                     }
                 }
-
+                child_parent_states = child_parent_states.concat(")");
                 int current_child_index = 0;
                 for(int j = 0; j < bn.variables.size(); j++){
                     if(bn.variables.get(j).name.equals(current_child.name)){
@@ -173,12 +173,12 @@ public class Approximate {
                         current_child_state_index = j;
                     }
                 }
-                /*
+
                 System.out.println(current_child.name);
                 System.out.println(current_child.states[current_child_state_index]);
                 System.out.println(child_parent_states);
                 System.out.println(current_child.probabilities.get(child_parent_states));
-                System.out.println(current_child.probabilities.get(child_parent_states).get(current_child_state_index));*/
+                System.out.println(current_child.probabilities.get(child_parent_states).get(current_child_state_index));
                 
                 multiplicants.add(current_child.probabilities.get(child_parent_states).get(current_child_state_index)); 
             }
