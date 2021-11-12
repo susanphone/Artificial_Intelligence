@@ -53,10 +53,10 @@ public class Variable {
     // print out the contents of the variable
     @Override
     public String toString() {
-        return  name + '\'' +
-                ", states=" + Arrays.toString(states) +
-                ", parents=" + Arrays.toString(parents) +
-                ", children=" + Arrays.toString(children) +
-                ", probabilities=" + probabilities;
+        return  name + "\n" +
+                "states=" + Arrays.toString(states) + "\n" +
+                "parents=" + Arrays.toString(parents) + "\n" +
+                "children=" + Arrays.toString(children) + "\n" +
+                "probabilities=" + probabilities + "\n";
     }
 }

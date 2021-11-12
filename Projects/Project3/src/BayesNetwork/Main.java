@@ -8,7 +8,7 @@ import java.util.*;
 public class Main {
 
     public static void main(String[] args) throws FileNotFoundException {
-        File file = new File("alarm.bif");
+        File file = new File("child.bif");
         ArrayList data;
 
         // Opens a reader
@@ -19,7 +19,7 @@ public class Main {
 
         // get an arraylist of variables
         var variables = reader.getVariables();
-        BayesNet alarm = new BayesNet("alarm", (ArrayList<Variable>) variables);
+        BayesNet alarm = new BayesNet("child", (ArrayList<Variable>) variables);
 
         // prints out the contents of each variable in the network
         System.out.println(alarm.getNetworkName());
