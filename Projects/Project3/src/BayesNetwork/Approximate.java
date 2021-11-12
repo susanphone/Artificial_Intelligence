@@ -51,8 +51,9 @@ public class Approximate {
             System.arraycopy(bn_state, 0, state_storage[i], 0, bn_state.length);
         }
 
-
+        //Counts the occurances of the queries, normalizes the values, then prints out the information for the query variable
         for (int i = 0; i < queries.length; i++) {
+            //Gets position of current query variable in the BayesNet variables ArrayList
             int querie_position = 0;
             for (int j = 0; j < bn.variables.size(); j++) {
                 if (bn.variables.get(j).name.equals(queries[i])) {
@@ -60,9 +61,11 @@ public class Approximate {
                 }
             }
 
+            //Gets the states of the current query variabled
             String[] states = bn.variables.get(querie_position).states;
+            
+            //Counts the occurances of each of the states of the query variables
             int[] counts = new int[states.length];
-
             for (String[] current_state : state_storage) {
                 String current_querie = current_state[querie_position];
 
@@ -73,7 +76,11 @@ public class Approximate {
                 }
 
             }
+            
+            //Prints out the query name
             System.out.println(queries[i]);
+            
+            //Prints out each state of the query alongside their probabilities
             for (int j = 0; j < counts.length; j++) {
                 System.out.println(states[j] + ": " + (((double) counts[j]) / ((double) sample_size)));
             }
@@ -175,7 +182,7 @@ public class Approximate {
                 
                 multiplicants.add(current_child.probabilities.get(child_parent_states).get(current_child_state_index)); 
             }
-            
+            //Calculates the numerator
             double product = 1;
             for(double num : multiplicants){
                 product *= num;
@@ -183,13 +190,12 @@ public class Approximate {
             numerators[i] = product;
         }
         
+        //Calculates the probabilities for the given variable states
         double[] probabilities = new double[var.states.length];
         double sum = 0;
-
         for(double num : numerators){
             sum += num;
         }
-        
         for(int i = 0; i < probabilities.length; i++){
             probabilities[i] = numerators[i]/sum;
         }
