@@ -47,22 +47,18 @@ public class HelperFunctions {
         //Used to store the parent variables
         Variable[] parents = new Variable[parentin.length];
         
-        //Used for indexing the parents array
-        int parentcount = 0;
-        
         //Loops through all variables in the BayesNet and tests to see if it's a parent of the current node
         for(int i = 0; i < bn.variables.size(); i++){
             Variable currentvar = bn.variables.get(i); //Gets a variable in the bayesnet
-            
+
             //Checks to see if the variable is a parent and adds it to the correct variable array
             for(int j = 0; j < parentin.length; j++){
                 if(currentvar.name.equals(parentin[j])){
-                    parents[parentcount] = currentvar;
-                    parentcount++;
+                    parents[j] = currentvar;
                 }
             }
         }
-        
+
         return parents;
     }
     
