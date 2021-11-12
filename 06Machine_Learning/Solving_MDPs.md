@@ -12,3 +12,38 @@
 * spec of MDP and discount factor(tunable parameter <= 1)
 
 ## Policy Iteration
+
+## Synchronous DP
+* Value iteration responds to synchronous DP
+* value function is updated for each state at each step
+
+## Complexity of Synchronous DP
+## Convergence
+* goal states
+* complexity and convergence -> alternative DP approaches
+
+## Gauss-Seidel DP
+* backup in an ordered sweep of the states
+* method for project
+* if value function is update, you could be using a new or an old value
+* updated according to order
+* indexing states based on order
+* if order is updated prior to ith state, use new value. else use old value
+* convergence works in discounted and non-eposodic case
+
+## Asynchronous DP
+* not an etire sweep, randomly select a subset of states
+* do gauss-seidel on the subset. 
+* do it enough to cover the entire space
+* will converge to the limit
+* cost/reward of each state is backed up infinitely oftens, visit every state action pair inifinitely often
+
+## Nondeterministic Navigation
+* transition probability
+* cost function
+* values calculated through dp
+* optimal policy
+* move to the square with the higher value
+* model gives you probabilities (t function)
+
+

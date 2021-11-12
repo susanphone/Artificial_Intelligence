@@ -11,21 +11,35 @@ public class Main {
     public static void main(String[] args) throws FileNotFoundException {
         File file = new File("alarm.bif");
         File file2 = new File("child.bif");
-        ArrayList data;
+        File file3 = new File("hailfinder.bif");
+        File file4 = new File("insurance.bif");
+        File file5 = new File("win95pts.bif");
 
         // Opens a reader
         Reader reader =  new Reader(file);
         Reader reader2 = new Reader(file2);
+        Reader reader3 = new Reader(file3);
+        Reader reader4 = new Reader(file4);
+        Reader reader5 = new Reader(file5);
 
         // Loads the file, and removes some unwanted characters
         reader.loadFile();
         reader2.loadFile();
+        reader3.loadFile();
+        reader4.loadFile();
+        reader5.loadFile();
 
         // get an arraylist of variables
         var variables = reader.getVariables();
         var variables2 = reader2.getVariables();
+        var variables3 = reader3.getVariables();
+        var variables4 = reader4.getVariables();
+        var variables5 = reader5.getVariables();
 
-//        Alarm Network
+
+
+
+//      Alarm Network
         BayesNet alarm = new BayesNet("alarm", (ArrayList<Variable>) variables);
         ArrayList<String> evid1 = new ArrayList<>();
         evid1.add("HRBP");
@@ -95,6 +109,45 @@ public class Main {
         String queries2[] = {"Disease"};
         Approximate.gibbs(child, 10000, evidC, evidStateC, queries2);
         Approximate.gibbs(child, 10000, modEvidC, modEvidStateC, queries2);
+
+
+//        Hailfinder Network
+        BayesNet hailfinder = new BayesNet("Hailfinder", variables3);
+
+        ArrayList<String> evidH = new ArrayList<>();
+        evidH.add("RSFcst");
+        evidH.add("N32StarFcst");
+        evidH.add("MountainFcst");
+        evidH.add("AreaMoDryAir");
+
+        ArrayList<String> modEvidH = new ArrayList<>();
+        modEvidH.add("RSFcst");
+        modEvidH.add("N32StarFcst");
+        modEvidH.add("MountainFcst");
+        modEvidH.add("CombVerMo");
+        modEvidH.add("AreaMeso_ALS");
+        modEvidH.add("CurPropConv");
+
+        ArrayList<String> esH = new ArrayList<>();
+        esH.add("XNIL");
+        esH.add("XNIL");
+        esH.add("XNIL");
+        esH.add("VeryWet");
+
+        ArrayList<String> modEsH = new ArrayList<>();
+        modEsH.add("XNIL");
+        modEsH.add("XNIL");
+        modEsH.add("XNIL");
+        modEsH.add("VeryWet");
+        modEsH.add("Down");
+        modEsH.add("Down");
+        modEsH.add("Strong");
+
+        String[] queries3 = {"SatContMoist", "LLIW"};
+        Approximate.gibbs(hailfinder, 10000, evidH, esH, queries3);
+        Approximate.gibbs(hailfinder, 10000, modEvidH, modEsH, queries3);
+
+
 
 
 //        // prints out the contents of each variable in the network
