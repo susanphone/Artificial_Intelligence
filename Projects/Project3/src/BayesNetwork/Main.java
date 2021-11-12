@@ -19,6 +19,7 @@ public class Main {
 
         // get an arraylist of variables
         var variables = reader.getVariables();
+        System.out.println(variables);
         BayesNet alarm = new BayesNet("alarm", (ArrayList<Variable>) variables);
         ArrayList<String> evid = new ArrayList<>();
         evid.add("HRBP");
@@ -31,7 +32,7 @@ public class Main {
         evidStates.add("HIGH");
 
         String [] queries = {"HYPOVOLEMIA", "LVFAILURE", "ERRLOWOUTPUT"};
-        Approximate.gibbs(alarm, 10000, evid, evidStates, queries );
+//        Approximate.gibbs(alarm, 10000, evid, evidStates, queries);
 
 //        // prints out the contents of each variable in the network
 //        System.out.println(alarm.getNetworkName());

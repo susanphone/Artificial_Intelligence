@@ -113,23 +113,24 @@ public class Reader {
                     var probabilities = new ArrayList<Double>();
 
                     // while data contains more probabilities
-                    while(true) {
+                    var endOfLine = false;
+
+                    while(!endOfLine) {
                         i++;
                         var prob = rawDataset.get(i);
-                        var endOfLine = false;
                         if (prob.contains(";")) {
                             endOfLine = true;
+                            prob = prob.replace(";", "");
+                            probabilities.add(Double.parseDouble(prob));
                         }
 
                         // removes commas and semi-colons and parses doubles
                         if (prob.contains(",")) {
                             prob = prob.replace(",", "");
-                            prob = prob.replace(";", "");
                             probabilities.add(Double.parseDouble(prob));
                         }
-                        if (endOfLine) {
-                            break;
-                        }
+                        System.out.println(prob);
+
                     }
 
                     // when the variable has no parents, get states of the variable
