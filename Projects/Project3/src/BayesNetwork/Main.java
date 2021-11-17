@@ -52,6 +52,7 @@ public class Main {
         evidStates1.add("HIGH");
 
         String [] queries1 = {"HYPOVOLEMIA", "LVFAILURE", "ERRLOWOUTPUT"};
+        System.out.println("Alarm Low Evidence");
         Approximate.gibbs(alarm, 10000, evid1, evidStates1, queries1);
 
         ArrayList<String> modEvid1 = new ArrayList<>();
@@ -70,6 +71,7 @@ public class Main {
         modEvidStates1.add("LOW");
         modEvidStates1.add("TRUE");
 
+        System.out.println("Alarm Moderate Evidence");
         Approximate.gibbs(alarm, 10000, modEvid1, modEvidStates1, queries1);
 
 
@@ -107,7 +109,9 @@ public class Main {
         modEvidC.add("Age");
 
         String queries2[] = {"Disease"};
+        System.out.println("Child Low Evidence");
         Approximate.gibbs(child, 10000, evidC, evidStateC, queries2);
+        System.out.println("Child Moderate Evidence");
         Approximate.gibbs(child, 10000, modEvidC, modEvidStateC, queries2);
 
 
@@ -144,57 +148,96 @@ public class Main {
         modEsH.add("Strong");
 
         String[] queries3 = {"SatContMoist", "LLIW"};
+        System.out.println("Hailfind Low Evidence");
         Approximate.gibbs(hailfinder, 10000, evidH, esH, queries3);
+        System.out.println("Hailfinder Moderate Evidence");
         Approximate.gibbs(hailfinder, 10000, modEvidH, modEsH, queries3);
 
+        // Insurance Nertwork
+        BayesNet insurance = new BayesNet("Insurance", variables4);
+        ArrayList<String> evidI = new ArrayList<>();
+        evidI.add("Age");
+        evidI.add("GoodStudent");
+        evidI.add("SeniorTrain");
+        evidI.add("DrivQuality");
+
+        ArrayList<String> modEvidI = new ArrayList<>();
+        modEvidI.add("Age");
+        modEvidI.add("GoodStudent");
+        modEvidI.add("SeniorTrain");
+        modEvidI.add("DrivQuality");
+        modEvidI.add("MakeModel");
+        modEvidI.add("CarValue");
+        modEvidI.add("DrivHistory");
+
+        ArrayList<String> evidSI = new ArrayList<>();
+        evidSI.add("Adolescent");
+        evidSI.add("False");
+        evidSI.add("False");
+        evidSI.add("Poor");
+
+        ArrayList<String> modESI = new ArrayList<>();
+        modESI.add("Adolescent");
+        modESI.add("False");
+        modESI.add("False");
+        modESI.add("Poor");
+        modESI.add("Luxury");
+        modESI.add("FiftyThousand");
+        modESI.add("Zero");
+
+        String[] queries4 = {"MedCost", "ILiCost", "PropCost"};
+
+        Approximate.gibbs(insurance, 10000, evidI, evidSI, queries4);
+        Approximate.gibbs(insurance, 10000, modEvidI, modESI, queries4);
+
+
+        // prints out the contents of each variable in the network
+        System.out.println(alarm.getNetworkName());
+        alarm.getVariables().forEach((Variable v) -> {
+            System.out.println(v);
+        });
+
+        //below is test code for variable elimination on the earthquake network
+        BayesNet earthquake = ExactTest.returnEarthquakeNet();
+
+        ArrayList<String> evidence = new ArrayList<>();
+        ArrayList<String> evidenceStates = new ArrayList<>();
+        //given the evidence that John and Mary both called
+        //to test on other networks, update the below add() calls to whatever variables will be provided as evidence
+        ArrayList<String> evid = new ArrayList<>();
+        evidence.add("JohnCalls");
+        evidence.add("MaryCalls");
+
+        //add to the evidence states list the state of the variables in the order that corresponds to the evidence list
+        ArrayList<String> evidStates = new ArrayList<>();
+        evidenceStates.add("True");
+        evidenceStates.add("True");
+
+        //for the gibbs sampling change the name of the variable to query in the e[] array
+        String[] e = new String[1];
+        e[0] = "Earthquake";
 
 
 
-//        // prints out the contents of each variable in the network
-//        System.out.println(alarm.getNetworkName());
-//        alarm.getVariables().forEach((Variable v) -> {
-//            System.out.println(v);
-//        });
-//
-//        //below is test code for variable elimination on the earthquake network
-//        BayesNet earthquake = ExactTest.returnEarthquakeNet();
-//
-//        //given the evidence that John and Mary both called
-//        //to test on other networks, update the below add() calls to whatever variables will be provided as evidence
-//        ArrayList<String> evid = new ArrayList<>();
-//        evidence.add("JohnCalls");
-//        evidence.add("MaryCalls");
-//
-//        //add to the evidence states list the state of the variables in the order that corresponds to the evidence list
-//        ArrayList<String> evidStates = new ArrayList<>();
-//        evidenceStates.add("True");
-//        evidenceStates.add("True");
-//
-//        //for the gibbs sampling change the name of the variable to query in the e[] array
-//        String[] e = new String[1];
-//        e[0] = "Earthquake";
-//
-//
-//
-//
-//
-//        //replace 'earthquake' with the name of the BayesNet object
+
+
+        //replace 'earthquake' with the name of the BayesNet object
 //        Approximate.gibbs(earthquake, 100000, evidence, evidenceStates, e);
-//
-//        System.out.println("Running variable elimination: ");
-//        System.out.println();
-//        //replace 'earthquake' with the name of the BayesNet object and "Alarm" with the name of the query variable
-//        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Earthquake", evidence, evidenceStates );
-//        //this will print out the distribution of the query variable for the variable elimination algorithm
-//        System.out.println("The resulting distribution from variable elimination for query variable " + e[0] + ":");
-//        for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){
-//            String[] stateLabels = item.getKey().split(" ");
-//            System.out.print(stateLabels[0] + " ");
-//            for (double d : item.getValue()) {
-//                System.out.print(d);
-//            }
-//            System.out.println("");
-//        }
+
+        System.out.println("Running variable elimination: ");
+        System.out.println();
+        //replace 'earthquake' with the name of the BayesNet object and "Alarm" with the name of the query variable
+        HashMap<String, ArrayList<Double>> evidenceFactors = Exact.variableElimination(earthquake, "Earthquake", evidence, evidenceStates );
+        //this will print out the distribution of the query variable for the variable elimination algorithm
+        System.out.println("The resulting distribution from variable elimination for query variable " + e[0] + ":");
+        for (Map.Entry<String, ArrayList<Double>> item: evidenceFactors.entrySet()){
+            String[] stateLabels = item.getKey().split(" ");
+            System.out.print(stateLabels[0] + " ");
+            for (double d : item.getValue()) {
+                System.out.print(d);
+            }
+            System.out.println("");
+        }
     }
 
 }
