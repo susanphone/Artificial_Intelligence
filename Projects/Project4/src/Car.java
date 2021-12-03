@@ -1,20 +1,16 @@
 public class Car {
 
-    double[] position;
-    double[] velocity;
-    double[] acceleration;
+    int[] position;
+    int[] velocity;
+    int[] acceleration;
 
-    public Car(double[] p, double[] v, double[] a){
+    public Car(int[] p, int[] v, int[] a){
         this.position = p;
         this.velocity = v;
         this.acceleration = a;
     }
 
-    public void accelerate(double direction){
-
-    }
-
-    public void decelerate(double direction){
+    public void accelerate(int x, int y){
 
     }
 
