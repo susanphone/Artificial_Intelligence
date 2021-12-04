@@ -1,4 +1,4 @@
-public class Reader {
+
 
 import java.io.File;
 import java.util.ArrayList;
@@ -15,6 +15,7 @@ public class Reader {
                 System.out.println();
             }
     }
+
 
     //Given a file name for a track, returns a char array with each character in a subarray representing a space on the track
     //‘W’ = wall, ‘R’ = road, ‘S’ = start, and ‘F’ = finish
