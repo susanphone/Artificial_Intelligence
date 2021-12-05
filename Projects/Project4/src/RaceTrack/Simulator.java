@@ -1,3 +1,5 @@
+package RaceTrack;
+
 public class Simulator {
 
     Car car;
