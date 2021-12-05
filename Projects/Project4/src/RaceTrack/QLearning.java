@@ -2,6 +2,7 @@ package RaceTrack;
 
 public class QLearning {
 
+    Knowledge
     int[] actions;
     char state;
     int reward;
@@ -17,7 +18,8 @@ public class QLearning {
         return actions;
     }
 
-    public static char updateState() {
+    public char updateState() {
+        state = this.state;
         return state;
     }
 
@@ -25,7 +27,7 @@ public class QLearning {
     public void explore(double[] position, char[][] knowledge) {
         if (position[0] == 0.0 || position[1] == 0.0) {
             int action = decision(state, reward, position, knowledge);
-            Knowledge.updateKnowledge(knowledge, this.position, action);
+
         }
     }
 
@@ -107,4 +109,15 @@ public class QLearning {
         return action;
     }
 
+    public static void main(String[] args) {
+        double[] p = {0,1};
+        int moves = 0;
+        QLearning ql = new QLearning('S', 1, p);
+        Knowledge k = new Knowledge();
+        char[][] matrix = k.initializeKnowledge();
+        ql.explore(p, matrix);
+        char s = ql.updateState();
+        int r = ql.costFunction(moves);
+
+    }
 }

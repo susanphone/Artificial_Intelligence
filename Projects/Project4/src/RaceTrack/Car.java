@@ -1,3 +1,5 @@
+package RaceTrack;
+
 public class Car {
 
     int[] position;
@@ -10,7 +12,7 @@ public class Car {
         this.acceleration = a;
     }
 
-    public void accelerate(int x, int y){
+    public static void accelerate(int x, int y){
 
     }
 

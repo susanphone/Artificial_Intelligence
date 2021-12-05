@@ -18,5 +18,12 @@
 * imperfect info games:
     * amgibuity
     * presence of chance
-    * poker, backgrammon
+    * poker, backgammon
     
+## Non-Cooperative Games
+* non-empty set, P, of players
+
+## Constant-Sum Games
+* if there exists a constant
+* zero-sum is when the constant is zero
+* all-constant sum games can be made into zero-sum games
