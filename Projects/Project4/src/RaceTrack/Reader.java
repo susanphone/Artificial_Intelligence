@@ -5,17 +5,6 @@ import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Reader {
-    public static void main(String[] args) {
-        char[][] track = trackIn("L-track.txt");
-        
-        for(int i = 0; i < track.length; i++){
-                for(int j = 0; j < track[i].length; j++){
-                    System.out.print(track[i][j]);
-                }
-                System.out.println();
-            }
-    }
-
 
     //Given a file name for a track, returns a char array with each character in a subarray representing a space on the track
     //‘W’ = wall, ‘R’ = road, ‘S’ = start, and ‘F’ = finish
