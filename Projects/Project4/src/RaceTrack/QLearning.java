@@ -2,13 +2,12 @@ package RaceTrack;
 
 public class QLearning {
 
-    Knowledge
     int[] actions;
     char state;
     int reward;
-    double[] position;
+    int[] position;
 
-    public QLearning(char s, int r, double[] p) {
+    public QLearning(char s, int r, int[] p) {
         this.state = s;
         this.reward = r;
         this.position = p;
@@ -18,28 +17,46 @@ public class QLearning {
         return actions;
     }
 
-    public char updateState() {
-        state = this.state;
-        return state;
+    public char[][] initializeQTable(int xSize, int ySize) {
+        char[][] matrix = new char[xSize][ySize];
+        for (int x = 0; x < matrix[xSize].length; x++) {
+            for (int y = 0; y < matrix[ySize].length; y++) {
+                // set state as unknown and action as 0.
+                char state = 'U';
+                int action = 0;
+                matrix = new char[state][action];
+            }
+        }
+        return matrix;
     }
 
+    // once position has been explored and car has not crashed, update knowledge
+    public char updateQTable(char[][] matrix, int[] position, int action, char state){
+        int x = position[0];
+        int y = position[1];
+        char m, n;
+        m = state;
+        n = (char) action;
+        char matrix1 = matrix[m][n];
+        return matrix1;
+    }
 
-    public void explore(double[] position, char[][] knowledge) {
+    // if grid space is unknown, move to the space and update the state and optimal action for that position
+    public void explore(int[] position, char[][] knowledge) {
         if (position[0] == 0.0 || position[1] == 0.0) {
             int action = decision(state, reward, position, knowledge);
+            updateQTable(knowledge, position, action, state);
 
         }
     }
 
 
     public int costFunction(int moves) {
-//        int t = 0;
-//        return t;
         int updatedMoves = moves + 1;
         return updatedMoves;
     }
 
-    public int decision(char state, int reward, double[] position, char[][] knowledge) {
+    public int decision(char state, int reward, int[] position, char[][] knowledge) {
         int[] acts = getActions();
         // continue at current speed going straight
         int action = 0;
@@ -56,67 +73,20 @@ public class QLearning {
                 }
                 double x = position[0];
                 double y = position[1];
-                for (int a : acts) {
-                    if (x + 1 != 'w' && y + 1 == 'w') {
-                        // move east
-                        Car.accelerate(1, 0);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (x + 1 == 'w' && y + 1 != 'w') {
-                        // move east, slight north
-                        Car.accelerate(-1, 1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (y + 1 != 'w' && x + 1 != 'w') {
-                        // move north-east
-                        Car.accelerate(1, 1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (y + 1 == 'w' && x - 1 != 'w') {
-                        // move west, slight south
-                        Car.accelerate(1, -1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (y - 1 == 'w' && x - 1 == 'w') {
-                        // move south-west
-                        Car.accelerate(-1, -1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (y - 1 != 'w' && x - 1 == 'w') {
-                        // move north, slight west
-                        Car.accelerate(-1, 1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (y - 1 != 'w' && x - 1 != 'w') {
-                        // move north-west
-                        Car.accelerate(1, 1);
-                        Knowledge.updateKnowledge(knowledge, position, a);
-                        return a;
-                    }
-                    if (this.state == 'w' || this.state == 'g'){
-                        done = true;
-                        break;
-                    }
-                }
             }
         }
         return action;
     }
 
     public static void main(String[] args) {
-        double[] p = {0,1};
+        int[] p = {0,1};
         int moves = 0;
+        int x = 10;
+        int y = 15;
         QLearning ql = new QLearning('S', 1, p);
-        Knowledge k = new Knowledge();
-        char[][] matrix = k.initializeKnowledge();
+        char[][] matrix = ql.initializeQTable(x, y);
         ql.explore(p, matrix);
-        char s = ql.updateState();
+        ql.decision(ql.state, ql.reward, p, matrix);
         int r = ql.costFunction(moves);
 
     }
