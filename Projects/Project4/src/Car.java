@@ -17,8 +17,8 @@ public class Car {
         velocity_history.add(this.position);
     }
 
-    //Accelerates the car and updates velocity and position accordingly. If there is a crash, it is handled in the desired way
-    public Boolean accelerate(int x, int y){
+    //Accelerates the car and updates velocity and position accordingly. Returns 0 for success, 1 for a crash, and 2 for a finish
+    public int accelerate(int x, int y, char[][] track){
         int last_x = position[0];
         int last_y = position[1];
         
@@ -45,9 +45,6 @@ public class Car {
         velocity_history.add(velocity);
         position_history.add(position);
         
-        //crash check
-        Boolean crashed = false;
-        
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
         
@@ -56,15 +53,22 @@ public class Car {
         int current_x = last_x;
         int current_y = last_y;
         
-        ArrayList<int[]> check_for_walls = new ArrayList<>();
         
         for(double i = last_x; i < position[0]; i += 0.01){
             if((int) i > current_x){
                 current_x = (int) i;
+                //check box for walls
+                //if wall return 1, if finish return 2
+            }
+            
+            if((int) (m*i + b) > current_y){
+                current_y = (int) i;
+                //check box for walls
+                //if wall return 1, if finish return 2
             }
         }
         
-        return crashed;
+        return 0;
     }
 
 }
