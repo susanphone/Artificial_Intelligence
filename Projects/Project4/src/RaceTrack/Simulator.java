@@ -1,5 +1,8 @@
 package racetrack;
 
+import java.util.ArrayList;
+import java.util.Random;
+
 public class Simulator {
 
     Car car;
@@ -9,8 +12,18 @@ public class Simulator {
         track = Reader.trackIn(file_name);
         
         //Get starting positions, randomly select one, initialize car there
-        //Temporary values for position and velocity
-        int[] p = {0,0};
+        ArrayList<int[]> start_positions = new ArrayList<>();
+        for(int i = 0; i < track.length; i++){
+            for(int j = 0; j < track[0].length; j++){
+                if(track[i][j] == 'S'){
+                    int[] temp = {i,j};
+                    start_positions.add(temp);
+                }
+            }
+        }
+        
+        Random rand = new Random();
+        int[] p = start_positions.get(rand.nextInt(start_positions.size()));
         int[] v = {0,0};
         car = new Car(p, v);
         
