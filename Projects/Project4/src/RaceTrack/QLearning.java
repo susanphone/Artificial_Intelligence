@@ -19,8 +19,8 @@ public class QLearning {
 
     public char[][] initializeQTable(int xSize, int ySize) {
         char[][] matrix = new char[xSize][ySize];
-        for (int x = 0; x < matrix[xSize].length; x++) {
-            for (int y = 0; y < matrix[ySize].length; y++) {
+        for (int x = 0; x < xSize; x++) {
+            for (int y = 0; y < ySize; y++) {
                 // set state as unknown and action as 0.
                 char state = 'U';
                 int action = 0;
@@ -31,22 +31,24 @@ public class QLearning {
     }
 
     // once position has been explored and car has not crashed, update knowledge
-    public char updateQTable(char[][] matrix, int[] position, int action, char state){
+    public char[][] updateQTable(char[][] matrix, int[] position, int action, char state){
         int x = position[0];
         int y = position[1];
-        char m, n;
-        m = state;
-        n = (char) action;
-        char matrix1 = matrix[m][n];
-        return matrix1;
+        matrix[x][y] = state, (char) action;
+        return matrix;
     }
 
     // if grid space is unknown, move to the space and update the state and optimal action for that position
     public void explore(int[] position, char[][] knowledge) {
+        int action = 0;
         if (position[0] == 0.0 || position[1] == 0.0) {
-            int action = decision(state, reward, position, knowledge);
+//            int action = decision(state, reward, position, knowledge);
+            if (this.state == 'R' || this.state == 'S') {
+                action = 1;
+            } else {
+                action = -1;
+            }
             updateQTable(knowledge, position, action, state);
-
         }
     }
 
@@ -65,7 +67,7 @@ public class QLearning {
         double currentMoveReward = 1.0;
         while (!done) {
             // while state is not terminal, continue on track
-            while ((state != 'w' || state != 'g') && currentMoveReward <= 0.01) {
+            while ((state == 'S' || state == 'R') && currentMoveReward >= 0.01) {
                 explore(position, knowledge);
                 currentMoveReward = reward - 0.001;
                 if (currentMoveReward == 0.1) {
@@ -85,9 +87,10 @@ public class QLearning {
         int y = 15;
         QLearning ql = new QLearning('S', 1, p);
         char[][] matrix = ql.initializeQTable(x, y);
-        ql.explore(p, matrix);
+//        ql.explore(p, matrix);
         ql.decision(ql.state, ql.reward, p, matrix);
         int r = ql.costFunction(moves);
+        System.out.println("Something Is happening");
 
     }
 }
