@@ -66,17 +66,24 @@ public class QLearning {
         int action = 0;
         // let the session continue as long as the current state is not 'W'
         boolean done = false;
+        int count = 0;
         while (!done) {
             // while state is not terminal, continue on track
             while ((state == 'S' || state == 'R') && currentMoveReward >= 0.01) {
                 explore(position, knowledge);
+                count = costFunction(count);
                 currentMoveReward = currentMoveReward - 0.001;
-                if (currentMoveReward == 0.1) {
+                if (currentMoveReward == 0.1 ) {
                     break;
                 }
+                if (count == 100000) {
+                    break;
+                }
+
                 double x = position[0];
                 double y = position[1];
             }
+
         }
         return action;
     }

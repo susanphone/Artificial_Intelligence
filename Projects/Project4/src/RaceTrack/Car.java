@@ -1,4 +1,5 @@
 package RaceTrack;
+
 import java.util.Random;
 import java.util.ArrayList;
 
@@ -11,7 +12,7 @@ public class Car {
     ArrayList<int[]> position_history = new ArrayList<>();
     ArrayList<int[]> velocity_history = new ArrayList<>();
 
-    public Car(int[] p, int[] v, int[] a){
+    public Car(int[] p, int[] v){
         this.position = p;
         this.velocity = v;
         position_history.add(this.position);
@@ -54,18 +55,33 @@ public class Car {
         int current_x = last_x;
         int current_y = last_y;
         
+        ArrayList<int[]> checks = new ArrayList<>();
         
-        for(double i = last_x; i < position[0]; i += 0.01){
-            if((int) i > current_x){
-                current_x = (int) i;
-                //check box for walls
-                //if wall return 1, if finish return 2
-            }
+        
+        for(double i = last_x; i < position[0]; i += 0.1){
+            int new_x = (int) i;
+            int new_y = (int) (m*i + b);
             
-            if((int) (m*i + b) > current_y){
-                current_y = (int) i;
-                //check box for walls
-                //if wall return 1, if finish return 2
+            boolean diff_x = new_x != current_x;
+            boolean diff_y = new_y != current_y;
+            
+            if(diff_x){
+                int[] temp = {new_x, current_y};
+                checks.add(temp);
+            }
+            if(diff_y){
+                int[] temp = {current_x, new_y};
+                checks.add(temp);
+            }
+        }
+        
+        for(int i = 0; i < checks.size(); i++){
+            int[] current = checks.get(i);
+            if(track[current[0]][current[1]] == 'W'){
+                return 1;
+            }
+            else if(track[current[0]][current[1]] == 'F'){
+                return 2;
             }
         }
         
