@@ -21,91 +21,80 @@ public class QLearning {
     }
 
     public HashMap initializeQTable(int xSize, int ySize) {
-        HashMap<Character, Integer> knowledge = new HashMap<>();
+        HashMap<int[], char[]> knowledge = new HashMap<>();
         char state = 'U';
         int action = 0;
+        char[] charArray = {state, (char)action};
         for (int x = 0; x < xSize; x++) {
             for (int y = 0; y < ySize; y++) {
+                int[] pos = {x,y};
                 // set state as unknown and action as 0.
-                knowledge.put(state, action);
-                continue;
+                knowledge.put(pos, charArray);
             }
         }
         return knowledge;
     }
 
     // once position has been explored and car has not crashed, update knowledge
-    public HashMap updateQTable(HashMap matrix, int action, char state){
-        matrix.put(state, action);
-        return matrix;
+    public void updateQTable(HashMap matrix, int[] position, int action, char state){
+        char[] charArray = {state, (char) action};
+        matrix.put(position, charArray);
     }
 
     // if grid space is unknown, move to the space and update the state and optimal action for that position
-    public HashMap explore(int[] position, HashMap knowledge) {
-        int action = 0;
-        if (position[0] == 0.0 || position[1] == 0.0) {
-//            int action = decision(state, reward, position, knowledge);
-            if (this.state == 'R' || this.state == 'S') {
-                action = 1;
-            } else {
-                action = -1;
-            }
-            knowledge = updateQTable(knowledge, action, state);
+    public char explore(int[] position, HashMap knowledge) {
+        char action = '0';
+        if (this.state == 'R' || this.state == 'S') {
+            action = '1';
+        } else {
+            action = '9';
         }
-        return knowledge;
+        char[] charArray = {state, (char) action};
+        knowledge.put(position, charArray);
+        updateQTable(knowledge, position, action, state);
+        return action;
     }
 
-
-    public int costFunction(int moves) {
-        int updatedMoves = moves + 1;
-        return updatedMoves;
-    }
-
-    public int[] decision(char state, double currentMoveReward, HashMap knowledge) {
+    public char decision(char state, double currentMoveReward, HashMap knowledge) {
         int[] pos = this.position;
-        int[] acts = getActions();
         // continue at current speed going straight
-        int action = 0;
+        char action = '0';
         int x = pos[0];
         int y = pos[1];
         // let the session continue as long as the current state is not 'W'
         boolean done = false;
-        int count = 0;
-        while (!done) {
-            // while state is not terminal, continue on track
-            while ((state == 'S' || state == 'R') && currentMoveReward >= 0.01) {
-                knowledge = explore(pos, knowledge);
-                count = costFunction(count);
-                currentMoveReward = currentMoveReward - 0.001;
-                if (currentMoveReward == 0.1 ) {
-                    break;
-                }
-                if (count == 10) {
-                    break;
-                }
-
-
+        // while state is not terminal, continue on track
+        if ((state == 'S' || state == 'R') && currentMoveReward >= 0.01) {
+             action = explore(pos, knowledge);
+            currentMoveReward = currentMoveReward - 0.001;
+            if (currentMoveReward == 0.1 ) {
+                System.out.println("Timeout");
+                done = true;
             }
-
+            if (done == true) {
+                return state;
+            }
         }
         pos[0] = x+1;
         pos[1] = y;
-        return pos;
+        return action;
     }
 
     public static void main(String[] args) {
-        int moves = 0;
         int x = 10;
         int y = 15;
-        int[] p = {0, 0};
-        System.out.println("Something Is happening");
-        HashMap matrix;
+        int[] p = {0,0};
         QLearning ql = new QLearning('S', 1, p);
-        matrix = ql.initializeQTable(x, y);
-//        ql.explore(p, matrix);
-        p = ql.decision(ql.state, ql.reward, matrix);
-        int r = ql.costFunction(moves);
-        System.out.println(Arrays.toString(p));
+        HashMap matrix  = ql.initializeQTable(x, y);
+        for (int i = 0; i < x; i++) {
+            for (int j = 0; j < y; j++){
+                p = new int[]{i, j};
+                System.out.println("Something Is happening");
+                char act = ql.decision(ql.state, ql.reward, matrix);
+                System.out.println(Arrays.toString(p) + " " + act + ql.state);
+            }
+        }
+
 
     }
 }
