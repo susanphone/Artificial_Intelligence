@@ -1,15 +1,17 @@
 package RaceTrack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
 
 public class Main {
-    public static void main(String[] args){
+    public static void main(String[] args) {
 
         char[][] track = Reader.trackIn("L-track.txt");
 
-        for(int i = 0; i < track.length; i++){
-            for(int j = 0; j < track[i].length; j++){
+        for (int i = 0; i < track.length; i++) {
+            for (int j = 0; j < track[i].length; j++) {
                 System.out.print(track[i][j]);
             }
             System.out.println();
@@ -18,9 +20,9 @@ public class Main {
         //initialize the possible velocities
         ArrayList<int[]> velocities = new ArrayList<>();
 
-        for(int x = -5; x < 6; x++){
-            for(int y = -5; y < 6; y++){
-                int [] velocity = {x, y};
+        for (int x = -5; x < 6; x++) {
+            for (int y = -5; y < 6; y++) {
+                int[] velocity = {x, y};
                 velocities.add(velocity);
             }
         }
@@ -29,16 +31,16 @@ public class Main {
         MDP currentTrack = new MDP();
 
         //add the coordinates for the possible states to the states ArrayList in the MDP
-        for(int i = 0; i < track.length; i++){
-            for(int j = 0; j < track[i].length; j++){
+        for (int i = 0; i < track.length; i++) {
+            for (int j = 0; j < track[i].length; j++) {
 
                 //check if coordinates are a valid position (starting point, road, or finish line)
-                if (track[i][j] == 'S' || track[i][j] == 'R' || track[i][j] == 'F'){
-                    for(int[] v : velocities){
+                if (track[i][j] == 'S' || track[i][j] == 'R' || track[i][j] == 'F') {
+                    for (int[] v : velocities) {
                         int[] state = {j, i, v[0], v[1]};
                         currentTrack.states.add(state);
                     }
-                    if(track[i][j] == 'F'){
+                    if (track[i][j] == 'F') {
                         int[] finishPos = {j, i};
                         currentTrack.finishPositions.add(finishPos);
                     }
@@ -47,7 +49,7 @@ public class Main {
         }
 
         //set-up the action possibilities
-        currentTrack.actions =  currentTrack.setActions();
+        currentTrack.actions = currentTrack.setActions();
 
         //track dimensions
         int[] trackDim = {track[0].length, track.length};
@@ -66,6 +68,23 @@ public class Main {
 
         HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7);
 
+        /* QLearning starts with initializing a map of the knowledge, the states are all unknown
+         * and the action is set as zero, which means no change to speed. */
+//        HashMap<int[], char[]> knowledge = new HashMap<>();
+//        int x = trackDim[0];
+//        int y = trackDim[1];
+//        int[] xy = {x, y};
+//        char[] states = {'S', 'R', 'W', 'F'};
+//        QLearning ql = new QLearning(states, xy);
+//        HashMap<int[], char[]> growingKnowledge = ql.runLearning(states, 1, xy);
+//        for (int[] gk : growingKnowledge.keySet()) {
+//            String key = gk.toString();
+//            System.out.println(key);
+//        }
+//        for (char[] sa : growingKnowledge.values()) {
+//            String value = sa.toString();
+//            System.out.println(value);
+//        }
     }
 
 }
