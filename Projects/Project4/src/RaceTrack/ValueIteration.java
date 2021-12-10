@@ -11,18 +11,17 @@ public class ValueIteration {
 
     }
 
-    public int costFunction(){
-        return 0;
-    }
-
     public static HashMap<int[], ActionValue> decision(int[] trackDim, MDP m, double epsilon, double discount){
 
         ArrayList<int[]>  states = m.states;
         ArrayList<int[]> actions = m.actions;
 
+        //initializing the cost
+        int cost = 0;
+
         //specified probability of acceleration at any given time step to ensure non-determinism
         double accel_probability = 0.8;
-
+        int[] bellmanErrState = new int[4];
 
         //key is a state & value is the reward value of that state
         HashMap<int[], Double> V = new HashMap<>();
@@ -41,27 +40,28 @@ public class ValueIteration {
         int iteration = 0;
 
         boolean finished = false;
-        double delta = 0.0;
 
         ArrayList<Integer> temp = new ArrayList<>();
 
-        while(iteration < 1000000){
+        while( !finished ){
+            double bellmanErr = 0.0;
 
             //copy the values of the old value function to be stored as the previous function for the next iteration
             for(int[] state : V.keySet()){
                 VPrev.put(state, V.get(state));
             }
 
-            int currSt = 0;
+            System.out.println("Iteration: " + iteration);
+
             for(int[] state : states){
-                currSt++;
-                System.out.println("Iteration: " + iteration + " State: " + currSt );
 
                 ActionValue nextActionValue = new ActionValue();
                 double nextValue = 0.0;
                 double qValue = 0.0;
 
                 for(int[] action : actions){
+                    cost++;
+
                     int[] nextState = getNextState(states, state, action);
 
                     //if the next state doesn't exist, given the current action, move on to the next action
@@ -86,15 +86,24 @@ public class ValueIteration {
                         nextActionValue.value = nextValue;
                     }
                 }
-                //System.out.println("Next action value: " + nextActionValue.value);
+
                 optimal.put(state, nextActionValue);
                 V.put(state, nextValue);
 
+                double currBellmanErr = Math.abs(V.get(state) - VPrev.get(state));
+
+                if(currBellmanErr > bellmanErr){
+                    bellmanErr = currBellmanErr;
+                    bellmanErrState = state;
+                }
+            }
+
+            if(bellmanErr < epsilon){
+                finished = true;
             }
             iteration++;
-            System.out.println("Final Size: " + temp.size());
         }
-
+        System.out.println("Cost: " + cost);
         return optimal;
     }
 

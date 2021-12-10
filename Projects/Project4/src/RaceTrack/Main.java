@@ -52,9 +52,20 @@ public class Main {
         //track dimensions
         int[] trackDim = {track[0].length, track.length};
 
-        //train the value iteration algo
+        /*
+         * OUTPUT FROM VALUE ITERATION
+         * value iteration produces a HashMap for the entire policy of the track, where the key is the state,
+         * stored as an integer array where arr[0] is the x position, arr[1] is the y position, arr[2] is the x
+         * velocity, and arr[3] is the y velocity
+         * the value is a ActionValue object, which has the corresponding optimal action and reward value for
+         * any given state, where the action is an integer array where arr[0] is the x acceleration and arr[1] is the
+         * y acceleration
+         * Given the starting position you should be able to use my optimalPolicy to help the car decide what is the
+         * optimal action the take (the action attribute in the ActionValue object)
+         */
 
-        HashMap<int[], ActionValue> optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.1, 0.1);
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7);
+
     }
 
 }
