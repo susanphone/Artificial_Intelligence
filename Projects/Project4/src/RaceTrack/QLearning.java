@@ -1,23 +1,34 @@
 package RaceTrack;
 
-import java.util.Arrays;
 import java.util.HashMap;
 
 public class QLearning {
 
     int[] actions;
-    char state;
+    char[] states;
     int reward;
     int[] position;
 
-    public QLearning(char s, int r, int[] p) {
-        this.state = s;
-        this.reward = r;
+    public QLearning(char[] s, int[] p) {
+        this.states = s;
         this.position = p;
     }
 
-    private int[] getActions() {
-        return actions;
+    public char getState(char[] states) {
+        for (char state: states) {
+            if (state == 'S') {
+                return state;
+            }
+            if (state == 'R') {
+                return state;
+            }
+            if (state == 'W') {
+                return state;
+            } else {
+                return state;
+            }
+        }
+        return states[0];
     }
 
     public HashMap initializeQTable(int xSize, int ySize) {
@@ -44,7 +55,8 @@ public class QLearning {
     // if grid space is unknown, move to the space and update the state and optimal action for that position
     public char explore(int[] position, HashMap knowledge) {
         char action = '0';
-        if (this.state == 'R' || this.state == 'S') {
+        char state = getState(states);
+        if (state == 'R' || state == 'S') {
             action = '1';
         } else {
             action = '9';
@@ -71,7 +83,7 @@ public class QLearning {
                 System.out.println("Timeout");
                 done = true;
             }
-            if (done == true) {
+            if (done) {
                 return state;
             }
         }
@@ -80,21 +92,16 @@ public class QLearning {
         return action;
     }
 
-    public static void main(String[] args) {
-        int x = 10;
-        int y = 15;
-        int[] p = {0,0};
-        QLearning ql = new QLearning('S', 1, p);
-        HashMap matrix  = ql.initializeQTable(x, y);
+    public HashMap<int[], char[]> runLearning(char[] states, int reward, int[] size) {
+        int x = size[0];
+        int y = size[1];
+        char state = getState(states);
+        HashMap knowledgeMap = initializeQTable(x, y);
         for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++){
-                p = new int[]{i, j};
-                System.out.println("Something Is happening");
-                char act = ql.decision(ql.state, ql.reward, matrix);
-                System.out.println(Arrays.toString(p) + " " + act + ql.state);
+            for (int j = 0; j < y; j++) {
+                char act = decision(state, reward, knowledgeMap);
             }
         }
-
-
+        return knowledgeMap;
     }
 }
