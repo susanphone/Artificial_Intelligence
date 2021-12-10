@@ -41,7 +41,7 @@ public class ValueIteration {
 
         boolean finished = false;
 
-        while( iteration < 2 ){
+        while( !finished ){
             double bellmanErr = 0.0;
 
             //copy the values of the old value function to be stored as the previous function for the next iteration
@@ -55,6 +55,11 @@ public class ValueIteration {
 
             for(int[] state : states){
 
+//                state[0] = 1;
+//                state[1] = 6;
+//                state[2] = -5;
+//                state[3] = -5;
+
                 stateNum++;
 
                 ActionValue nextActionValue = new ActionValue();
@@ -67,17 +72,22 @@ public class ValueIteration {
                     int[] nextState = getNextState(states, state, action, crashType);
 
                     //if the current action causes the car to crash into a wall move on to the next action
-                    if(nextState[0] == -1 && nextState[1] == -1){
-                        nextValue = -10;
-                        continue;
-                    }
+//                    if(nextState[0] == -1 && nextState[1] == -1){
+//                        nextValue = -10;
+//                        continue;
+//                    }
 
                     //get the values for if the acceleration fails
                     int[] failedAccel = {0,0};
                     int[] nextStateAccelFails = getNextState(states, state, failedAccel, crashType);
 
+                    //int[] testState = {26, 8};
+                    //VPrev.get(nextState);
 
-                    qValue = m.reward(state) + (discount * m.transition(accel_probability, VPrev.get(nextState),
+//                    System.out.println(state[0] + " " + state[1] + " " + state[2] + " " + state[3] );
+//                    System.out.println(nextState[0] + " " + nextState[1] + " " + nextState[2] + " " + nextState[3] );
+
+                    qValue = m.reward(nextState) + (discount * m.transition(accel_probability, VPrev.get(nextState),
                             VPrev.get(nextStateAccelFails)));
 
                     if(nextValue == 0.0 || qValue > nextValue){
@@ -120,14 +130,14 @@ public class ValueIteration {
         int xAccel = action[0];
         int yAccel = action[1];
 
-        //non-determinism
-        Random rand = new Random();
-        int r = rand.nextInt(10) + 1;
-
-        if(r > 8){
-            xAccel = 0;
-            yAccel = 0;
-        }
+//        //non-determinism
+//        Random rand = new Random();
+//        int r = rand.nextInt(10) + 1;
+//
+//        if(r > 8){
+//            xAccel = 0;
+//            yAccel = 0;
+//        }
 
         int newXCoord;
         int newYCoord;
@@ -152,18 +162,47 @@ public class ValueIteration {
         int[] newState = {-1, -1, 0, 0};
 
         for (int[] s : states) {
-            if(s[0] == newXCoord && s[1] == newYCoord && s[2] == newXVel && s[3] == newYVel){
+            if (s[0] == newXCoord && s[1] == newYCoord && s[2] == newXVel && s[3] == newYVel) {
                 newState = s;
-            }else{
-
+            }
+        }
+        if(newState[0] == -1 && newState[1] == -1){
                 if(crashType == 0){
                     //mild crash
+//                    if(newXCoord < 0){
+//                        newXCoord = 0;
+//                    }
+//                    if(newYCoord < 0){
+//                        newYCoord = 0;
+//                    }
+                    int[] nearestState = getNearestPosition(newXCoord, newYCoord, states);
+                    newState = nearestState;
 
                 }else{
                     //bad crash
                 }
-            }
         }
+
         return newState;
+    }
+
+    private static int[] getNearestPosition(int newXCoord, int newYCoord, ArrayList<int[]> states) {
+
+        double minDist = 100;
+        int[] nearest = {0, 0, 0, 0};
+
+        for(int[] s: states){
+            if(s[2] == 0 && s[3] == 0){
+                double currDist = Math.sqrt((Math.pow((newXCoord - s[0]), 2.0) + (Math.pow((newYCoord - s[1]), 2.0))));
+
+                if(currDist < minDist){
+                    minDist = currDist;
+                    nearest = s;
+                }
+            }
+
+        }
+
+        return nearest;
     }
 }

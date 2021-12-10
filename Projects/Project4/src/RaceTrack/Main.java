@@ -46,6 +46,12 @@ public class Main {
             }
         }
 
+//        for(int[] s : currentTrack.states){
+//            if(s[0] == 26 && s[1] == 8){
+//                System.out.println("State exists ");
+//            }
+//        }
+
         //set-up the action possibilities
         currentTrack.actions =  currentTrack.setActions();
 
@@ -64,7 +70,7 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
-        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.1, 0.1, 0);
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
 
     }
 
