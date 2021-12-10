@@ -72,8 +72,9 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
-        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
+        //HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
 
+        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
         /* QLearning starts with initializing a map of the knowledge, the states are all unknown
          * and the action is set as zero, which means no change to speed. */
 //        HashMap<int[], char[]> knowledge = new HashMap<>();

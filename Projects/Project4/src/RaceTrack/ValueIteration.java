@@ -11,7 +11,7 @@ public class ValueIteration {
 
     }
 
-    public static HashMap<int[], ActionValue> decision(int[] trackDim, MDP m, double epsilon, double discount, int crashType){
+    public static HashMap<int[], ActionValue> decision( MDP m, double epsilon, double discount, int crashType){
 
         ArrayList<int[]>  states = m.states;
         ArrayList<int[]> actions = m.actions;
