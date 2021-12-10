@@ -16,9 +16,6 @@ public class QLearning {
         this.position = p;
     }
 
-    private int[] getActions() {
-        return actions;
-    }
 
     public HashMap initializeQTable(int xSize, int ySize) {
         HashMap<int[], char[]> knowledge = new HashMap<>();
@@ -71,7 +68,7 @@ public class QLearning {
                 System.out.println("Timeout");
                 done = true;
             }
-            if (done == true) {
+            if (done) {
                 return state;
             }
         }
@@ -80,21 +77,14 @@ public class QLearning {
         return action;
     }
 
-    public static void main(String[] args) {
-        int x = 10;
-        int y = 15;
-        int[] p = {0,0};
-        QLearning ql = new QLearning('S', 1, p);
-        HashMap matrix  = ql.initializeQTable(x, y);
+    public void runLearning(char state, int reward, int[] size) {
+        int x = size[0];
+        int y = size[1];
+        HashMap knowledgeMap = initializeQTable(x, y);
         for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++){
-                p = new int[]{i, j};
-                System.out.println("Something Is happening");
-                char act = ql.decision(ql.state, ql.reward, matrix);
-                System.out.println(Arrays.toString(p) + " " + act + ql.state);
+            for (int j = 0; j < y; j++) {
+                char act = decision(state, reward, knowledgeMap);
             }
         }
-
-
     }
 }
