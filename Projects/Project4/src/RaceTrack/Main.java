@@ -52,9 +52,12 @@ public class Main {
         //track dimensions
         int[] trackDim = {track[0].length, track.length};
 
-        //train the value iteration algo
+        /*
+         * OUPUT FROM VALUE ITERATION
+         */
 
-        HashMap<int[], ActionValue> optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.1, 0.1);
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7);
+
     }
 
 }
