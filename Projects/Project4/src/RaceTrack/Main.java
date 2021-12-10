@@ -64,7 +64,7 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
-        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7);
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.1, 0.1, 0);
 
     }
 

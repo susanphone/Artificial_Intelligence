@@ -11,7 +11,7 @@ public class ValueIteration {
 
     }
 
-    public static HashMap<int[], ActionValue> decision(int[] trackDim, MDP m, double epsilon, double discount){
+    public static HashMap<int[], ActionValue> decision(int[] trackDim, MDP m, double epsilon, double discount, int crashType){
 
         ArrayList<int[]>  states = m.states;
         ArrayList<int[]> actions = m.actions;
@@ -41,9 +41,7 @@ public class ValueIteration {
 
         boolean finished = false;
 
-        ArrayList<Integer> temp = new ArrayList<>();
-
-        while( !finished ){
+        while( iteration < 2 ){
             double bellmanErr = 0.0;
 
             //copy the values of the old value function to be stored as the previous function for the next iteration
@@ -53,7 +51,11 @@ public class ValueIteration {
 
             System.out.println("Iteration: " + iteration);
 
+            int stateNum = 0;
+
             for(int[] state : states){
+
+                stateNum++;
 
                 ActionValue nextActionValue = new ActionValue();
                 double nextValue = 0.0;
@@ -62,20 +64,18 @@ public class ValueIteration {
                 for(int[] action : actions){
                     cost++;
 
-                    int[] nextState = getNextState(states, state, action);
+                    int[] nextState = getNextState(states, state, action, crashType);
 
-                    //if the next state doesn't exist, given the current action, move on to the next action
+                    //if the current action causes the car to crash into a wall move on to the next action
                     if(nextState[0] == -1 && nextState[1] == -1){
+                        nextValue = -10;
                         continue;
                     }
 
                     //get the values for if the acceleration fails
                     int[] failedAccel = {0,0};
-                    int[] nextStateAccelFails = getNextState(states, state, failedAccel);
+                    int[] nextStateAccelFails = getNextState(states, state, failedAccel, crashType);
 
-                    if(nextStateAccelFails[0] ==-1 && nextStateAccelFails[1] == -1){
-                        continue;
-                    }
 
                     qValue = m.reward(state) + (discount * m.transition(accel_probability, VPrev.get(nextState),
                             VPrev.get(nextStateAccelFails)));
@@ -87,6 +87,12 @@ public class ValueIteration {
                     }
                 }
 
+                //if (stateNum == 105 || stateNum == 3500 || stateNum == 10000){
+//                System.out.println("Next Value for state: " + state[0] + " " + state[1] + " " + state[2] + " " +
+//                        state[3] + ": \n" + nextValue);
+                //}
+
+
                 optimal.put(state, nextActionValue);
                 V.put(state, nextValue);
 
@@ -94,10 +100,9 @@ public class ValueIteration {
 
                 if(currBellmanErr > bellmanErr){
                     bellmanErr = currBellmanErr;
-                    bellmanErrState = state;
                 }
             }
-
+            System.out.println("Bellman Error: " + bellmanErr);
             if(bellmanErr < epsilon){
                 finished = true;
             }
@@ -107,7 +112,7 @@ public class ValueIteration {
         return optimal;
     }
 
-    private static int[] getNextState(ArrayList<int[]> states, int[] state, int[] action) {
+    private static int[] getNextState(ArrayList<int[]> states, int[] state, int[] action, int crashType) {
         int xCoord = state[0];
         int yCoord = state[1];
         int xVel = state[2];
@@ -149,6 +154,14 @@ public class ValueIteration {
         for (int[] s : states) {
             if(s[0] == newXCoord && s[1] == newYCoord && s[2] == newXVel && s[3] == newYVel){
                 newState = s;
+            }else{
+
+                if(crashType == 0){
+                    //mild crash
+
+                }else{
+                    //bad crash
+                }
             }
         }
         return newState;
