@@ -1,9 +1,7 @@
 package RaceTrack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -79,12 +77,10 @@ public class Main {
          * and the action is set as zero, which means no change to speed. */
 //
         HashMap<int[], HashMap<int[], int[]>> trackLearning = new HashMap<>();
-        QLearning2 ql = new QLearning2(trackDim, 0.001, 1);
+        QLearning ql = new QLearning(trackDim, 0.001, 1);
         trackLearning = ql.initailizeQTable(trackDim, ql.states, ql.actions);
         ql.explore(ql.position, trackLearning);
-        int[] start = {0,0};
-        ArrayList<int[]> path = new ArrayList<>();
-        path.add(start);
+        HashMap path = new HashMap();
         ql.decision(trackLearning, 1, ql.position, path);
     }
 
