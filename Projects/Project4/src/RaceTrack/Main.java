@@ -2,6 +2,8 @@ package RaceTrack;
 
 import java.util.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class Main {
     public static void main(String[] args) {
@@ -134,21 +136,13 @@ public class Main {
 
         /* QLearning starts with initializing a map of the knowledge, the states are all unknown
          * and the action is set as zero, which means no change to speed. */
-//        HashMap<int[], char[]> knowledge = new HashMap<>();
-//        int x = trackDim[0];
-//        int y = trackDim[1];
-//        int[] xy = {x, y};
-//        char[] states = {'S', 'R', 'W', 'F'};
-//        QLearning ql = new QLearning(states, xy);
-//        HashMap<int[], char[]> growingKnowledge = ql.runLearning(states, 1, xy);
-//        for (int[] gk : growingKnowledge.keySet()) {
-//            String key = gk.toString();
-//            System.out.println(key);
-//        }
-//        for (char[] sa : growingKnowledge.values()) {
-//            String value = sa.toString();
-//            System.out.println(value);
-//        }
+//
+        HashMap<int[], HashMap<int[], int[]>> trackLearning = new HashMap<>();
+        QLearning ql = new QLearning(trackDim, 0.001, 1);
+        trackLearning = ql.initailizeQTable(trackDim, ql.states, ql.actions);
+        ql.explore(ql.position, trackLearning);
+        HashMap path = new HashMap();
+        ql.decision(trackLearning, 1, ql.position, path);
     }
 
 }

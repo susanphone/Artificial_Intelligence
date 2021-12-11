@@ -1,107 +1,133 @@
 package RaceTrack;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QLearning {
-
+    int[] trackDimensions;
+    double discount;
     int[] actions;
-    char[] states;
-    int reward;
+    int[] states = new int[]{0,1,2,3,4};
+    double reward;
     int[] position;
+    HashMap path = new HashMap();
 
-    public QLearning(char[] s, int[] p) {
-        this.states = s;
-        this.position = p;
+    public QLearning(int[] td, double d, double r) {
+        this.trackDimensions = td;
+        this.discount = d;
+        this.reward = r;
     }
 
-    public char getState(char[] states) {
-        for (char state: states) {
-            if (state == 'S') {
-                return state;
+    /* States Values
+    0 = unexplored
+    1 = start
+    2 = road
+    3 = wall
+    4 = finish
+     */
+    // get all the possible states
+    public int[] getStates() {
+        return states;
+    }
+
+    // compute the action based on the possible state
+    public HashMap<Integer, int[]> computeAction(int[] states) {
+        HashMap computedActions = new HashMap<>();
+        int[] action;
+        for (int state : states) {
+            if (state == 1) {
+                action = new int[]{1, 0};
+                action = new int[]{0, 1};
+                action = new int[]{1, 1};
+                computedActions.put(state, action);
             }
-            if (state == 'R') {
-                return state;
+            if (state == 2) {
+                action = new int[]{1, 0};
+                action = new int[]{0, 1};
+                action = new int[]{1, 1};
+                computedActions.put(state, action);
             }
-            if (state == 'W') {
-                return state;
+            if (state == 3) {
+                action = new int[]{-1, 0};
+                action = new int[]{0, -1};
+                action = new int[]{-1, -1};
+                computedActions.put(state, action);
             } else {
-                return state;
+                state = 4;
+                action = new int[]{1, 0};
+                action = new int[]{0, 1};
+                action = new int[]{1, 1};
+                computedActions.put(state, action);
+            }
+
+        }
+        return computedActions;
+    }
+
+    // set up a qtable that returns a Hashmap with the position as the key and a state and action as the value as zero
+    public HashMap<int[], HashMap<int[], int[]>> initailizeQTable(int[] trackDimensions, int[] states, int[] actions) {
+        HashMap<int[], HashMap<int[], int[]>> locationKnowledge = new HashMap<>();
+        HashMap<int[], int[]> knowledge = new HashMap<>();
+        for (int state: states) {
+            state = 0;
+            int statex = state;
+            int statey = state;
+            knowledge.put(new int[]{statex, statey}, new int[]{0, 0});
+        }
+        for (int x = 0; x < trackDimensions[0];x++) {
+            for (int y = 0; y < trackDimensions[1]; y++) {
+                locationKnowledge.put(new int[]{x, y}, knowledge);
             }
         }
-        return states[0];
+        System.out.println("Initializing QTable");
+        return locationKnowledge;
     }
 
-    public HashMap initializeQTable(int xSize, int ySize) {
-        HashMap<int[], char[]> knowledge = new HashMap<>();
-        char state = 'U';
-        int action = 0;
-        char[] charArray = {state, (char)action};
-        for (int x = 0; x < xSize; x++) {
-            for (int y = 0; y < ySize; y++) {
-                int[] pos = {x,y};
-                // set state as unknown and action as 0.
-                knowledge.put(pos, charArray);
-            }
+    // update the values of the state and action that best suit the position
+    public void updateQTable(HashMap<int[], HashMap<int[], int[]>> locationKnowledge, int[] state, HashMap action, int[] position) {
+        locationKnowledge.get(position);
+        HashMap sa = new HashMap();
+        sa.put(state, action);
+        locationKnowledge.put(position, sa);
+        System.out.println("Updating QTable");
+    }
+
+    // get the current qtable
+    public void getQTable(HashMap locationKnowledge, int[] position) {
+        if (locationKnowledge.get(position) == position) {
+            locationKnowledge.get(locationKnowledge.values());
         }
-        return knowledge;
     }
 
-    // once position has been explored and car has not crashed, update knowledge
-    public void updateQTable(HashMap matrix, int[] position, int action, char state){
-        char[] charArray = {state, (char) action};
-        matrix.put(position, charArray);
-    }
-
-    // if grid space is unknown, move to the space and update the state and optimal action for that position
-    public char explore(int[] position, HashMap knowledge) {
-        char action = '0';
-        char state = getState(states);
-        if (state == 'R' || state == 'S') {
-            action = '1';
+    // if a state and action are unknown, the update the knowledge about the current position on the track.
+    public HashMap<int[], HashMap<int[], int[]>> explore(int[] position, HashMap locationKnowledge) {
+        System.out.println("Exploring Track");
+        HashMap emptyKnowledge = new HashMap<>();
+        emptyKnowledge.put(0,0);
+        int[] state = getStates();
+        HashMap action = computeAction(states);
+        getQTable(locationKnowledge, position);
+        if (locationKnowledge.containsValue(emptyKnowledge)) {
+            updateQTable(locationKnowledge, state, action, position);
         } else {
-            action = '9';
+            decision(locationKnowledge, reward, position, path);
         }
-        char[] charArray = {state, (char) action};
-        knowledge.put(position, charArray);
-        updateQTable(knowledge, position, action, state);
-        return action;
+        return locationKnowledge;
     }
 
-    public char decision(char state, double currentMoveReward, HashMap knowledge) {
-        int[] pos = this.position;
-        // continue at current speed going straight
-        char action = '0';
-        int x = pos[0];
-        int y = pos[1];
-        // let the session continue as long as the current state is not 'W'
-        boolean done = false;
-        // while state is not terminal, continue on track
-        if ((state == 'S' || state == 'R') && currentMoveReward >= 0.01) {
-             action = explore(pos, knowledge);
-            currentMoveReward = currentMoveReward - 0.001;
-            if (currentMoveReward == 0.1 ) {
-                System.out.println("Timeout");
-                done = true;
-            }
-            if (done) {
-                return state;
-            }
-        }
-        pos[0] = x+1;
-        pos[1] = y;
-        return action;
+    // exploit the knowledge and decide which combination of actions will create the optimal path to drive and action.
+    public HashMap<int[], HashMap> decision (HashMap locationKnowledge, double reward, int[] position, HashMap<int[], HashMap> currentPath) {
+        System.out.println("Making Decisions");
+        int[] pos = (int[]) locationKnowledge.get(position);
+        reward = costFunction(reward);
+        currentPath.put(pos, computeAction(states));
+        return currentPath;
     }
 
-    public HashMap<int[], char[]> runLearning(char[] states, int reward, int[] size) {
-        int x = size[0];
-        int y = size[1];
-        char state = getState(states);
-        HashMap knowledgeMap = initializeQTable(x, y);
-        for (int i = 0; i < x; i++) {
-            for (int j = 0; j < y; j++) {
-                char act = decision(state, reward, knowledgeMap);
-            }
-        }
-        return knowledgeMap;
+    // everytime the car moves to a new position, the reward decreases
+    public Double costFunction(double reward) {
+        reward = reward - 0.001;
+        return reward;
     }
 }
+
