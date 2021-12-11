@@ -50,28 +50,46 @@ public class Car {
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
         
-        //y = mx + b
         
         int current_x = last_x;
         int current_y = last_y;
         
         ArrayList<int[]> checks = new ArrayList<>();
         
-        
-        for(double i = last_x; i < position[0]; i += 0.1){
-            int new_x = (int) i;
-            int new_y = (int) (m*i + b);
+        if(last_x < position[0]){
+            for(double i = last_x; i < position[0]; i += 0.1){
+                int new_x = (int) i;
+                int new_y = (int) (m*i + b);
             
-            boolean diff_x = new_x != current_x;
-            boolean diff_y = new_y != current_y;
+                boolean diff_x = new_x != current_x;
+                boolean diff_y = new_y != current_y;
             
-            if(diff_x){
-                int[] temp = {new_x, current_y};
-                checks.add(temp);
+                if(diff_x){
+                    int[] temp = {new_x, current_y};
+                    checks.add(temp);
+                }
+                if(diff_y){
+                    int[] temp = {current_x, new_y};
+                    checks.add(temp);
+                }
             }
-            if(diff_y){
-                int[] temp = {current_x, new_y};
-                checks.add(temp);
+        }
+        if(last_x > position[0]){
+            for(double i = last_x; i > position[0]; i -= 0.1){
+                int new_x = (int) i;
+                int new_y = (int) (m*i + b);
+            
+                boolean diff_x = new_x != current_x;
+                boolean diff_y = new_y != current_y;
+            
+                if(diff_x){
+                    int[] temp = {new_x, current_y};
+                    checks.add(temp);
+                }
+                if(diff_y){
+                    int[] temp = {current_x, new_y};
+                    checks.add(temp);
+                }
             }
         }
         
