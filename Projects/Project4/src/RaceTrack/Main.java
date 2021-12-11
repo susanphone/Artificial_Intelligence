@@ -74,7 +74,7 @@ public class Main {
 
         //HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
 
-        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
+//        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
         /* QLearning starts with initializing a map of the knowledge, the states are all unknown
          * and the action is set as zero, which means no change to speed. */
 //        HashMap<int[], char[]> knowledge = new HashMap<>();
@@ -92,6 +92,12 @@ public class Main {
 //            String value = sa.toString();
 //            System.out.println(value);
 //        }
+        HashMap<int[], HashMap<int[], int[]>> trackLearning = new HashMap<>();
+        QLearning2 ql = new QLearning2(trackDim, 0.001, 1);
+        int[] states = new int[] {0,1,2,3,4};
+        trackLearning = ql.initailizeQTable(trackDim, states, ql.actions);
+//        ql.decision(trackLearning, 1, ql.position);
+        System.out.println("Path: " + ql.decision(trackLearning, 1, ql.position));
     }
 
 }
