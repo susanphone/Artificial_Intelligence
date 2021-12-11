@@ -74,30 +74,18 @@ public class Main {
 
         //HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
 
-//        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
+        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
         /* QLearning starts with initializing a map of the knowledge, the states are all unknown
          * and the action is set as zero, which means no change to speed. */
-//        HashMap<int[], char[]> knowledge = new HashMap<>();
-//        int x = trackDim[0];
-//        int y = trackDim[1];
-//        int[] xy = {x, y};
-//        char[] states = {'S', 'R', 'W', 'F'};
-//        QLearning ql = new QLearning(states, xy);
-//        HashMap<int[], char[]> growingKnowledge = ql.runLearning(states, 1, xy);
-//        for (int[] gk : growingKnowledge.keySet()) {
-//            String key = gk.toString();
-//            System.out.println(key);
-//        }
-//        for (char[] sa : growingKnowledge.values()) {
-//            String value = sa.toString();
-//            System.out.println(value);
-//        }
+//
         HashMap<int[], HashMap<int[], int[]>> trackLearning = new HashMap<>();
         QLearning2 ql = new QLearning2(trackDim, 0.001, 1);
-        int[] states = new int[] {0,1,2,3,4};
-        trackLearning = ql.initailizeQTable(trackDim, states, ql.actions);
-//        ql.decision(trackLearning, 1, ql.position);
-        System.out.println("Path: " + ql.decision(trackLearning, 1, ql.position));
+        trackLearning = ql.initailizeQTable(trackDim, ql.states, ql.actions);
+        ql.explore(ql.position, trackLearning);
+        int[] start = {0,0};
+        ArrayList<int[]> path = new ArrayList<>();
+        path.add(start);
+        ql.decision(trackLearning, 1, ql.position, path);
     }
 
 }
