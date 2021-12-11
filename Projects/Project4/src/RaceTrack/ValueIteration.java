@@ -1,5 +1,4 @@
 package RaceTrack;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -8,9 +7,17 @@ import java.util.Random;
 public class ValueIteration {
 
     public ValueIteration(){
-
+        // empty constructor
     }
 
+    /**
+     * perform value iteration to generate an optimal policy for the current track
+     * @param m the MDP for the current track
+     * @param epsilon a predetermined value used to determine when convergence is reached
+     * @param discount the factor specified in order for the sum produced by the transition method to converge
+     * @param crashType 0 for the first crash vari
+     * @return
+     */
     public static HashMap<int[], ActionValue> decision( MDP m, double epsilon, double discount, int crashType){
 
         ArrayList<int[]>  states = m.states;
@@ -169,12 +176,6 @@ public class ValueIteration {
         if(newState[0] == -1 && newState[1] == -1){
                 if(crashType == 0){
                     //mild crash
-//                    if(newXCoord < 0){
-//                        newXCoord = 0;
-//                    }
-//                    if(newYCoord < 0){
-//                        newYCoord = 0;
-//                    }
                     int[] nearestState = getNearestPosition(newXCoord, newYCoord, states);
                     newState = nearestState;
 
