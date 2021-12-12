@@ -97,11 +97,22 @@ public class ValueIteration {
                     qValue = m.reward(nextState) + (discount * m.transition(accel_probability, VPrev.get(nextState),
                             VPrev.get(nextStateAccelFails)));
 
-                    if(nextValue == 0.0 || qValue > nextValue){
+
+//                    if(qValue != -1){
+//                        System.out.println(state[0] + " " + state[1]);
+//                        System.out.println("Q-Value: " + qValue);
+//                        System.out.println("X Action: " + action[0]);
+//                        System.out.println("Y Action: " + action[1]);
+//                    }
+
+                    //System.out.println("Action Value: " + qValue);
+
+                    if(nextValue == 0.0 || qValue < nextValue){
                         nextValue = qValue;
                         nextActionValue.action = action;
                         nextActionValue.value = nextValue;
                     }
+
                 }
 
                 //if (stateNum == 105 || stateNum == 3500 || stateNum == 10000){
@@ -110,8 +121,14 @@ public class ValueIteration {
                 //}
 
 
+                if(m.finishPositions.contains(state)){
+                    nextValue = 0.0;
+                    nextActionValue.value = nextValue;
+                }
+
                 optimal.put(state, nextActionValue);
                 V.put(state, nextValue);
+
 
                 double currBellmanErr = Math.abs(V.get(state) - VPrev.get(state));
 
