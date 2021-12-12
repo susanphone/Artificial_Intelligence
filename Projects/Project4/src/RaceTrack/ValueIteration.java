@@ -154,14 +154,14 @@ public class ValueIteration {
         int xAccel = action[0];
         int yAccel = action[1];
 
-//        //non-determinism
-//        Random rand = new Random();
-//        int r = rand.nextInt(10) + 1;
-//
-//        if(r > 8){
-//            xAccel = 0;
-//            yAccel = 0;
-//        }
+        //non-determinism
+        Random rand = new Random();
+        int r = rand.nextInt(10) + 1;
+
+        if(r > 8){
+            xAccel = 0;
+            yAccel = 0;
+        }
 
         int newXCoord;
         int newYCoord;
