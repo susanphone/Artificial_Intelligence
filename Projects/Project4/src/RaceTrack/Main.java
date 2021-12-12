@@ -39,12 +39,10 @@ public class Main {
                     for (int[] v : velocities) {
                         int[] state = {j, i, v[0], v[1]};
                         currentTrack.states.add(state);
+                        if (track[i][j] == 'F') {
+                            currentTrack.finishPositions.add(state);
+                        }
                     }
-                    if (track[i][j] == 'F') {
-                        int[] finishPos = {j, i};
-                        currentTrack.finishPositions.add(finishPos);
-                    }
-
                 }
             }
         }
