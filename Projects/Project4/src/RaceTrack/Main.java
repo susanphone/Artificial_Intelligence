@@ -8,7 +8,7 @@ import java.util.HashMap;
 public class Main {
     public static void main(String[] args) {
 
-        char[][] track = Reader.trackIn("L-track.txt");
+        char[][] track = Reader.trackIn("O-track.txt");
 
         for (int i = 0; i < track.length; i++) {
             for (int j = 0; j < track[i].length; j++) {
@@ -65,71 +65,70 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
-        //HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(trackDim, currentTrack, 0.001, 0.7, 0);
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.00001, 0.7, 0);
+        System.out.println(optimalPolicy.size());
 
-//        HashMap<int[], ActionValue>  optimalPolicy2 = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
-//
-//        try{
-//            FileWriter myFile = new FileWriter("VI-L-track-Policy.txt");
-//
-//            for(int[] key: optimalPolicy2.keySet()){
-//                myFile.write(key[0] + " " + key[1] + " " + key[2] + " " + key[3] + " " +
-//                        optimalPolicy2.get(key).action[0] + " " + optimalPolicy2.get(key).action[1]);
-//                myFile.write("\n");
-//            }
-//
-//            myFile.close();
-//
-//        }catch(IOException e){
-//            System.out.println("An error occurred.");
-//            e.printStackTrace();
-//        }
+        try{
+            FileWriter myFile = new FileWriter("VI-O-track-Policy.txt");
 
-        HashMap<int[], int[]>  optimalPolicy = new HashMap<>();
-
-        try {
-            File myObj = new File("VI-L-track-Policy.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                int[] fileData = new int[6];
-                int i = 0;
-
-                for(String s: data.split(" ")){
-                    //System.out.println("String: " + s);
-                    int sInt = Integer.parseInt(s);
-                    //System.out.println(sInt);
-                    fileData[i] = sInt;
-                    i++;
-                }
-
-                int[] states = new int[4];
-                int[] action = new int[2];
-
-                states[0] = fileData[0];
-                states[1] = fileData[1];
-                states[2] = fileData[2];
-                states[3] = fileData[3];
-
-                action[0] = fileData[4];
-                action[1] = fileData[5];
-
-                optimalPolicy.put(states, action);
-
-                if(states[0] == 1 && states[1] == 6 && states[2] == 0 && states[3] == 0){
-                    System.out.println("X Action: " + action[0]);
-                    System.out.println("Y Action: " + action[1]);
-                }
-
-
+            for(int[] key: optimalPolicy.keySet()){
+                myFile.write(key[0] + " " + key[1] + " " + key[2] + " " + key[3] + " " +
+                        optimalPolicy.get(key).action[0] + " " + optimalPolicy.get(key).action[1]);
+                myFile.write("\n");
             }
-            myReader.close();
-        } catch (FileNotFoundException e) {
+
+            myFile.close();
+
+        }catch(IOException e){
             System.out.println("An error occurred.");
             e.printStackTrace();
         }
 
-        System.out.println(optimalPolicy.size());
+//        HashMap<int[], int[]>  optimalPolicy = new HashMap<>();
+//
+//        try {
+//            File myObj = new File("VI-L-track-Policy.txt");
+//            Scanner myReader = new Scanner(myObj);
+//            while (myReader.hasNextLine()) {
+//                String data = myReader.nextLine();
+//                int[] fileData = new int[6];
+//                int i = 0;
+//
+//                for(String s: data.split(" ")){
+//                    //System.out.println("String: " + s);
+//                    int sInt = Integer.parseInt(s);
+//                    //System.out.println(sInt);
+//                    fileData[i] = sInt;
+//                    i++;
+//                }
+//
+//                int[] states = new int[4];
+//                int[] action = new int[2];
+//
+//                states[0] = fileData[0];
+//                states[1] = fileData[1];
+//                states[2] = fileData[2];
+//                states[3] = fileData[3];
+//
+//                action[0] = fileData[4];
+//                action[1] = fileData[5];
+//
+//                optimalPolicy.put(states, action);
+//
+//                if(states[0] == 1 && states[1] == 6 && states[2] == 0 && states[3] == 0){
+//                    System.out.println("X Action: " + action[0]);
+//                    System.out.println("Y Action: " + action[1]);
+//                }
+//
+//
+//            }
+//            myReader.close();
+//        } catch (FileNotFoundException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
+//
+//        System.out.println(optimalPolicy.size());
 
 
         /* QLearning starts with initializing a map of the knowledge, the states are all unknown
