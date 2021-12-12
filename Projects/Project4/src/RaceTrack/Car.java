@@ -45,7 +45,7 @@ public class Car {
         
         //Adds the velocity and position at the current timestep to the history list
         velocity_history.add(velocity);
-        position_history.add(position);
+
         
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
@@ -96,13 +96,22 @@ public class Car {
         for(int i = 0; i < checks.size(); i++){
             int[] current = checks.get(i);
             if(track[current[0]][current[1]] == 'W'){
+                if(checks.size()>0){
+                    position = checks.get(i-1);
+                    position_history.add(position);
+                }
+                else{
+                    position = position_history.get(position_history.size()-1);
+                    position_history.add(position);
+                }
                 return 1;
             }
             else if(track[current[0]][current[1]] == 'F'){
+                position_history.add(position);
                 return 2;
             }
         }
-        
+        position_history.add(position);
         return 0;
     }
 

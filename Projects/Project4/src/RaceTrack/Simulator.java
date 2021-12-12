@@ -42,16 +42,6 @@ public class Simulator {
                         finished = true;
                         System.out.println("Car crashed, reseting");
                     }
-                    else{
-                        //change to be nearest position
-                        
-                        
-                        int [] last_position = car.position_history.get(car.position_history.size() - 1);
-                        car.position = last_position;
-                        
-                        int [] last_velocity = {0,0};
-                        car.velocity = last_velocity;
-                    }
                     break;
                 case 2:
                     System.out.println("Car reached the finish");
