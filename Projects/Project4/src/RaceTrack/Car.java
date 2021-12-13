@@ -100,7 +100,8 @@ public class Car {
             if(track[current[0]][current[1]] == 'W'){
                 if(checks.size()>0 && i > 0){
                     System.out.println("hey");
-                    position = checks.get(i-1);
+                    position[0] = checks.get(i-1)[0];
+                    position[0] = checks.get(i-1)[1];
                 }
                 else{
                     position[0] = position_history.get(position_history.size()-1)[0];
@@ -112,8 +113,6 @@ public class Car {
                 int[] v = {0, 0};
                 velocity = v;
                 velocity_history.add(v);
-                
-                
                 return 1;
             }
             else if(track[current[0]][current[1]] == 'F'){
