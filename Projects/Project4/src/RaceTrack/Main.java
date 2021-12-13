@@ -16,8 +16,7 @@ public class Main {
             }
             System.out.println();
         }
-        
-        /*
+
 
         //initialize the possible velocities
         ArrayList<int[]> velocities = new ArrayList<>();
@@ -56,7 +55,7 @@ public class Main {
         currentTrack.actions = currentTrack.setActions();
 
         //track dimensions
-        int[] trackDim = {track[0].length, track.length}; */
+        int[] trackDim = {track[0].length, track.length};
 
         /*
          * OUTPUT FROM VALUE ITERATION
@@ -70,12 +69,8 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
-<<<<<<< HEAD
         HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
-=======
-        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.0000001, 0.7, 0);
 
->>>>>>> ba3a44cbc54f0203506d64e804c2eb1571a91d78
         System.out.println(optimalPolicy.size());
 
         try{
@@ -94,65 +89,60 @@ public class Main {
             e.printStackTrace();
         }
         
-        */
-        
-        
-        
-        
-
-        HashMap<String, int[]>  optimalPolicy = new HashMap<>();
-
-        try {
-            File myObj = new File("VI-L-track-Policy.txt");
-            Scanner myReader = new Scanner(myObj);
-            while (myReader.hasNextLine()) {
-                String data = myReader.nextLine();
-                int[] fileData = new int[6];
-                int i = 0;
-
-                for(String s: data.split(" ")){
-                    //System.out.println("String: " + s);
-                    int sInt = Integer.parseInt(s);
-                    //System.out.println(sInt);
-                    fileData[i] = sInt;
-                    i++;
-                }
-
-                int[] states = new int[4];
-                int[] action = new int[2];
-
-                states[0] = fileData[0];
-                states[1] = fileData[1];
-                states[2] = fileData[2];
-                states[3] = fileData[3];
-
-                action[0] = fileData[4];
-                action[1] = fileData[5];
-
-                String temp = "";
-                temp = temp.concat(String.valueOf(states[0]) + " ");
-                temp = temp.concat(String.valueOf(states[1]) + " ");
-                temp = temp.concat(String.valueOf(states[2]) + " ");
-                temp = temp.concat(String.valueOf(states[3]));
-                
-                optimalPolicy.put(temp, action);
-
-                if(states[0] == 1 && states[1] == 6 && states[2] == 0 && states[3] == 0){
-                    System.out.println("X Action: " + action[0]);
-                    System.out.println("Y Action: " + action[1]);
-                }
-
-
-            }
-            myReader.close();
-        } catch (FileNotFoundException e) {
-            System.out.println("An error occurred.");
-            e.printStackTrace();
-        }
+//
+//        HashMap<String, int[]>  optimalPolicy = new HashMap<>();
+//
+//        try {
+//            File myObj = new File("VI-L-track-Policy.txt");
+//            Scanner myReader = new Scanner(myObj);
+//            while (myReader.hasNextLine()) {
+//                String data = myReader.nextLine();
+//                int[] fileData = new int[6];
+//                int i = 0;
+//
+//                for(String s: data.split(" ")){
+//                    //System.out.println("String: " + s);
+//                    int sInt = Integer.parseInt(s);
+//                    //System.out.println(sInt);
+//                    fileData[i] = sInt;
+//                    i++;
+//                }
+//
+//                int[] states = new int[4];
+//                int[] action = new int[2];
+//
+//                states[0] = fileData[0];
+//                states[1] = fileData[1];
+//                states[2] = fileData[2];
+//                states[3] = fileData[3];
+//
+//                action[0] = fileData[4];
+//                action[1] = fileData[5];
+//
+//                String temp = "";
+//                temp = temp.concat(String.valueOf(states[0]) + " ");
+//                temp = temp.concat(String.valueOf(states[1]) + " ");
+//                temp = temp.concat(String.valueOf(states[2]) + " ");
+//                temp = temp.concat(String.valueOf(states[3]));
+//
+//                optimalPolicy.put(temp, action);
+//
+//                if(states[0] == 1 && states[1] == 6 && states[2] == 0 && states[3] == 0){
+//                    System.out.println("X Action: " + action[0]);
+//                    System.out.println("Y Action: " + action[1]);
+//                }
+//
+//
+//            }
+//            myReader.close();
+//        } catch (FileNotFoundException e) {
+//            System.out.println("An error occurred.");
+//            e.printStackTrace();
+//        }
 
         //System.out.println(optimalPolicy.size());
         
-        new Simulator(track, false, optimalPolicy);
+        //new Simulator(track, false, optimalPolicy);
 
     }
 
