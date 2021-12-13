@@ -50,7 +50,7 @@ public class ValueIteration {
 
         boolean finished = false;
 
-        while( !finished && iteration < 50){
+        while( !finished && iteration < 100){
             //initialize the bellman error
             double bellmanErr = 0.0;
 
