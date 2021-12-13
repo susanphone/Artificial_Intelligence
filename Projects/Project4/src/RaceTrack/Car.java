@@ -13,10 +13,12 @@ public class Car {
     ArrayList<int[]> velocity_history = new ArrayList<>();
 
     public Car(int[] p, int[] v){
-        this.position = p;
-        this.velocity = v;
-        position_history.add(this.position);
-        velocity_history.add(this.position);
+        position = p;
+        velocity = v;
+        int[] temp1 = {p[0], p[1]};
+        position_history.add(temp1);
+        int[] temp2 = {v[0], v[1]};
+        velocity_history.add(temp2);
     }
 
     //Accelerates the car and updates velocity and position accordingly. Returns 0 for success, 1 for a crash, and 2 for a finish
@@ -27,25 +29,25 @@ public class Car {
         //Checks to see if the car successfully accelerates, then updates velocity and position if true
         if(new Random().nextDouble() < 0.8){
             //Updates velocity based on current acceleration
-            velocity[0] = x + velocity_history.get(velocity_history.size() - 1)[0];
-            velocity[1] = x + velocity_history.get(velocity_history.size() - 1)[1];
+            velocity[0] = x + velocity[0];
+            velocity[1] = x + velocity[1];
             
             //Checks to see if either the x or y velocity has gone over 5 or under -5. If so, velocity is set back to the max or min
             if(velocity[0] > 5 || velocity[0] < -5){
                 velocity[0] = 5 * (velocity[0]/Math.abs(velocity[0]));
             }
             if(velocity[1] > 5 || velocity[1] < -5){
-                velocity[2] = 5 * (velocity[1]/Math.abs(velocity[1]));
+                velocity[1] = 5 * (velocity[1]/Math.abs(velocity[1]));
             }
-        
             //Updates position based on new velocity
-            position[0] = velocity[0]+ position_history.get(position_history.size() - 1)[0];
-            position[1] = velocity[1] + position_history.get(position_history.size() - 1)[1];
+            position[0] = velocity[0]+ position[0];
+            position[1] = velocity[1] + position[1];
         }
-        
-        //Adds the velocity and position at the current timestep to the history list
-        velocity_history.add(velocity);
-
+        else{
+            //Updates position based on new velocity
+            position[0] = velocity[0]+ position[0];
+            position[1] = velocity[1] + position[1];
+        }
         
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
@@ -96,22 +98,34 @@ public class Car {
         for(int i = 0; i < checks.size(); i++){
             int[] current = checks.get(i);
             if(track[current[0]][current[1]] == 'W'){
-                if(checks.size()>0){
+                if(checks.size()>0 && i > 0){
+                    System.out.println("hey");
                     position = checks.get(i-1);
-                    position_history.add(position);
                 }
                 else{
-                    position = position_history.get(position_history.size()-1);
-                    position_history.add(position);
+                    position[0] = position_history.get(position_history.size()-1)[0];
+                    position[1] = position_history.get(position_history.size()-1)[1];
                 }
+                
+                int[] p = {position[0], position[1]};
+                position_history.add(p);
+                int[] v = {0, 0};
+                velocity = v;
+                velocity_history.add(v);
+                
+                
                 return 1;
             }
             else if(track[current[0]][current[1]] == 'F'){
                 position_history.add(position);
+                velocity_history.add(velocity);
                 return 2;
             }
         }
-        position_history.add(position);
+        int[] p = {position[0], position[1]};
+        position_history.add(p);
+        int[] v = {velocity[0], velocity[1]};
+        velocity_history.add(v);
         return 0;
     }
 
