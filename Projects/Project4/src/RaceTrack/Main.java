@@ -44,6 +44,9 @@ public class Main {
                         if (track[i][j] == 'F') {
                             currentTrack.finishPositions.add(state);
                         }
+                        if (track[i][j] == 'S') {
+                            currentTrack.startPositions.add(state);
+                        }
                     }
                 }
             }
@@ -67,12 +70,16 @@ public class Main {
          * optimal action the take (the action attribute in the ActionValue object)
          */
 
+<<<<<<< HEAD
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.001, 0.7, 0);
+=======
         HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.0000001, 0.7, 0);
 
+>>>>>>> ba3a44cbc54f0203506d64e804c2eb1571a91d78
         System.out.println(optimalPolicy.size());
 
         try{
-            FileWriter myFile = new FileWriter("VI-R-track-Policy.txt");
+            FileWriter myFile = new FileWriter("VI-L-track-Policy.txt");
 
             for(int[] key: optimalPolicy.keySet()){
                 myFile.write(key[0] + " " + key[1] + " " + key[2] + " " + key[3] + " " +

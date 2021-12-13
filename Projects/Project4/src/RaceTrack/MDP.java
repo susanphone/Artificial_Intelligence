@@ -12,6 +12,7 @@ public class MDP {
     ArrayList<int[]> states = new ArrayList<>();
     ArrayList<int[]> actions = new ArrayList<>();
     ArrayList<int[]> finishPositions = new ArrayList<>();
+    ArrayList<int[]> startPositions = new ArrayList<>();
 
     public MDP(){
         // empty constructor
