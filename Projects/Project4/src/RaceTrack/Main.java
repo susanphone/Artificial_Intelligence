@@ -66,12 +66,13 @@ public class Main {
          * Given the starting position you should be able to use my optimalPolicy to help the car decide what is the
          * optimal action the take (the action attribute in the ActionValue object)
          */
-/*
-        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.00001, 0.7, 0);
+
+        HashMap<int[], ActionValue>  optimalPolicy = ValueIteration.decision(currentTrack, 0.0000001, 0.7, 0);
+
         System.out.println(optimalPolicy.size());
 
         try{
-            FileWriter myFile = new FileWriter("VI-O-track-Policy.txt");
+            FileWriter myFile = new FileWriter("VI-R-track-Policy.txt");
 
             for(int[] key: optimalPolicy.keySet()){
                 myFile.write(key[0] + " " + key[1] + " " + key[2] + " " + key[3] + " " +
