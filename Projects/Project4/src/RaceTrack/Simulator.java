@@ -33,12 +33,13 @@ public class Simulator {
             temp = temp.concat(String.valueOf(car.velocity[0]) + " ");
             temp = temp.concat(String.valueOf(car.velocity[1]));
             
-            System.out.println(temp);
+            System.out.println();
+            System.out.println("Key: " + temp);
             
             //get acceleration
             int[] acceleration = policy.get(temp);
 
-            
+            System.out.println("Acceleration: " + acceleration[0] + "," + acceleration[1]);
             
             //try to accelerate
             int acceleration_results = car.accelerate(acceleration[0], acceleration[1], track);

@@ -30,7 +30,7 @@ public class Car {
         if(new Random().nextDouble() < 0.8){
             //Updates velocity based on current acceleration
             velocity[0] = x + velocity[0];
-            velocity[1] = x + velocity[1];
+            velocity[1] = y + velocity[1];
             
             //Checks to see if either the x or y velocity has gone over 5 or under -5. If so, velocity is set back to the max or min
             if(velocity[0] > 5 || velocity[0] < -5){
@@ -44,39 +44,41 @@ public class Car {
             position[1] = velocity[1] + position[1];
         }
         else{
-            //Updates position based on new velocity
+            System.out.println("Car slipped");
+            //Updates position based on old velocity
             position[0] = velocity[0]+ position[0];
             position[1] = velocity[1] + position[1];
         }
         
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
-        
-        
+        System.out.println("Old position: " + last_x + "," + last_y);
+        System.out.println("Temporary position: " + position[0] + "," + position[1]);
         int current_x = last_x;
         int current_y = last_y;
         
         ArrayList<int[]> checks = new ArrayList<>();
         
         if(last_x < position[0]){
-            for(double i = last_x; i < position[0]; i += 0.1){
+            for(double i = last_x; i <= (double) position[0] + 0.1; i += 0.1){
                 int new_x = (int) i;
-                int new_y = (int) (m*i + b);
-            
+                int new_y = (int) (m*(double)i + b);
                 boolean diff_x = new_x != current_x;
                 boolean diff_y = new_y != current_y;
             
                 if(diff_x){
                     int[] temp = {new_x, current_y};
                     checks.add(temp);
+                    //System.out.println("Check at " + temp[0] + "," + temp[1]);
                 }
                 if(diff_y){
                     int[] temp = {current_x, new_y};
                     checks.add(temp);
+                    //System.out.println("Check at " + temp[0] + "," + temp[1]);
                 }
             }
         }
-        if(last_x > position[0]){
+        else if(last_x > position[0]){
             for(double i = last_x; i > position[0]; i -= 0.1){
                 int new_x = (int) i;
                 int new_y = (int) (m*i + b);
@@ -94,14 +96,51 @@ public class Car {
                 }
             }
         }
+        else if(last_x == position[0]){
+            if(last_y < position[1]){
+                for(double i = last_y; i < position[1]; i += 0.1){
+                    int new_x = (int) position[0];
+                    int new_y = (int) i;
+            
+                    boolean diff_x = new_x != current_x;
+                    boolean diff_y = new_y != current_y;
+            
+                    if(diff_x){
+                        int[] temp = {new_x, current_y};
+                        checks.add(temp);
+                    }
+                    if(diff_y){
+                        int[] temp = {current_x, new_y};
+                        checks.add(temp);
+                    }
+                }
+            }
+            if(last_y > position[1]){
+                for(double i = last_y; i > position[1]; i -= 0.1){
+                    int new_x = position[0];
+                    int new_y = (int) i;
+            
+                    boolean diff_x = new_x != current_x;
+                    boolean diff_y = new_y != current_y;
+            
+                    if(diff_x){
+                        int[] temp = {new_x, current_y};
+                        checks.add(temp);
+                    }
+                    if(diff_y){
+                        int[] temp = {current_x, new_y};
+                        checks.add(temp);
+                    }
+                }
+            }
+        }
         
         for(int i = 0; i < checks.size(); i++){
             int[] current = checks.get(i);
-            if(track[current[0]][current[1]] == 'W'){
+            if(track[current[1]][current[0]] == 'W'){
                 if(checks.size()>0 && i > 0){
-                    System.out.println("hey");
                     position[0] = checks.get(i-1)[0];
-                    position[0] = checks.get(i-1)[1];
+                    position[1] = checks.get(i-1)[1];
                 }
                 else{
                     position[0] = position_history.get(position_history.size()-1)[0];
@@ -113,14 +152,21 @@ public class Car {
                 int[] v = {0, 0};
                 velocity = v;
                 velocity_history.add(v);
+                System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+                System.out.println("Ending position: " + position[0] + "," + position[1]);
                 return 1;
             }
-            else if(track[current[0]][current[1]] == 'F'){
+            else if(track[current[1]][current[0]] == 'F'){
                 position_history.add(position);
                 velocity_history.add(velocity);
+                System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+                System.out.println("Ending position: " + position[0] + "," + position[1]);
                 return 2;
             }
         }
+        
+        System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+        System.out.println("Ending position: " + position[0] + "," + position[1]);
         int[] p = {position[0], position[1]};
         position_history.add(p);
         int[] v = {velocity[0], velocity[1]};
