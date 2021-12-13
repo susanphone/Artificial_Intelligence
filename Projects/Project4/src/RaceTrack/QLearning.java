@@ -1,15 +1,12 @@
 package RaceTrack;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class QLearning {
     int[] trackDimensions;
     double discount;
-    int[] actions;
     int[] states = new int[]{0,1,2,3,4};
     double reward;
-    int[] position;
     HashMap path = new HashMap();
 
     public QLearning(int[] td, double d, double r) {
@@ -88,6 +85,7 @@ public class QLearning {
         locationKnowledge.get(position);
         HashMap sa = new HashMap();
         sa.put(state, action);
+        System.out.println(position + " " + action + " " + state);
         locationKnowledge.put(position, sa);
         System.out.println("Updating QTable");
     }
@@ -115,12 +113,13 @@ public class QLearning {
         return locationKnowledge;
     }
 
-    // exploit the knowledge and decide which combination of actions will create the optimal path to drive and action.
-    public HashMap<int[], HashMap> decision (HashMap locationKnowledge, double reward, int[] position, HashMap<int[], HashMap> currentPath) {
+    // exploit the knowledge and decide which combination of actions will create the optimal path to drive and best action.
+    public HashMap<int[], HashMap<Integer, int[]>> decision (HashMap locationKnowledge, double reward, int[] position, HashMap<int[], HashMap<Integer, int[]>> currentPath) {
         System.out.println("Making Decisions");
         int[] pos = (int[]) locationKnowledge.get(position);
         reward = costFunction(reward);
         currentPath.put(pos, computeAction(states));
+        System.out.println(pos + " " + computeAction(states));
         return currentPath;
     }
 
