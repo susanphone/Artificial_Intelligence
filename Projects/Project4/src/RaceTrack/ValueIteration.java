@@ -62,11 +62,6 @@ public class ValueIteration {
 
             for(int[] state : states){
 
-//                state[0] = 1;
-//                state[1] = 6;
-//                state[2] = -5;
-//                state[3] = -5;
-
                 stateNum++;
 
                 ActionValue nextActionValue = new ActionValue();
@@ -78,48 +73,21 @@ public class ValueIteration {
 
                     int[] nextState = getNextState(states, state, action, crashType);
 
-                    //if the current action causes the car to crash into a wall move on to the next action
-//                    if(nextState[0] == -1 && nextState[1] == -1){
-//                        nextValue = -10;
-//                        continue;
-//                    }
-
                     //get the values for if the acceleration fails
                     int[] failedAccel = {0,0};
                     int[] nextStateAccelFails = getNextState(states, state, failedAccel, crashType);
-
-                    //int[] testState = {26, 8};
-                    //VPrev.get(nextState);
-
-//                    System.out.println(state[0] + " " + state[1] + " " + state[2] + " " + state[3] );
-//                    System.out.println(nextState[0] + " " + nextState[1] + " " + nextState[2] + " " + nextState[3] );
 
                     qValue = m.reward(nextState) + (discount * m.transition(accel_probability, VPrev.get(nextState),
                             VPrev.get(nextStateAccelFails)));
 
 
-//                    if(qValue != -1){
-//                        System.out.println(state[0] + " " + state[1]);
-//                        System.out.println("Q-Value: " + qValue);
-//                        System.out.println("X Action: " + action[0]);
-//                        System.out.println("Y Action: " + action[1]);
-//                    }
-
-                    //System.out.println("Action Value: " + qValue);
-
-                    if(nextValue == 0.0 || qValue < nextValue){
+                    if(nextValue == 0.0 || qValue > nextValue){
                         nextValue = qValue;
                         nextActionValue.action = action;
                         nextActionValue.value = nextValue;
                     }
 
                 }
-
-                //if (stateNum == 105 || stateNum == 3500 || stateNum == 10000){
-//                System.out.println("Next Value for state: " + state[0] + " " + state[1] + " " + state[2] + " " +
-//                        state[3] + ": \n" + nextValue);
-                //}
-
 
                 if(m.finishPositions.contains(state)){
                     nextValue = 0.0;
