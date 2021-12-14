@@ -101,21 +101,21 @@ public class ValueIteration {
                 }
 
                 //video demonstration
-                if(iteration != 0){
-                    ActionValue currStateActionValue = optimal.get(state);
-                    if(currStateActionValue.action[0] != nextActionValue.action[0] ||
-                            currStateActionValue.action[1] != nextActionValue.action[1]){
-                        System.out.println("Previous state-action pair: X-Pos: " + state[0] + " Y-Pos: " + state[1]
-                        + " X velocity: " + state[2] + " Y velocity: " + state[3] + " X acceleration: " +
-                                currStateActionValue.action[0] + " Y acceleration: " + currStateActionValue.action[1]);
-                        System.out.println("Previous Q-value: " + currStateActionValue.value);
-                        System.out.println("Updated state-action pair: X-Pos: " + state[0] + " Y-Pos: " + state[1]
-                                + " X velocity: " + state[2] + " Y velocity: " + state[3] + " X acceleration: " +
-                                nextActionValue.action[0] + " Y acceleration: " + nextActionValue.action[1]);
-                        System.out.println("Updated Q-value: " + nextActionValue.value);
-                    }
-
-                }
+//                if(iteration != 0){
+//                    ActionValue currStateActionValue = optimal.get(state);
+//                    if(currStateActionValue.action[0] != nextActionValue.action[0] ||
+//                            currStateActionValue.action[1] != nextActionValue.action[1]){
+//                        System.out.println("Previous state-action pair: X-Pos: " + state[0] + " Y-Pos: " + state[1]
+//                        + " X velocity: " + state[2] + " Y velocity: " + state[3] + " X acceleration: " +
+//                                currStateActionValue.action[0] + " Y acceleration: " + currStateActionValue.action[1]);
+//                        System.out.println("Previous Q-value: " + currStateActionValue.value);
+//                        System.out.println("Updated state-action pair: X-Pos: " + state[0] + " Y-Pos: " + state[1]
+//                                + " X velocity: " + state[2] + " Y velocity: " + state[3] + " X acceleration: " +
+//                                nextActionValue.action[0] + " Y acceleration: " + nextActionValue.action[1]);
+//                        System.out.println("Updated Q-value: " + nextActionValue.value);
+//                    }
+//
+//                }
 
                 //put the current optimal action for a state in the policy hashmap
                 optimal.put(state, nextActionValue);
