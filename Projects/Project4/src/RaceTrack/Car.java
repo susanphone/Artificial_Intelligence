@@ -44,21 +44,25 @@ public class Car {
             position[1] = velocity[1] + position[1];
         }
         else{
-            System.out.println("Car slipped");
+            //System.out.println("Car slipped");
+            
             //Updates position based on old velocity
             position[0] = velocity[0]+ position[0];
             position[1] = velocity[1] + position[1];
         }
         
+        //Used to find the slope of the car's path
         double m  = ((double)(position[1] - last_y)) / ((double)(position[0] - last_x));
         double b = ((double)last_y) - (m * ((double)last_x));
-        System.out.println("Old position: " + last_x + "," + last_y);
-        System.out.println("Temporary position: " + position[0] + "," + position[1]);
+        //System.out.println("Old position: " + last_x + "," + last_y);
+        //System.out.println("Temporary position: " + position[0] + "," + position[1]);
         int current_x = last_x;
         int current_y = last_y;
         
+        //Stores the coords of squares that need to be checked
         ArrayList<int[]> checks = new ArrayList<>();
         
+        //Adds squares along the car's path to the checks array
         if(last_x < position[0]){
             for(double i = last_x; i <= (double) position[0] + 0.1; i += 0.1){
                 int new_x = (int) i;
@@ -96,6 +100,7 @@ public class Car {
                 }
             }
         }
+        //Used for a vertical slope
         else if(last_x == position[0]){
             if(last_y < position[1]){
                 for(double i = last_y; i < position[1]; i += 0.1){
@@ -135,9 +140,12 @@ public class Car {
             }
         }
         
+        //Goes through each square in the checks list and sees if it's either a wall or finish line
         for(int i = 0; i < checks.size(); i++){
             int[] current = checks.get(i);
+            //Handles crashes
             if(track[current[1]][current[0]] == 'W'){
+                //Resets the car's position
                 if(checks.size()>0 && i > 0){
                     position[0] = checks.get(i-1)[0];
                     position[1] = checks.get(i-1)[1];
@@ -152,21 +160,22 @@ public class Car {
                 int[] v = {0, 0};
                 velocity = v;
                 velocity_history.add(v);
-                System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
-                System.out.println("Ending position: " + position[0] + "," + position[1]);
+                //System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+                //System.out.println("Ending position: " + position[0] + "," + position[1]);
                 return 1;
             }
+            //Handles finishes
             else if(track[current[1]][current[0]] == 'F'){
                 position_history.add(position);
                 velocity_history.add(velocity);
-                System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
-                System.out.println("Ending position: " + position[0] + "," + position[1]);
+                //System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+                //System.out.println("Ending position: " + position[0] + "," + position[1]);
                 return 2;
             }
         }
         
-        System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
-        System.out.println("Ending position: " + position[0] + "," + position[1]);
+        //System.out.println("Ending velocity: " + velocity[0] + " " + velocity[1]);
+        //System.out.println("Ending position: " + position[0] + "," + position[1]);
         int[] p = {position[0], position[1]};
         position_history.add(p);
         int[] v = {velocity[0], velocity[1]};
