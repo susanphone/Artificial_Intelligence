@@ -141,6 +141,15 @@ public class Main {
 
         new Simulator(track, false, optimalPolicy2);
 
+        /* QLearning starts with initializing a map of the knowledge, the states are all unknown
+         * and the action is set as zero, which means no change to speed. */
+//        HashMap<int[], HashMap<int[], int[]>> trackLearning;
+//        QLearning ql = new QLearning(trackDim, 0.001, 1);
+//        int[] states = new int[] {0,1,2,3,4};
+//        HashMap<int[], HashMap<Integer, int[]>>  currentPath = new HashMap<>();
+//        trackLearning = ql.initailizeQTable(trackDim, states, ql.actions);
+//        ql.decision(trackLearning, 1, ql.position, currentPath);
+
     }
 
 }
